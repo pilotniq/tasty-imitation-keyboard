@@ -131,6 +131,7 @@ class KeyboardViewController: UIInputViewController {
 		
 		self.shiftState = .Disabled
 		self.currentMode = 0
+        self.currentInterfaceOrientation = UIInterfaceOrientation.Portrait
 		
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 		
@@ -270,8 +271,8 @@ class KeyboardViewController: UIInputViewController {
 		}
 		
 		self.setupLayout()
-		
-		let orientationSavvyBounds = CGRectMake(0, 0, self.view.bounds.width, self.heightForOrientation(self.interfaceOrientation, withTopBanner: false))
+        
+		let orientationSavvyBounds = CGRectMake(0, 0, self.view.bounds.width, self.heightForOrientation(self.currentInterfaceOrientation, withTopBanner: false))
 		
 		if (lastLayoutBounds != nil && lastLayoutBounds == orientationSavvyBounds) {
 			// do nothing
@@ -315,9 +316,11 @@ class KeyboardViewController: UIInputViewController {
     
     override func viewWillAppear(animated: Bool) {
         self.bannerView?.hidden = false
-        self.keyboardHeight = self.heightForOrientation(self.interfaceOrientation, withTopBanner: true)
+        self.keyboardHeight = self.heightForOrientation(self.currentInterfaceOrientation, withTopBanner: true)
     }
 	
+    var currentInterfaceOrientation : UIInterfaceOrientation
+    
     override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
         self.forwardingView.resetTrackedViews()
         self.shiftStartingState = nil
@@ -331,6 +334,7 @@ class KeyboardViewController: UIInputViewController {
         }
         
         self.keyboardHeight = self.heightForOrientation(toInterfaceOrientation, withTopBanner: true)
+        self.currentInterfaceOrientation = toInterfaceOrientation
     }
     
     override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
@@ -589,7 +593,7 @@ class KeyboardViewController: UIInputViewController {
 					
 				}
 				
-				self.keyboardHeight = self.heightForOrientation(self.interfaceOrientation, withTopBanner: true)
+				self.keyboardHeight = self.heightForOrientation(self.currentInterfaceOrientation, withTopBanner: true)
 				
 				self.constraintsAdded = false
 				self.setupLayout()
@@ -1204,7 +1208,7 @@ class KeyboardViewController: UIInputViewController {
 					if KeyboardViewController.getDeviceType() == TTDeviceType.TTDeviceTypeIPhone4
 					{
 						offsetY = 9
-						if self.interfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.interfaceOrientation == UIInterfaceOrientation.LandscapeRight
+						if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight
 						{
 							offsetY = 3
 						}
@@ -1212,7 +1216,7 @@ class KeyboardViewController: UIInputViewController {
 					else if KeyboardViewController.getDeviceType() == TTDeviceType.TTDeviceTypeIPhone5
 					{
 						offsetY = 9
-						if self.interfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.interfaceOrientation == UIInterfaceOrientation.LandscapeRight
+						if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight
 						{
 							offsetY = 3
 						}
@@ -1221,7 +1225,7 @@ class KeyboardViewController: UIInputViewController {
 					else if KeyboardViewController.getDeviceType() == TTDeviceType.TTDeviceTypeIPhone6
 					{
 						offsetY = 13
-						if self.interfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.interfaceOrientation == UIInterfaceOrientation.LandscapeRight
+						if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight
 						{
 							offsetY = 3
 						}
@@ -1230,7 +1234,7 @@ class KeyboardViewController: UIInputViewController {
 					else if KeyboardViewController.getDeviceType() == TTDeviceType.TTDeviceTypeIPhone6p
 					{
 						offsetY = 16
-						if self.interfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.interfaceOrientation == UIInterfaceOrientation.LandscapeRight
+						if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight
 						{
 							offsetY = 3
 						}

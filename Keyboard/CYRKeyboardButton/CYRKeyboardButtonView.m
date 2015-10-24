@@ -57,8 +57,8 @@
     CGRect frame = [UIScreen mainScreen].bounds;
 	
 	firstRowChar = [[NSCharacterSet characterSetWithCharactersInString:@"QWERTYUIOPqwertyuiop"] invertedSet];
-	
-	if (UIInterfaceOrientationIsLandscape([[UIDevice currentDevice]orientation])) {
+    
+	if (UIDeviceOrientationIsLandscape([[UIDevice currentDevice]orientation])) {
 		frame = CGRectMake(0, 0, CGRectGetHeight(frame), CGRectGetWidth(frame));
 	}
 	
