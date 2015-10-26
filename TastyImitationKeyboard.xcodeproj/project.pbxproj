@@ -33,6 +33,8 @@
 		4EF16F9819D255030076AFCB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF16F9519D255030076AFCB /* ViewController.swift */; };
 		4EF16F9B19D2550D0076AFCB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF16F9A19D2550D0076AFCB /* AppDelegate.swift */; };
 		4EF16F9F19D2552E0076AFCB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4EF16F9D19D2552E0076AFCB /* Main.storyboard */; };
+		73A3F1991BDD8B66005436D1 /* FrenchAZERTY.json in Resources */ = {isa = PBXBuildFile; fileRef = 73A3F1981BDD8B66005436D1 /* FrenchAZERTY.json */; };
+		73A3F19B1BDDA917005436D1 /* EnglishQWERTY.json in Resources */ = {isa = PBXBuildFile; fileRef = 73A3F19A1BDDA917005436D1 /* EnglishQWERTY.json */; };
 		82FD1A801B0B2C2E00A6D23D /* CatboardBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FD1A7F1B0B2C2E00A6D23D /* CatboardBanner.swift */; };
 		82FD1A861B0B319100A6D23D /* CYRKeyboardButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 82FD1A831B0B319100A6D23D /* CYRKeyboardButton.m */; };
 		82FD1A871B0B319100A6D23D /* CYRKeyboardButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 82FD1A851B0B319100A6D23D /* CYRKeyboardButtonView.m */; };
@@ -128,6 +130,8 @@
 		4EF16F9519D255030076AFCB /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4EF16F9A19D2550D0076AFCB /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4EF16F9E19D2552E0076AFCB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
+		73A3F1981BDD8B66005436D1 /* FrenchAZERTY.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FrenchAZERTY.json; sourceTree = "<group>"; };
+		73A3F19A1BDDA917005436D1 /* EnglishQWERTY.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EnglishQWERTY.json; sourceTree = "<group>"; };
 		82FD1A7F1B0B2C2E00A6D23D /* CatboardBanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatboardBanner.swift; sourceTree = "<group>"; };
 		82FD1A821B0B319100A6D23D /* CYRKeyboardButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CYRKeyboardButton.h; sourceTree = "<group>"; };
 		82FD1A831B0B319100A6D23D /* CYRKeyboardButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CYRKeyboardButton.m; sourceTree = "<group>"; };
@@ -232,6 +236,7 @@
 		4E807D8A19461D9000D875D1 = {
 			isa = PBXGroup;
 			children = (
+				73A3F1971BDD8B44005436D1 /* KeyboardDefinitions */,
 				4E807D9519461D9000D875D1 /* HostingApp */,
 				4E807DBA19461DC700D875D1 /* Keyboard */,
 				4E8EF38219F95D75009CBF5D /* KeyboardFramework */,
@@ -319,6 +324,15 @@
 				4EE7599A19F75A0D00B4E6ED /* Utilities.swift */,
 			);
 			name = Utility;
+			sourceTree = "<group>";
+		};
+		73A3F1971BDD8B44005436D1 /* KeyboardDefinitions */ = {
+			isa = PBXGroup;
+			children = (
+				73A3F19A1BDDA917005436D1 /* EnglishQWERTY.json */,
+				73A3F1981BDD8B66005436D1 /* FrenchAZERTY.json */,
+			);
+			name = KeyboardDefinitions;
 			sourceTree = "<group>";
 		};
 		82FD1A811B0B319100A6D23D /* CYRKeyboardButton */ = {
@@ -469,6 +483,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73A3F19B1BDDA917005436D1 /* EnglishQWERTY.json in Resources */,
+				73A3F1991BDD8B66005436D1 /* FrenchAZERTY.json in Resources */,
 				4E52A6DA1A06C198006A08CE /* DefaultSettings.xib in Resources */,
 				4E52A6D61A06BADA006A08CE /* Media.xcassets in Resources */,
 			);

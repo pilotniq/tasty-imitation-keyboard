@@ -277,7 +277,8 @@ class KeyboardViewController: UIInputViewController {
 		if (lastLayoutBounds != nil && lastLayoutBounds == orientationSavvyBounds) {
 			// do nothing
 		}
-		else {            let uppercase = self.shiftState.uppercase()
+		else {
+            let uppercase = self.shiftState.uppercase()
 			let characterUppercase = (NSUserDefaults.standardUserDefaults().boolForKey(kSmallLowercase) ? uppercase : true)
 			
 			self.forwardingView.frame = orientationSavvyBounds
@@ -290,14 +291,7 @@ class KeyboardViewController: UIInputViewController {
 		
 		let proxy = textDocumentProxy
 		
-		if proxy.keyboardType == UIKeyboardType.NumberPad || proxy.keyboardType == UIKeyboardType.DecimalPad
-		{
-			self.bannerView!.hidden = true
-		}
-		else
-		{
-			self.bannerView!.hidden = false
-		}
+		self.bannerView!.hidden = proxy.keyboardType == UIKeyboardType.NumberPad || proxy.keyboardType == UIKeyboardType.DecimalPad
 		
 		let newOrigin = CGPointMake(0, self.view.bounds.height - self.forwardingView.bounds.height)
 		self.forwardingView.frame.origin = newOrigin

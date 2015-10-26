@@ -1,0 +1,649 @@
+{
+    "keyboardName": "EnglishQWERTY",
+    "pages": [
+              {
+              "pageIndex": 0,
+              "rows": [
+                       {
+                       "rowIndex": 0,
+                       "keys": [
+                                {
+                                "label": "Q",
+                                "values": [
+                                           [
+                                            "a",
+                                            "LATIN SMALL LETTER A"
+                                            ],
+                                           [
+                                            "\u00E1",
+                                            "LATIN SMALL LETTER A WITH ACUTE"
+                                            ],
+                                           [
+                                            "à",
+                                            "LATIN SMALL LETTER A WITH GRAVE"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "A",
+                                                   "LATIN CAPITAL LETTER A"
+                                                   ],
+                                                  [
+                                                   "Á",
+                                                   "LATIN CAPITAL LETTER A WITH ACUTE"
+                                                   ],
+                                                  [
+                                                   "À",
+                                                   "LATIN CAPITAL LETTER A WITH GRAVE"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                100,
+                                                100,
+                                                150,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "W",
+                                "values": [
+                                           [
+                                            "a",
+                                            "LATIN SMALL LETTER A"
+                                            ],
+                                           [
+                                            "á",
+                                            "LATIN SMALL LETTER A WITH ACUTE"
+                                            ],
+                                           [
+                                            "à",
+                                            "LATIN SMALL LETTER A WITH GRAVE"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "A",
+                                                   "LATIN CAPITAL LETTER A"
+                                                   ],
+                                                  [
+                                                   "Á",
+                                                   "LATIN CAPITAL LETTER A WITH ACUTE"
+                                                   ],
+                                                  [
+                                                   "À",
+                                                   "LATIN CAPITAL LETTER A WITH GRAVE"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                100,
+                                                100,
+                                                150,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "E",
+                                "values": [
+                                           [
+                                            "c",
+                                            "LATIN SMALL LETTER C"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "C",
+                                                   "LATIN CAPITAL LETTER C"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                230,
+                                                100,
+                                                280,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "R",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "T",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "Y",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "U",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "I",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "O",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "P",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                }
+                                ]
+                       },
+                       {
+                       "rowIndex": 1,
+                       "keys": [
+                                {
+                                "label": "A",
+                                "values": [
+                                           [
+                                            "a",
+                                            "LATIN SMALL LETTER A"
+                                            ],
+                                           [
+                                            "á",
+                                            "LATIN SMALL LETTER A WITH ACUTE"
+                                            ],
+                                           [
+                                            "à",
+                                            "LATIN SMALL LETTER A WITH GRAVE"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "A",
+                                                   "LATIN CAPITAL LETTER A"
+                                                   ],
+                                                  [
+                                                   "Á",
+                                                   "LATIN CAPITAL LETTER A WITH ACUTE"
+                                                   ],
+                                                  [
+                                                   "À",
+                                                   "LATIN CAPITAL LETTER A WITH GRAVE"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                100,
+                                                100,
+                                                150,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                
+  
+
+                                {
+                                "label": "S",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "D",
+                                "values": [
+                                           [
+                                            "c",
+                                            "LATIN SMALL LETTER C"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "C",
+                                                   "LATIN CAPITAL LETTER C"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                230,
+                                                100,
+                                                280,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "F",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "G",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "H",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "J",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "K",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "L",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "M",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                }
+                                ]
+                       },
+                       {
+                       "rowIndex": 2,
+                       "keys": [
+                                {
+                                "label": "Z",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "X",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                
+                                {
+                                "label": "C",
+                                "values": [
+                                           [
+                                            "c",
+                                            "LATIN SMALL LETTER C"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "C",
+                                                   "LATIN CAPITAL LETTER C"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                230,
+                                                100,
+                                                280,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "V",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "B",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "N",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                }
+                                ]
+                       }
+                       ]
+              }
+              ]
+}

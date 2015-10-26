@@ -154,53 +154,81 @@ class Key: Hashable {
     
     func outputForCase(uppercase: Bool) -> String {
         if uppercase {
-            if self.uppercaseOutput != nil {
-                return self.uppercaseOutput!
-            }
-            else if self.lowercaseOutput != nil {
-                return self.lowercaseOutput!
-            }
-            else {
-                return ""
-            }
+            return self.uppercaseOutput ?? self.lowercaseOutput ?? ""
         }
         else {
-            if self.lowercaseOutput != nil {
-                return self.lowercaseOutput!
-            }
-            else if self.uppercaseOutput != nil {
-                return self.uppercaseOutput!
-            }
-            else {
-                return ""
-            }
+            return self.lowercaseOutput ?? self.uppercaseOutput ?? ""
         }
     }
     
     func keyCapForCase(uppercase: Bool) -> String {
         if uppercase {
-            if self.uppercaseKeyCap != nil {
-                return self.uppercaseKeyCap!
-            }
-            else if self.lowercaseKeyCap != nil {
-                return self.lowercaseKeyCap!
-            }
-            else {
-                return ""
-            }
+            return self.uppercaseKeyCap ?? self.lowercaseKeyCap ?? ""
         }
         else {
-            if self.lowercaseKeyCap != nil {
-                return self.lowercaseKeyCap!
-            }
-            else if self.uppercaseKeyCap != nil {
-                return self.uppercaseKeyCap!
-            }
-            else {
-                return ""
-            }
+            return self.lowercaseKeyCap ?? self.uppercaseKeyCap ?? ""
         }
     }
+    
+    class func SlashKey() -> Key
+    {
+        let slashModel = Key(.Character)
+        slashModel.setLetter("/")
+        
+        return slashModel
+    }
+    
+    class func AtKey() -> Key
+    {
+        let atModel = Key(.Character)
+        atModel.setLetter("@")
+        
+        return atModel
+    }
+    
+    class func PeriodKey() -> Key
+    {
+        let dotModel = Key(.Character)
+        dotModel.setLetter(".")
+        
+        return dotModel
+    }
+    
+    class func SpaceKey() -> Key
+    {
+        let space = Key(.Space)
+        space.uppercaseKeyCap = "space"
+        space.uppercaseOutput = " "
+        space.lowercaseOutput = " "
+        return space
+    }
+    
+    class func ReturnKey() -> Key
+    {
+        let returnKey = Key(.Return)
+        returnKey.uppercaseKeyCap = "return"
+        returnKey.uppercaseOutput = "\n"
+        returnKey.lowercaseOutput = "\n"
+        return returnKey
+    }
+    
+    class func ModeChangeNumbersKey() -> Key
+    {
+        let keyModeChangeNumbers = Key(.ModeChange)
+        keyModeChangeNumbers.uppercaseKeyCap = "123"
+        keyModeChangeNumbers.toMode = 1
+        return keyModeChangeNumbers
+        
+    }
+    
+    class func ModeChangeLettersKey() -> Key
+    {
+        let keyModeChangeLetters = Key(.ModeChange)
+        keyModeChangeLetters.uppercaseKeyCap = "ABC"
+        keyModeChangeLetters.toMode = 0
+        return keyModeChangeLetters
+    }
+
 }
 
 func ==(lhs: Key, rhs: Key) -> Bool {

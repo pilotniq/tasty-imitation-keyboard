@@ -577,9 +577,4 @@ class ShapeView: UIView {
         }
     }
     
-//    override func drawRect(rect: CGRect) {
-//        if self.shapeLayer == nil {
-//            self.drawCall(rect)
-//        }
-//    }
 }

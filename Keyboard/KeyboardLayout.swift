@@ -318,8 +318,8 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         
         // reset state
         for (p, page) in self.model.pages.enumerate() {
-            for (_, row) in page.rows.enumerate() {
-                for (_, key) in row.enumerate() {
+            for row in page.rows {
+                for key in row {
                     if let keyView = self.modelToView[key] {
                         keyView.hidePopup()
                         
@@ -484,9 +484,8 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             switch shiftState {
             case .Disabled:
                 key.highlighted = false
-            case .Enabled:
-                key.highlighted = true
-            case .Locked:
+                
+            case .Enabled, .Locked:
                 key.highlighted = true
             }
             
