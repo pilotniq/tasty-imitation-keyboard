@@ -146,7 +146,7 @@ extern NSString *const CYRKeyboardButtonKeyPressedKey;
 @property (nonatomic, weak) UIView *forwordingView;
 
 @property (nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
--(CYRKeyboardButtonView*)showLongPopUpOptions;
+-(CYRKeyboardButtonView*)showLongPopUpOptions: (BOOL)isTopRow;
 - (void)setupInputOptionsConfiguration;
 - (void)setupInputOptionsConfigurationWithView:(UIView*)forwordingView;
 - (void)tearDownInputOptionsConfigurationWithView:(UIView*)forwordingView;

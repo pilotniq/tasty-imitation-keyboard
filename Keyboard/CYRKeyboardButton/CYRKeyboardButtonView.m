@@ -37,7 +37,7 @@
 
 @interface CYRKeyboardButtonView ()<UIGestureRecognizerDelegate>
 {
-	NSCharacterSet *firstRowChar;
+    BOOL _topRow;
 }
 @property (nonatomic, weak) CYRKeyboardButton *button;
 @property (nonatomic, assign) CYRKeyboardButtonViewType type;
@@ -52,11 +52,11 @@
 @synthesize inPutOptionSelectView;
 #pragma mark - UIView
 
-- (instancetype)initWithKeyboardButton:(CYRKeyboardButton *)button type:(CYRKeyboardButtonViewType)type;
+- (instancetype)initWithKeyboardButton:(CYRKeyboardButton *)button type:(CYRKeyboardButtonViewType)type topRow:(BOOL)isTopRow;
 {
     CGRect frame = [UIScreen mainScreen].bounds;
 	
-	firstRowChar = [[NSCharacterSet characterSetWithCharactersInString:@"QWERTYUIOPqwertyuiop"] invertedSet];
+    _topRow = isTopRow;
     
 	if (UIDeviceOrientationIsLandscape([[UIDevice currentDevice]orientation])) {
 		frame = CGRectMake(0, 0, CGRectGetHeight(frame), CGRectGetWidth(frame));
@@ -124,7 +124,6 @@
         if (self.selectedInputIndex != 0)
         {
             self.selectedInputIndex = 0;
-            //[self setNeedsDisplay];
             [self drawCustomSelectedViewFromIndex];
         }
         
@@ -134,7 +133,6 @@
 		if (ABS(self.selectedInputIndex - selectedInputIndex) == 1)
 		{
 			self.selectedInputIndex = selectedInputIndex;
-			//[self setNeedsDisplay];
 			[self drawCustomSelectedViewFromIndex];
 			
 		}
@@ -453,7 +451,7 @@
     switch (self.button.position) {
         case CYRKeyboardButtonPositionInner:
         {
-			if ([self.button.input rangeOfCharacterFromSet:firstRowChar].location == NSNotFound)
+			if (_topRow)
 			{
 				[path rightArc:majorRadius turn:90]; // #1
 				[path forward:upperWidth - 2 * majorRadius]; // #2 top
@@ -520,7 +518,7 @@
 			
         case CYRKeyboardButtonPositionLeft:
         {
-			if ([self.button.input rangeOfCharacterFromSet:firstRowChar].location == NSNotFound)
+			if (_topRow)
 			{
 				[path rightArc:majorRadius turn:90]; // #1
 				[path forward:upperWidth - 2 * majorRadius]; // #2 top
@@ -573,7 +571,7 @@
 			
         case CYRKeyboardButtonPositionRight:
         {
-			if ([self.button.input rangeOfCharacterFromSet:firstRowChar].location == NSNotFound)
+			if (_topRow)
 			{
 				[path rightArc:majorRadius turn:90]; // #1
 				[path forward:upperWidth - 2 * majorRadius]; // #2 top
@@ -681,7 +679,7 @@
                 case CYRKeyboardButtonStylePhone:
                 {
 					
-					if ([self.button.input rangeOfCharacterFromSet:firstRowChar].location == NSNotFound)
+					if (_topRow)
 					{
 						[path rightArc:majorRadius turn:90]; // #1
 						[path forward:(upperWidth - 2 * majorRadius) - 28]; // #2 top
@@ -736,9 +734,6 @@
 						[path applyTransform:CGAffineTransformMakeTranslation(offsetX, offsetY)];
 					}
 					
-					
-					
-					
                 }
                     break;
 					
@@ -771,7 +766,7 @@
                 case CYRKeyboardButtonStylePhone:
                 {
 					
-					if ([self.button.input rangeOfCharacterFromSet:firstRowChar].location == NSNotFound)
+					if (_topRow)
 					{
 						[path rightArc:majorRadius turn:90]; // #1
 						[path forward:(upperWidth - 2 * majorRadius) - 20]; // #2 top
@@ -865,15 +860,13 @@
 {
     CGRect keyRect = [self convertRect:self.button.frame fromView:self.button.superview];
 	
-	if ([self.button.input rangeOfCharacterFromSet:firstRowChar].location == NSNotFound)
+	if (_topRow)
 	{
 		keyRect = CGRectMake(keyRect.origin.x, keyRect.origin.y + 22, keyRect.size.width -2 , keyRect.size.height );
 	}
 	
 	
 	NSString *optionChar = self.button.inputOptions[0];
-	
-//	CGSize stringSize = [optionChar sizeWithAttributes:@{NSFontAttributeName : self.button.inputOptionsFont}];
 	
 	CGSize stringSize = [optionChar sizeWithAttributes:@{NSFontAttributeName : self.button.inputOptionsFont}];
 	

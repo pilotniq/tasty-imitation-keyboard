@@ -480,28 +480,6 @@
                                                 160
                                                 ],
                                 "function": "type"
-                                },
-                                {
-                                "label": "M",
-                                "values": [
-                                           [
-                                            "b",
-                                            "LATIN SMALL LETTER B"
-                                            ]
-                                           ],
-                                "shiftedValues": [
-                                                  [
-                                                   "B",
-                                                   "LATIN CAPITAL LETTER B"
-                                                   ]
-                                                  ],
-                                "coordinates": [
-                                                180,
-                                                100,
-                                                230,
-                                                160
-                                                ],
-                                "function": "type"
                                 }
                                 ]
                        },
@@ -621,6 +599,28 @@
                                 },
                                 {
                                 "label": "N",
+                                "values": [
+                                           [
+                                            "b",
+                                            "LATIN SMALL LETTER B"
+                                            ]
+                                           ],
+                                "shiftedValues": [
+                                                  [
+                                                   "B",
+                                                   "LATIN CAPITAL LETTER B"
+                                                   ]
+                                                  ],
+                                "coordinates": [
+                                                180,
+                                                100,
+                                                230,
+                                                160
+                                                ],
+                                "function": "type"
+                                },
+                                {
+                                "label": "M",
                                 "values": [
                                            [
                                             "b",

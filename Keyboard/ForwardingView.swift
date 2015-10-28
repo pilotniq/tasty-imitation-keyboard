@@ -77,7 +77,6 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 	{
 		if (longPress.state == UIGestureRecognizerState.Ended)
 		{
-			//println("Ended")
 			
 			let position = longPress.locationInView(self)
 			let view = findNearestView(position)
@@ -97,37 +96,31 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 				keyboardKey.highlighted = false
 			}
 			
-			
 		}
-		else if (longPress.state == UIGestureRecognizerState.Began)
-		{
-			if (longPress.state == UIGestureRecognizerState.Began)
-			{
-				//println("Began")
-				
-				isLongPressEnable = true
-				
-				let position = longPress.locationInView(self)
-				let view = findNearestView(position)
-				
-				let viewChangedOwnership = false
-				
-				if !viewChangedOwnership {
-					
-					if view is KeyboardKey
-					{
-						let v = view as! KeyboardKey
-						if self.isLongPressEnableKey(v.text)
-						{
-							view!.tag = 888
-							
-							self.handleControl(view, controlEvent: .TouchDownRepeat)
-						}
-						
-					}
-				}
-			}
-		}
+        else if (longPress.state == UIGestureRecognizerState.Began)
+        {
+            
+            isLongPressEnable = true
+            
+            let position = longPress.locationInView(self)
+            let view = findNearestView(position)
+            
+            let viewChangedOwnership = false
+            
+            if !viewChangedOwnership {
+                
+                if view is KeyboardKey
+                {
+                    let v = view as! KeyboardKey
+                    if self.isLongPressEnableKey(v.text)
+                    {
+                        view!.tag = 888
+                        
+                        self.handleControl(view, controlEvent: .TouchDownRepeat)
+                    }
+                }
+            }
+        }
 	}
 
 	

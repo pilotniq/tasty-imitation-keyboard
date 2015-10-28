@@ -530,26 +530,20 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         case
         Key.KeyType.Space:
             key.color = self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)
-            //key.downColor = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
-            
-            key.downColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
+            key.downColor = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
             
             key.textColor = (darkMode ? self.globalColors.darkModeTextColor : self.globalColors.lightModeTextColor)
             key.downTextColor = nil
         case
         Key.KeyType.Shift:
-           // key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
-            
-            key.color = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-            
+           key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+           
             key.downColor = (darkMode ? self.globalColors.darkModeShiftKeyDown : self.globalColors.lightModeRegularKey)
             key.textColor = self.globalColors.darkModeTextColor
             key.downTextColor = self.globalColors.lightModeTextColor
         case
         Key.KeyType.Backspace:
-            //key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
-            
-            key.color = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
+            key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
             
             // TODO: actually a bit different
             key.downColor = self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)
@@ -557,9 +551,7 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             key.downTextColor = (darkMode ? nil : self.globalColors.lightModeTextColor)
         case
         Key.KeyType.ModeChange:
-            //key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
-            
-            key.color = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
+            key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
             
             key.downColor = nil
             key.textColor = (darkMode ? self.globalColors.darkModeTextColor : self.globalColors.lightModeTextColor)
@@ -568,9 +560,9 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         Key.KeyType.Return,
         Key.KeyType.KeyboardChange,
         Key.KeyType.Settings:
-            //key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+            key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
             
-            key.color = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
+            //key.color = BluishColor
             
             // TODO: actually a bit different
             key.downColor = self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)

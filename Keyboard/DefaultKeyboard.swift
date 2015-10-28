@@ -72,6 +72,7 @@ func languageSpecificKeyboard() -> Keyboard?
                                 // HACKHACK Splice in the shift key
                                 if rowIndex == 2 {
                                     let keyModel = Key(.Shift)
+                                    
                                     newKeyboard.addKey(keyModel, row: rowIndex, page: pageIndex)
                                 }
                                 
@@ -80,6 +81,8 @@ func languageSpecificKeyboard() -> Keyboard?
                                         if let keyLabel = oneKeyRecord["label"] as? String {
                                             let keyModel = Key(.Character)
                                             keyModel.setLetter(keyLabel)
+                                            keyModel.isTopRow = rowIndex == 0
+                                            
                                             newKeyboard.addKey(keyModel, row: rowIndex, page: pageIndex)
                                         }
                                         
@@ -288,6 +291,8 @@ func AddCharsHelper(defaultKeyboard: Keyboard, characters: [String], row: Int, p
     for c in characters {
         let key = Key(keyType)
         key.setLetter(c)
+        key.isTopRow = row == 0
+        
         defaultKeyboard.addKey(key, row: row, page: page)
     }
 }

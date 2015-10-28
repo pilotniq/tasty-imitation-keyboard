@@ -207,12 +207,15 @@ NSString *const CYRKeyboardButtonKeyPressedKey = @"CYRKeyboardButtonKeyPressedKe
 
 #pragma mark - Internal - UI
 
+// REVIEWREVIEW is showInputView ever called?
 - (void)showInputView
 {
     if (_style == CYRKeyboardButtonStylePhone) {
         [self hideInputView];
         
-        self.buttonView = [[CYRKeyboardButtonView alloc] initWithKeyboardButton:self type:CYRKeyboardButtonViewTypeInput];
+        // REVIEW top row keys have a more conservative pop out (doesn't go outside bounds) so for now
+        // err on the side of assuming it's a top row
+        self.buttonView = [[CYRKeyboardButtonView alloc] initWithKeyboardButton:self type:CYRKeyboardButtonViewTypeInput topRow:YES];
         
         [self.window addSubview:self.buttonView];
     } else {
@@ -221,9 +224,9 @@ NSString *const CYRKeyboardButtonKeyPressedKey = @"CYRKeyboardButtonKeyPressedKe
     
 }
 
--(CYRKeyboardButtonView*)showLongPopUpOptions
+-(CYRKeyboardButtonView*)showLongPopUpOptions: (BOOL)isTopRow
 {
-	CYRKeyboardButtonView *expandedButtonView = [[CYRKeyboardButtonView alloc] initWithKeyboardButton:self type:CYRKeyboardButtonViewTypeExpanded];
+	CYRKeyboardButtonView *expandedButtonView = [[CYRKeyboardButtonView alloc] initWithKeyboardButton:self type:CYRKeyboardButtonViewTypeExpanded topRow:isTopRow];
 	//NSLog(@"\nCalled\n");
 	[self.window addSubview:expandedButtonView];
 	self.expandedButtonView = nil;
@@ -239,10 +242,12 @@ NSString *const CYRKeyboardButtonKeyPressedKey = @"CYRKeyboardButtonKeyPressedKe
 }
 
 - (void)showExpandedInputView:(UILongPressGestureRecognizer *)recognizer
-{
+ {
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         if (self.expandedButtonView == nil) {
-            CYRKeyboardButtonView *expandedButtonView = [[CYRKeyboardButtonView alloc] initWithKeyboardButton:self type:CYRKeyboardButtonViewTypeExpanded];
+            // REVIEW top row keys have a more conservative pop out (doesn't go outside bounds) so for now
+            // err on the side of assuming it's a top row            
+            CYRKeyboardButtonView *expandedButtonView = [[CYRKeyboardButtonView alloc] initWithKeyboardButton:self type:CYRKeyboardButtonViewTypeExpanded topRow:YES];
             
             [self.window addSubview:expandedButtonView];
 			

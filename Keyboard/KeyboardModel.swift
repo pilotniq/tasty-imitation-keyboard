@@ -78,6 +78,7 @@ class Key: Hashable {
         case Other
     }
     
+    var isTopRow: Bool
     var type: KeyType
     var uppercaseKeyCap: String?
     var lowercaseKeyCap: String?
@@ -131,6 +132,7 @@ class Key: Hashable {
     
     init(_ type: KeyType) {
         self.type = type
+        self.isTopRow = false
         self.hashValue = counter
         counter += 1
     }

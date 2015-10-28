@@ -1242,7 +1242,8 @@ class KeyboardViewController: UIInputViewController {
 					
 					self.view.insertSubview(self.button, aboveSubview: self.forwardingView)
 					
-					self.viewLongPopUp = self.button.showLongPopUpOptions()
+                    let isTopRow:Bool = self.layout?.keyForView(sender)?.isTopRow ?? false
+					self.viewLongPopUp = self.button.showLongPopUpOptions(isTopRow)
 					self.button.input = sender.text
 					self.button.hidden = true
 					self.button.inputOptions = arrOptions
