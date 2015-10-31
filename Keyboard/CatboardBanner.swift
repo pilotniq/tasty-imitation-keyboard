@@ -48,49 +48,28 @@ class CatboardBanner: ExtraView {
         self.updateAppearance()
     }
     
+    func suggestionButton(suggestedWord : String) -> UIButton {
+        let btn = UIButton(type: .Custom)
+        btn.exclusiveTouch = true
+        btn.titleLabel!.minimumScaleFactor = 0.6
+        btn.setTitle(suggestedWord, forState: UIControlState.Normal)
+        btn.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
+        btn.titleLabel?.font = UIFont.systemFontOfSize(18)
+        btn.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.titleLabel!.adjustsFontSizeToFitWidth = true
+
+        return btn
+    }
+    
     override func updateAppearance() {
 
 		isAllowFullAccess = isOpenAccessGranted()
-		
-        btn1 = UIButton(type: .Custom)
-		btn1.exclusiveTouch = true
-		btn1.titleLabel!.minimumScaleFactor = 0.6
-		btn1 .setTitle("The", forState: UIControlState.Normal)
-		btn1.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-		btn1.titleLabel?.font = UIFont.systemFontOfSize(18)
-		btn1.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-		btn1.translatesAutoresizingMaskIntoConstraints = false
-        btn1.titleLabel!.adjustsFontSizeToFitWidth = true
-		
-        btn2 = UIButton(type: .Custom)
-		btn2.exclusiveTouch = true
-		btn2.titleLabel!.minimumScaleFactor = 0.6
-		btn2 .setTitle("I", forState: UIControlState.Normal)
-		btn2.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-		btn2.titleLabel?.font = UIFont.systemFontOfSize(18)
-		btn2.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-		btn2.translatesAutoresizingMaskIntoConstraints = false
-        btn2.titleLabel!.adjustsFontSizeToFitWidth = true
-		
-        btn3 = UIButton(type: .Custom)
-		btn3.exclusiveTouch = true
-		btn3.titleLabel!.minimumScaleFactor = 0.6
-		btn3 .setTitle("What", forState: UIControlState.Normal)
-		btn3.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-		btn3.titleLabel?.font = UIFont.systemFontOfSize(18)
-		btn3.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-		btn3.translatesAutoresizingMaskIntoConstraints = false
-        btn3.titleLabel!.adjustsFontSizeToFitWidth = true
         
-        btn4 = UIButton(type: .Custom)
-        btn4.exclusiveTouch = true
-        btn4.titleLabel!.minimumScaleFactor = 0.6
-        btn4 .setTitle("Enable Allow Full Access", forState: UIControlState.Normal)
-        btn4.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-        btn4.titleLabel?.font = UIFont.systemFontOfSize(18)
-        btn4.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        btn4.translatesAutoresizingMaskIntoConstraints = false
-        btn4.titleLabel!.adjustsFontSizeToFitWidth = true
+		btn1 = suggestionButton("The")
+        btn2 = suggestionButton("I")
+        btn3 = suggestionButton("What")
+        btn4 = suggestionButton("Enable Allow Full Access")
 
         if(isAllowFullAccess == true)
         {
