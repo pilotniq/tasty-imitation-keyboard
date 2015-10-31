@@ -710,8 +710,6 @@
 					}
 					else
 					{
-						
-						
 						[path rightArc:majorRadius turn:90]; // #1
 						[path forward:upperWidth - 2 * majorRadius]; // #2 top
 						[path rightArc:majorRadius turn:90]; // #3
@@ -880,8 +878,6 @@
 			
 			if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
 			{
-				NSLog(@"%f",keyRect.origin.x);
-				
 				if (keyRect.origin.x > 850)
 				{
 					keyRect.origin.x = keyRect.origin.x - 35;

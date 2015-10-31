@@ -59,7 +59,7 @@ class CatboardBanner: ExtraView {
 		btn1.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
 		btn1.titleLabel?.font = UIFont.systemFontOfSize(18)
 		btn1.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-//		btn1.setTranslatesAutoresizingMaskIntoConstraints(false)
+		btn1.translatesAutoresizingMaskIntoConstraints = false
         btn1.titleLabel!.adjustsFontSizeToFitWidth = true
 		
         btn2 = UIButton(type: .Custom)
@@ -69,7 +69,7 @@ class CatboardBanner: ExtraView {
 		btn2.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
 		btn2.titleLabel?.font = UIFont.systemFontOfSize(18)
 		btn2.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-//		btn2.setTranslatesAutoresizingMaskIntoConstraints(false)
+		btn2.translatesAutoresizingMaskIntoConstraints = false
         btn2.titleLabel!.adjustsFontSizeToFitWidth = true
 		
         btn3 = UIButton(type: .Custom)
@@ -79,7 +79,7 @@ class CatboardBanner: ExtraView {
 		btn3.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
 		btn3.titleLabel?.font = UIFont.systemFontOfSize(18)
 		btn3.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-//		btn3.setTranslatesAutoresizingMaskIntoConstraints(false)
+		btn3.translatesAutoresizingMaskIntoConstraints = false
         btn3.titleLabel!.adjustsFontSizeToFitWidth = true
         
         btn4 = UIButton(type: .Custom)
@@ -89,7 +89,7 @@ class CatboardBanner: ExtraView {
         btn4.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
         btn4.titleLabel?.font = UIFont.systemFontOfSize(18)
         btn4.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-//        btn4.setTranslatesAutoresizingMaskIntoConstraints(false)
+        btn4.translatesAutoresizingMaskIntoConstraints = false
         btn4.titleLabel!.adjustsFontSizeToFitWidth = true
 
         if(isAllowFullAccess == true)

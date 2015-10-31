@@ -119,6 +119,16 @@ class KeyboardViewController: UIInputViewController {
         self.init(nibName: nil, bundle: nil)
     }
     
+    // HACKHACK
+    // Since UIApplication.sharedApplication().statusBarOrientation has been deprecated.
+    // For now assume interfaceOrientation and device orientation are the same thing.
+    // Couldn't get UIDevice.currentDevice().orientation to work even if I wrapped with begin/endGeneratingDeviceOrientationNotifications
+    class func getInterfaceOrientation() -> UIInterfaceOrientation
+    {
+        let screenSize : CGSize = UIScreen.mainScreen().bounds.size
+        return screenSize.width < screenSize.height ? UIInterfaceOrientation.Portrait : UIInterfaceOrientation.LandscapeLeft
+    }
+    
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         NSUserDefaults.standardUserDefaults().registerDefaults([
             kAutoCapitalization: true,
@@ -127,14 +137,13 @@ class KeyboardViewController: UIInputViewController {
             kSmallLowercase: false
         ])
         
-        //self.keyboard = defaultKeyboard()
-		
-		self.shiftState = .Disabled
-		self.currentMode = 0
-        self.currentInterfaceOrientation = UIInterfaceOrientation.Portrait
-		
-		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-		
+        self.shiftState = .Disabled
+        self.currentMode = 0
+        
+        self.currentInterfaceOrientation = KeyboardViewController.getInterfaceOrientation()
+
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        
 		self.forwardingView = ForwardingView(frame: CGRectZero)
 		self.view.addSubview(self.forwardingView)
 		
@@ -165,7 +174,6 @@ class KeyboardViewController: UIInputViewController {
 		initializePopUp()
 		
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("defaultsChanged:"), name: NSUserDefaultsDidChangeNotification, object: nil)
-		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("hideExpandView:"), name: "hideExpandViewNotification", object: nil)
     }
     
@@ -848,7 +856,6 @@ class KeyboardViewController: UIInputViewController {
         
         self.advanceToNextInputMode()
     }
-    
     @IBAction func toggleSettings() {
         // lazy load settings
         if self.settingsView == nil {
@@ -858,6 +865,8 @@ class KeyboardViewController: UIInputViewController {
                 aSettings.hidden = true
                 self.view.addSubview(aSettings)
                 self.settingsView = aSettings
+                
+                aSettings.translatesAutoresizingMaskIntoConstraints = false
                 
   //              aSettings.setTranslatesAutoresizingMaskIntoConstraints(false)
                 
@@ -1022,8 +1031,8 @@ class KeyboardViewController: UIInputViewController {
     // a banner that sits in the empty space on top of the keyboard
     func createBanner() -> ExtraView? {
         // note that dark mode is not yet valid here, so we just put false for clarity
-        //return ExtraView(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode())
-        return nil
+        return ExtraView(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode())
+        //return nil
     }
     
     // a settings view that replaces the keyboard when the settings button is pressed

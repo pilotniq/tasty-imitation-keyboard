@@ -227,7 +227,6 @@ NSString *const CYRKeyboardButtonKeyPressedKey = @"CYRKeyboardButtonKeyPressedKe
 -(CYRKeyboardButtonView*)showLongPopUpOptions: (BOOL)isTopRow
 {
 	CYRKeyboardButtonView *expandedButtonView = [[CYRKeyboardButtonView alloc] initWithKeyboardButton:self type:CYRKeyboardButtonViewTypeExpanded topRow:isTopRow];
-	//NSLog(@"\nCalled\n");
 	[self.window addSubview:expandedButtonView];
 	self.expandedButtonView = nil;
 	self.expandedButtonView = expandedButtonView;
@@ -246,7 +245,7 @@ NSString *const CYRKeyboardButtonKeyPressedKey = @"CYRKeyboardButtonKeyPressedKe
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         if (self.expandedButtonView == nil) {
             // REVIEW top row keys have a more conservative pop out (doesn't go outside bounds) so for now
-            // err on the side of assuming it's a top row            
+            // err on the side of assuming it's a top row
             CYRKeyboardButtonView *expandedButtonView = [[CYRKeyboardButtonView alloc] initWithKeyboardButton:self type:CYRKeyboardButtonViewTypeExpanded topRow:YES];
             
             [self.window addSubview:expandedButtonView];
@@ -464,8 +463,6 @@ NSString *const CYRKeyboardButtonKeyPressedKey = @"CYRKeyboardButtonKeyPressedKe
 
 - (void)_handlePanning:(UIPanGestureRecognizer *)recognizer
 {
-    //NSLog(@"_handlePanning");
-    
 	if (_inputOptions.count > 0)
 	{
 		if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) {
