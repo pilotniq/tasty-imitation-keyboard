@@ -112,8 +112,6 @@ class KeyboardViewController: UIInputViewController {
 	var keyboard_type: UIKeyboardType!
 	var preKeyboardType = UIKeyboardType.Default
 	
-	var key_type: Bool!
-	
     // TODO: why does the app crash if this isn't here?
     convenience init() {
         self.init(nibName: nil, bundle: nil)
@@ -546,20 +544,8 @@ class KeyboardViewController: UIInputViewController {
 		
 		keyboard_type = proxy.keyboardType!
 		
-		getKeyboardType()
-		
-		if let _ = proxy.documentContextBeforeInput
-		{
-			if isAllowFullAccess == true
-			{
-				
-			}
-			
-		}
-		else
-		{
+        if proxy.documentContextBeforeInput == nil {
 			sug_word = " "
-			
 		}
 		
 		dispatch_async(dispatch_get_main_queue(), {
@@ -650,9 +636,8 @@ class KeyboardViewController: UIInputViewController {
             }
             
             // auto period on double space
-            // TODO: timeout
-        
             self.handleAutoPeriod(model)
+
             // TODO: reset context
         }
         
@@ -1236,8 +1221,6 @@ class KeyboardViewController: UIInputViewController {
 					
 					self.button.frame = CGRectMake(sender.frame.origin.x, sender.frame.origin.y + sender.frame.size.height - offsetY, sender.frame.size.width, sender.frame.size.height)
 					
-					//					self.button.frame = CGRectMake(sender.frame.origin.x, sender.frame.origin.y , sender.frame.size.width, sender.frame.size.height)
-					
 					self.view.insertSubview(self.button, aboveSubview: self.forwardingView)
 					
                     let isTopRow:Bool = self.layout?.keyForView(sender)?.isTopRow ?? false
@@ -1282,208 +1265,62 @@ class KeyboardViewController: UIInputViewController {
 		
 		switch (height) {
 		case 480:
-			deviceType = TTDeviceType.TTDeviceTypeIPhone4 ;
-			break;
+			deviceType = TTDeviceType.TTDeviceTypeIPhone4
+			break
 			
 		case 568:
-			deviceType = TTDeviceType.TTDeviceTypeIPhone5 ;
-			break;
+			deviceType = TTDeviceType.TTDeviceTypeIPhone5
+			break
+            
 		case 667:
-			deviceType = TTDeviceType.TTDeviceTypeIPhone6 ;
-			break;
+			deviceType = TTDeviceType.TTDeviceTypeIPhone6
+			break
+            
 		case 736:
-			deviceType = TTDeviceType.TTDeviceTypeIPhone6p ;
-			break;
+			deviceType = TTDeviceType.TTDeviceTypeIPhone6p
+			break
 			
 		default:
-			break;
+			break
 		}
 		
 		return deviceType
 		
 	}
-	
+    
+    let lowerCaseCousins: [String : [String]] = [
+        "A" : ["a","á", "à", "ä", "â", "ã", "å", "æ","ā"],
+        "E" : ["e", "é", "è", "ë", "ê", "ę", "ė", "ē"],
+        "U" : ["u", "ú", "ü", "ù", "û", "ū"],
+        "I" : ["i", "í", "ï", "ì", "î", "į", "ī"],
+        "O" : ["o", "ó", "ò", "ö", "ô", "õ", "ø", "œ", "ō"],
+        "S" : ["s","š"],
+        "D" : ["d", "đ"],
+        "C" : ["c", "ç", "ć", "č"],
+        "N" : ["n","ñ", "ń"],
+        "." : [".com",".edu",".net",".org"]
+    ]
+
+    let upperCaseCousins: [String : [String]] = [
+        "A" : ["A","Á","À","Ä","Â","Ã","Å","Æ","Ā"],
+        "E" : ["E","É","È","Ë","Ê","Ę","Ė","Ē"],
+        "U" : ["U","Ú","Ü","Ù","Û"],
+        "I" : ["I","Í","Ï","Ì","Î","Į","Ī"],
+        "O" : ["O","Ó","Ò","Ö","Ô","Õ","Ø","Œ","Ō"],
+        "S" : ["S","Š"],
+        "D" : ["D","Đ"],
+        "C" : ["C","Ç","Ć","Č"],
+        "N" : ["N","Ñ","Ń"],
+        "." : [".com",".edu",".net",".org"]
+    ]
+
 	func getInputOption(strChar : String) -> [String]
 	{
-		
-		if strChar == "A"
-		{
-			if self.shiftState == .Enabled || self.shiftState == .Locked
-			{
-				return ["A","Á","À","Ä","Â","Ã","Å","Æ","Ā"] //"ª", "Ą"
-			}
-			else
-			{
-				return ["a","á", "à", "ä", "â", "ã", "å", "æ","ā"] //"ą"
-			}
-			
-		}
-		else if strChar == "."
-		{
-			
-			return [".com",".edu",".net",".org"] //"ą
-			
-		}
-		else if strChar == "E"
-		{
-			if self.shiftState == .Enabled || self.shiftState == .Locked
-			{
-				return ["E","É","È","Ë","Ê","Ę","Ė","Ē"]
-			}
-			else
-			{
-				return ["e", "é", "è", "ë", "ê", "ę", "ė", "ē"]
-			}
-			
-		}
-		else if strChar == "U"
-		{
-			if self.shiftState == .Enabled || self.shiftState == .Locked
-			{
-				return ["U","Ú","Ü","Ù","Û"]
-			}
-			else
-			{
-				return ["u", "ú", "ü", "ù", "û", "ū"]
-			}
-			
-		}
-		else if strChar == "I"
-		{
-			if self.shiftState == .Enabled || self.shiftState == .Locked
-			{
-				return ["I","Í","Ï","Ì","Î","Į","Ī"]
-			}
-			else
-			{
-				return ["i", "í", "ï", "ì", "î", "į", "ī"]
-			}
-			
-		}
-		else if strChar == "O"
-		{
-			if self.shiftState == .Enabled || self.shiftState == .Locked
-			{
-				return ["O","Ó","Ò","Ö","Ô","Õ","Ø","Œ","Ō"] //"º"
-			}
-			else
-			{
-				return ["o", "ó", "ò", "ö", "ô", "õ", "ø", "œ", "ō"]
-			}
-			
-		}
-		else if strChar == "S"
-		{
-			if self.shiftState == .Enabled || self.shiftState == .Locked
-			{
-				return ["S","Š"]
-			}
-			else
-			{
-				return ["s","š"]
-			}
-			
-		}
-		else if strChar == "D"
-		{
-			if self.shiftState == .Enabled || self.shiftState == .Locked
-			{
-				return ["D","Đ"]
-			}
-			else
-			{
-				return ["d", "đ"]
-			}
-			
-		}
-		else if strChar == "C"
-		{
-			if self.shiftState == .Enabled || self.shiftState == .Locked
-			{
-				return ["C","Ç","Ć","Č"]
-			}
-			else
-			{
-				return ["c", "ç", "ć", "č"]
-			}
-			
-		}
-		else if strChar == "N"
-		{
-			if self.shiftState == .Enabled || self.shiftState == .Locked
-			{
-				return ["N","Ñ","Ń"]
-			}
-			else
-			{
-				return ["n","ñ", "ń"]
-			}
-			
-		}
-		return [""]
-	}
-
-	func getKeyboardType()
-	{
-		let proxy = textDocumentProxy
-		
-		if proxy.keyboardType == UIKeyboardType.EmailAddress
-		{
-			//add code here to display number/decimal input keyboard
-			key_type = true
-			
-		}
-		else if(proxy.keyboardType == UIKeyboardType.WebSearch)
-		{
-			key_type = true
-		}
-		else if(proxy.keyboardType == UIKeyboardType.ASCIICapable)
-		{
-			key_type = true
-		}
-		else if(proxy.keyboardType == UIKeyboardType.NumbersAndPunctuation)
-		{
-			key_type = true
-		}
-		else if(proxy.keyboardType == UIKeyboardType.URL)
-		{
-			key_type = true
-		}
-		else if(proxy.keyboardType == UIKeyboardType.NumberPad)
-		{
-			key_type = true
-		}
-		else if(proxy.keyboardType == UIKeyboardType.DecimalPad)
-		{
-			key_type = true
-		}
-		else if(proxy.keyboardType == UIKeyboardType.NamePhonePad)
-		{
-			key_type = true
-		}
-		else if(proxy.keyboardType == UIKeyboardType.Twitter)
-		{
-			key_type = true
-		}
-		else if(proxy.keyboardType == UIKeyboardType.Default)
-		{
-			
-			if(proxy.autocorrectionType == UITextAutocorrectionType.No)
-			{
-				key_type = true
-			}
-			else
-			{
-				key_type = false
-			}
-			
-		}
-		else
-		{
-			key_type = false
-		}
-		
-	}
-
-	
+        if let cousins = self.shiftState == .Enabled || self.shiftState == .Locked ? upperCaseCousins[strChar] : lowerCaseCousins[strChar] {
+            return cousins
+        }
+        else {
+            return [""]
+        }
+    }
 }
