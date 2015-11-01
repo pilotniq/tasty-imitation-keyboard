@@ -13,6 +13,8 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
     var touchToView: [UITouch:UIView]
 	
 	var gesture = UILongPressGestureRecognizer()
+    var leftSwipeGestureRecognizer = UISwipeGestureRecognizer()
+    var rightSwipeGestureRecognizer = UISwipeGestureRecognizer()
 	
 	var isLongPressEnable = false
 	var isLongPressKeyPress = false
@@ -20,6 +22,27 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 	var currentMode: Int = 0
 	var keyboard_type: UIKeyboardType?
 	
+    private func MakeLongPressGesturesRecognizer()
+    {
+        gesture = UILongPressGestureRecognizer(target: self, action: "handleLongGesture:")
+        
+        gesture.minimumPressDuration = 0.5
+        gesture.delegate = self
+        gesture.cancelsTouchesInView = false
+        self.addGestureRecognizer(gesture)
+    }
+    
+    private func MakeSwipeGestureRecognizers()
+    {
+        leftSwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: Selector("handleLeftSwipe:"))
+        leftSwipeGestureRecognizer.direction = .Left
+        self.addGestureRecognizer(leftSwipeGestureRecognizer)
+        
+        rightSwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: Selector("handleRightSwipe:"))
+        rightSwipeGestureRecognizer.direction = .Right
+        self.addGestureRecognizer(rightSwipeGestureRecognizer)
+    }
+    
     override init(frame: CGRect) {
         self.touchToView = [:]
         
@@ -30,13 +53,8 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
         self.userInteractionEnabled = true
         self.opaque = false
 		
-		gesture = UILongPressGestureRecognizer(target: self, action: "handleLongGesture:")
-		
-		gesture.minimumPressDuration = 0.5
-		gesture.delegate = self
-		gesture.cancelsTouchesInView = false
-		self.addGestureRecognizer(gesture)
-		
+        self.MakeLongPressGesturesRecognizer()
+        self.MakeSwipeGestureRecognizers()
     }
     
     required init(coder: NSCoder) {
@@ -73,6 +91,16 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
         }
     }
 	
+    func handleLeftSwipe(sender: UISwipeGestureRecognizer)
+    {
+        NSLog("Swipe left")
+    }
+    
+    func handleRightSwipe(sender: UISwipeGestureRecognizer)
+    {
+        NSLog("Swipe right")
+    }
+    
 	@IBAction func handleLongGesture(longPress: UIGestureRecognizer)
 	{
 		if (longPress.state == UIGestureRecognizerState.Ended)
