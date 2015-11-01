@@ -72,14 +72,7 @@ class KeyboardViewController: UIInputViewController {
     
     var shiftState: ShiftState {
         didSet {
-            switch shiftState {
-            case .Disabled:
-                self.updateKeyCaps(false)
-            case .Enabled:
-                self.updateKeyCaps(true)
-            case .Locked:
-                self.updateKeyCaps(true)
-            }
+            self.updateKeyCaps(shiftState != .Disabled)
         }
     }
     
@@ -338,8 +331,9 @@ class KeyboardViewController: UIInputViewController {
 	{
 		if string.characters.count > 0
 		{
+            
 			let firstChar = string[string.startIndex]
-			return ("A"..."Z").contains(firstChar)
+            return ("A"..."Z").contains(firstChar)
 		}
 		else
 		{
@@ -370,16 +364,7 @@ class KeyboardViewController: UIInputViewController {
                 proxy.insertText(title)
             }
             
-            
-			
-			if (isAllowFullAccess == true)
-			{
-//				isSuggestionBlank = false
-//				get_suggestion()
-//				setPredictionAndSuggestion()
-			}
-			self.setCapsIfNeeded()
-			
+            self.setCapsIfNeeded()
 		}
 		
 		if self.forwardingView.isLongPressEnable == false
@@ -497,11 +482,7 @@ class KeyboardViewController: UIInputViewController {
 		self.view.sendSubviewToBack(self.bannerView!)
 		
 		let proxy = textDocumentProxy
-		if proxy.keyboardType == UIKeyboardType.NumberPad || proxy.keyboardType == UIKeyboardType.DecimalPad
-		{
-			
-		}
-		else
+		if proxy.keyboardType != UIKeyboardType.NumberPad && proxy.keyboardType != UIKeyboardType.DecimalPad
 		{
 			sender.showPopup()
 		}
@@ -542,7 +523,7 @@ class KeyboardViewController: UIInputViewController {
 		
 		let proxy = textDocumentProxy 
 		
-		keyboard_type = proxy.keyboardType!
+		keyboard_type = textDocumentProxy.keyboardType!
 		
         if proxy.documentContextBeforeInput == nil {
 			sug_word = " "
@@ -744,15 +725,7 @@ class KeyboardViewController: UIInputViewController {
                 return
             }
             else {
-                switch self.shiftState {
-                case .Disabled:
-                    self.shiftState = .Enabled
-                case .Enabled:
-                    self.shiftState = .Disabled
-                case .Locked:
-                    self.shiftState = .Disabled
-                }
-                
+                self.shiftState = (self.shiftState == .Disabled) ? .Enabled : .Disabled
                 (sender.shape as? ShiftShape)?.withLock = false
             }
         }
@@ -768,15 +741,7 @@ class KeyboardViewController: UIInputViewController {
                     // handled by shiftDown
                 }
                 else {
-                    switch self.shiftState {
-                    case .Disabled:
-                        self.shiftState = .Enabled
-                    case .Enabled:
-                        self.shiftState = .Disabled
-                    case .Locked:
-                        self.shiftState = .Disabled
-                    }
-                    
+                    self.shiftState = (self.shiftState == .Disabled) ? .Enabled : .Disabled
                     (sender.shape as? ShiftShape)?.withLock = false
                 }
             }
@@ -788,15 +753,7 @@ class KeyboardViewController: UIInputViewController {
     
     func shiftDoubleTapped(sender: KeyboardKey) {
         self.shiftWasMultitapped = true
-        
-        switch self.shiftState {
-        case .Disabled:
-            self.shiftState = .Locked
-        case .Enabled:
-            self.shiftState = .Locked
-        case .Locked:
-            self.shiftState = .Disabled
-        }
+        self.shiftState = (self.shiftState == .Locked) ? .Disabled : .Locked
     }
     
     func updateKeyCaps(uppercase: Bool) {
@@ -867,26 +824,12 @@ class KeyboardViewController: UIInputViewController {
     
     func setCapsIfNeeded() -> Bool {
         if self.shouldAutoCapitalize() {
-            switch self.shiftState {
-            case .Disabled:
-                self.shiftState = .Enabled
-            case .Enabled:
-                self.shiftState = .Enabled
-            case .Locked:
-                self.shiftState = .Locked
-            }
+            self.shiftState = (self.shiftState == .Locked) ? .Locked : .Enabled
             
             return true
         }
         else {
-            switch self.shiftState {
-            case .Disabled:
-                self.shiftState = .Disabled
-            case .Enabled:
-                self.shiftState = .Disabled
-            case .Locked:
-                self.shiftState = .Locked
-            }
+            self.shiftState = (self.shiftState == .Locked) ? .Locked : .Disabled
             
             return false
         }
@@ -906,14 +849,7 @@ class KeyboardViewController: UIInputViewController {
     }
     
     func stringIsWhitespace(string: String?) -> Bool {
-        if string != nil {
-            for char in string!.characters {
-                if !characterIsWhitespace(char) {
-                    return false
-                }
-            }
-        }
-        return true
+        return string != nil && string!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) != ""
     }
     
     func shouldAutoCapitalize() -> Bool {
@@ -1033,11 +969,8 @@ class KeyboardViewController: UIInputViewController {
 	func didTTouchExitDownSuggestionButton(sender: AnyObject?)
 	{
 		let button = sender as! UIButton
-		
 		button.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-		
 		button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-		
 	}
 	
 	func didTTouchDownSuggestionButton(sender: AnyObject?)
@@ -1103,25 +1036,14 @@ class KeyboardViewController: UIInputViewController {
             {
                 return
             }
+            
             let tokens = self.sug_word.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) as [String]
             
-            if let lastWord = tokens.last
+            if let lastWord = tokens.last where lastWord != "" && title == ""
             {
-                if lastWord != ""
+                for _ in lastWord.characters
                 {
-                    if title != ""
-                    {
-                        
-                    }
-                    else
-                    {
-                        for _ in lastWord.characters
-                        {
-                            proxy.deleteBackward()
-                        }
-                        
-                    }
-                    
+                    proxy.deleteBackward()
                 }
             }
             
@@ -1135,36 +1057,17 @@ class KeyboardViewController: UIInputViewController {
             }
             else
             {
-                if let lastWord = tokens.last
-                {
-                    if lastWord != ""
-                    {
-                        if self.isCapitalalize(tokens.last!)
-                        {
-                            proxy.insertText(title.capitalizedString+" ")
-                        }
-                        else
-                        {
-                            proxy.insertText(title+" ")
-                        }
-                    }
-                    else
-                    {
-                        proxy.insertText(title+" ")
-                    }
-                    
-                    
+                if let lastWord = tokens.last where lastWord != "" && self.isCapitalalize(lastWord) {
+                    proxy.insertText(title.capitalizedString + " ")
                 }
-                else
-                {
-                    proxy.insertText(title+" ")
+                else {
+                    proxy.insertText(title + " ")
                 }
                 
             }
             
-            
         }
-	}
+    }
 	
 
 	
@@ -1182,40 +1085,21 @@ class KeyboardViewController: UIInputViewController {
 				{
 					var offsetY : CGFloat = 9
 					
-					if KeyboardViewController.getDeviceType() == TTDeviceType.TTDeviceTypeIPhone4
-					{
-						offsetY = 9
-						if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight
-						{
-							offsetY = 3
-						}
-					}
-					else if KeyboardViewController.getDeviceType() == TTDeviceType.TTDeviceTypeIPhone5
-					{
-						offsetY = 9
-						if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight
-						{
-							offsetY = 3
-						}
-						
-					}
-					else if KeyboardViewController.getDeviceType() == TTDeviceType.TTDeviceTypeIPhone6
-					{
-						offsetY = 13
-						if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight
-						{
-							offsetY = 3
-						}
-						
-					}
-					else if KeyboardViewController.getDeviceType() == TTDeviceType.TTDeviceTypeIPhone6p
-					{
-						offsetY = 16
-						if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight
-						{
-							offsetY = 3
-						}
-					}
+                    if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight {
+                        offsetY = 3
+                    }
+                    else {
+                        switch  KeyboardViewController.getDeviceType() {
+                        case TTDeviceType.TTDeviceTypeIPhone4, TTDeviceType.TTDeviceTypeIPhone5:
+                            offsetY = 9
+                            
+                        case TTDeviceType.TTDeviceTypeIPhone6:
+                            offsetY = 13
+                            
+                        case TTDeviceType.TTDeviceTypeIPhone6p:
+                            offsetY = 16
+                        }
+                    }
 					
 					self.button.removeFromSuperview()
 					
