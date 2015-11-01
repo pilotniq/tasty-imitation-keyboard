@@ -84,8 +84,8 @@ class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
         self.tableView?.estimatedRowHeight = 44;
         self.tableView?.rowHeight = UITableViewAutomaticDimension;
         
-        // XXX: this is here b/c a totally transparent background does not support scrolling in blank areas
-        self.tableView?.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.01)
+        // We display the options on top of the kbd. Make certain we can't see any of the underlying buttons etc.
+        self.tableView?.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(1.0)
         
         self.updateAppearance()
     }

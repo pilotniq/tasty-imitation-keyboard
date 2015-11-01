@@ -147,28 +147,16 @@ class KeyboardViewController: UIInputViewController {
 		self.forwardingView = ForwardingView(frame: CGRectZero)
 		self.view.addSubview(self.forwardingView)
 		
-		if let aBanner = self.createBanner()
-		{
-			
-			aBanner.btn1.addTarget(self, action: "didTapSuggestionButton:", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchDragOutside])
-			aBanner.btn2.addTarget(self, action: "didTapSuggestionButton:", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchDragOutside])
-			aBanner.btn3.addTarget(self, action: "didTapSuggestionButton:", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchDragOutside])
-			
-			
-			aBanner.btn1.addTarget(self, action: "didTTouchDownSuggestionButton:", forControlEvents: [.TouchDown, .TouchDragInside, .TouchDragEnter])
-			aBanner.btn2.addTarget(self, action: "didTTouchDownSuggestionButton:", forControlEvents: [.TouchDown, .TouchDragInside, .TouchDragEnter])
-			aBanner.btn3.addTarget(self, action: "didTTouchDownSuggestionButton:", forControlEvents: [.TouchDown, .TouchDragInside, .TouchDragEnter])
-			
-			aBanner.btn1.addTarget(self, action: "didTTouchExitDownSuggestionButton:", forControlEvents: [.TouchDragExit, .TouchCancel])
-			aBanner.btn2.addTarget(self, action: "didTTouchExitDownSuggestionButton:", forControlEvents: [.TouchDragExit, .TouchCancel])
-			aBanner.btn3.addTarget(self, action: "didTTouchExitDownSuggestionButton:", forControlEvents: [.TouchDragExit, .TouchCancel])
-			
-			
+        if let aBanner = self.createBanner() {
+            for button in [aBanner.btn1, aBanner.btn2, aBanner.btn3] {
+                button.addTarget(self, action: "didTapSuggestionButton:", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchDragOutside])
+                button.addTarget(self, action: "didTTouchDownSuggestionButton:", forControlEvents: [.TouchDown, .TouchDragInside, .TouchDragEnter])
+                button.addTarget(self, action: "didTTouchExitDownSuggestionButton:", forControlEvents: [.TouchDragExit, .TouchCancel])
+            }
 			
 			aBanner.hidden = true
 			self.view.insertSubview(aBanner, aboveSubview: self.forwardingView)
 			self.bannerView = aBanner
-			
 		}
 		
 		initializePopUp()
@@ -199,7 +187,7 @@ class KeyboardViewController: UIInputViewController {
         if self.kludge == nil {
             let kludge = UIView()
             self.view.addSubview(kludge)
-          //  kludge.setTranslatesAutoresizingMaskIntoConstraints(false)
+            kludge.translatesAutoresizingMaskIntoConstraints = false
             kludge.hidden = true
             
             let a = NSLayoutConstraint(item: kludge, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: self.view, attribute: NSLayoutAttribute.Left, multiplier: 1, constant: 0)
@@ -868,8 +856,6 @@ class KeyboardViewController: UIInputViewController {
                 
                 aSettings.translatesAutoresizingMaskIntoConstraints = false
                 
-  //              aSettings.setTranslatesAutoresizingMaskIntoConstraints(false)
-                
                 let widthConstraint = NSLayoutConstraint(item: aSettings, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: self.view, attribute: NSLayoutAttribute.Width, multiplier: 1, constant: 0)
                 let heightConstraint = NSLayoutConstraint(item: aSettings, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: self.view, attribute: NSLayoutAttribute.Height, multiplier: 1, constant: 0)
                 let centerXConstraint = NSLayoutConstraint(item: aSettings, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant: 0)
@@ -884,10 +870,13 @@ class KeyboardViewController: UIInputViewController {
         
         if let settings = self.settingsView {
             let hidden = settings.hidden
+
+            self.bannerView?.hidden = hidden
+            
             settings.hidden = !hidden
+            
             self.forwardingView.hidden = hidden
             self.forwardingView.userInteractionEnabled = !hidden
-            self.bannerView?.hidden = hidden
         }
     }
     

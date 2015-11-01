@@ -19,6 +19,17 @@ class ExtraView: UIView {
         }
     }
     
+    override var hidden : Bool {
+        didSet {
+            self.btn1.hidden = hidden
+            self.btn2.hidden = hidden
+            self.btn3.hidden = hidden
+            self.btn4.hidden = hidden
+            
+            updateAppearance()
+        }
+    }
+    
     var solidColorMode: Bool
 	
 	var btn1 : UIButton = UIButton()
@@ -43,6 +54,7 @@ class ExtraView: UIView {
     }
     
     func updateAppearance() {
-        
+
     }
+    
 }

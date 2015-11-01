@@ -79,7 +79,6 @@ class CatboardBanner: ExtraView {
         }
         else
         {
-            //btn4.frame = (CGRectMake(0, 0, 430, 30))
             self.addSubview(self.btn4)
         }
 		
