@@ -432,35 +432,24 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             default:
                 key.label.font = key.label.font.fontWithSize(22)
             }
-            
-            // label inset
-            switch model.type {
-            case
-            Key.KeyType.ModeChange:
-                key.labelInset = 3
-            default:
-                key.labelInset = 0
-            }
-            
+
+            key.labelInset = model.type == Key.KeyType.ModeChange ? 3 : 0
+
             // shapes
-            switch model.type {
-            case Key.KeyType.Shift:
-                if key.shape == nil {
-                    let shiftShape = self.getShape(ShiftShape)
-                    key.shape = shiftShape
+            if key.shape == nil {
+                switch model.type {
+                case Key.KeyType.Shift:
+                    key.shape = self.getShape(ShiftShape)
+
+                case Key.KeyType.Backspace:
+                    key.shape = self.getShape(BackspaceShape)
+
+                case Key.KeyType.KeyboardChange:
+                    key.shape = self.getShape(GlobeShape)
+
+                default:
+                    break
                 }
-            case Key.KeyType.Backspace:
-                if key.shape == nil {
-                    let backspaceShape = self.getShape(BackspaceShape)
-                    key.shape = backspaceShape
-                }
-            case Key.KeyType.KeyboardChange:
-                if key.shape == nil {
-                    let globeShape = self.getShape(GlobeShape)
-                    key.shape = globeShape
-                }
-            default:
-                break
             }
             
             // images
@@ -477,18 +466,11 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         
         if model.type == Key.KeyType.Shift {
             if key.shape == nil {
-                let shiftShape = self.getShape(ShiftShape)
-                key.shape = shiftShape
+                key.shape = self.getShape(ShiftShape)
             }
-            
-            switch shiftState {
-            case .Disabled:
-                key.highlighted = false
-                
-            case .Enabled, .Locked:
-                key.highlighted = true
-            }
-            
+
+            key.highlighted = shiftState != .Disabled
+
             (key.shape as? ShiftShape)?.withLock = (shiftState == .Locked)
         }
         
@@ -684,17 +666,10 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
                     
                     return key
                 }
-                else {
-                    return createAndSetupNewKey()
-                }
-            }
-            else {
-                return createAndSetupNewKey()
             }
         }
-        else {
-            return createAndSetupNewKey()
-        }
+
+        return createAndSetupNewKey()
     }
     
     // if pool is disabled, doesn't do anything

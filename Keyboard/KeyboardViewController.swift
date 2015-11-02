@@ -341,30 +341,35 @@ class KeyboardViewController: UIInputViewController {
 		}
 		
 	}
-	
+
+    func CasedString(str : String, shiftState : ShiftState) -> String
+    {
+        if shiftState == .Enabled
+        {
+            return str.capitalizedString
+        }
+        else if shiftState == .Locked
+        {
+            return str.uppercaseString
+        }
+        else
+        {
+            return str
+        }
+    }
+
+
 	func hideExpandView(notification: NSNotification)
 	{
 		
 		if notification.userInfo != nil
-		{
-			let title = notification.userInfo!["text"] as! String
-			let proxy = self.textDocumentProxy
-                
-			
-            if self.shiftState == .Enabled
-            {
-                proxy.insertText(title.capitalizedString)
+        {
+            if let title = notification.userInfo!["text"] as? String {
+
+                self.textDocumentProxy.insertText(CasedString(title, shiftState: self.shiftState))
+
+                self.setCapsIfNeeded()
             }
-            else if self.shiftState == .Locked
-            {
-                proxy.insertText(title.uppercaseString)
-            }
-            else
-            {
-                proxy.insertText(title)
-            }
-            
-            self.setCapsIfNeeded()
 		}
 		
 		if self.forwardingView.isLongPressEnable == false
@@ -372,8 +377,7 @@ class KeyboardViewController: UIInputViewController {
 			self.view.bringSubviewToFront(self.bannerView!)
 		}
 		viewLongPopUp.hidden = true
-		//self.forwardingView.resetTrackedViews()
-		
+
 	}
 	
 	func heightForOrientation(orientation: UIInterfaceOrientation, withTopBanner: Bool) -> CGFloat {
@@ -482,9 +486,9 @@ class KeyboardViewController: UIInputViewController {
 		self.view.sendSubviewToBack(self.bannerView!)
 		
 		let proxy = textDocumentProxy
-		if proxy.keyboardType != UIKeyboardType.NumberPad && proxy.keyboardType != UIKeyboardType.DecimalPad
-		{
-			sender.showPopup()
+        if proxy.keyboardType != UIKeyboardType.NumberPad && proxy.keyboardType != UIKeyboardType.DecimalPad {
+
+            sender.showPopup()
 		}
     }
 	
@@ -606,16 +610,13 @@ class KeyboardViewController: UIInputViewController {
             self.keyPressed(model)
 
             // auto exit from special char subkeyboard
-            if model.type == Key.KeyType.Space || model.type == Key.KeyType.Return {
-                self.currentMode = 0
+            if model.type == Key.KeyType.Space || model.type == Key.KeyType.Return
+                || model.lowercaseOutput == "'"
+                || model.type == Key.KeyType.Character {
+
+                    self.currentMode = 0
             }
-            else if model.lowercaseOutput == "'" {
-                self.currentMode = 0
-            }
-            else if model.type == Key.KeyType.Character {
-                self.currentMode = 0
-            }
-            
+
             // auto period on double space
             self.handleAutoPeriod(model)
 
@@ -960,7 +961,7 @@ class KeyboardViewController: UIInputViewController {
 	{
         if let button = sender as? UIButton {
 
-            if let btn_title = button.titleForState(UIControlState.Normal) where TrimWhiteSpace(btn_title) != "" {
+            if let btn_title = button.titleForState(UIControlState.Normal) where !stringIsWhitespace(btn_title)  {
                 self.bannerView?.showPressedAppearance(button)
             }
         }
@@ -983,55 +984,40 @@ class KeyboardViewController: UIInputViewController {
 	
     func onSuggestionTap(sender: AnyObject?)
     {
-        
-        let button = sender as! UIButton
-        
-        let proxy = self.textDocumentProxy
-        
-        
-        if let titleBtn = button.titleForState(.Normal)
-        {
-            let title = titleBtn.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-            
+        if let button = sender as? UIButton {
+
+            let title = TrimWhiteSpace(button.titleForState(.Normal))
+
             if title == ""
             {
                 return
             }
-            
-            let tokens = self.sug_word.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) as [String]
-            
-            if let lastWord = tokens.last where lastWord != "" && title == ""
-            {
-                for _ in lastWord.characters
-                {
-                    proxy.deleteBackward()
-                }
-            }
-            
+
             if self.shiftState == .Enabled
             {
-                proxy.insertText(title.capitalizedString+" ")
+                self.textDocumentProxy.insertText(title.capitalizedString + " ")
             }
             else if self.shiftState == .Locked
             {
-                proxy.insertText(title.uppercaseString+" ")
+                self.textDocumentProxy.insertText(title.uppercaseString + " ")
             }
             else
             {
+                let tokens = self.sug_word.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) as [String]
+
                 if let lastWord = tokens.last where lastWord != "" && self.isCapitalalize(lastWord) {
-                    proxy.insertText(title.capitalizedString + " ")
+                    self.textDocumentProxy.insertText(title.capitalizedString + " ")
                 }
                 else {
-                    proxy.insertText(title + " ")
+                    self.textDocumentProxy.insertText(title + " ")
                 }
                 
             }
-            
         }
     }
-	
 
-	
+
+
 	func keyCharDoubleTapped(sender: KeyboardKey)
 	{
 		if sender.tag == 888

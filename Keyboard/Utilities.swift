@@ -8,21 +8,6 @@
 
 import Foundation
 
-func memoize<T:Hashable, U>(fn : T -> U) -> T -> U {
-    var cache = [T:U]()
-    return {
-        (val : T) -> U in
-        let value = cache[val]
-        if value != nil {
-            return value!
-        } else {
-            let newValue = fn(val)
-            cache[val] = newValue
-            return newValue
-        }
-    }
-}
-
 var profile: ((id: String) -> Double?) = {
     var counterForName = Dictionary<String, Double>()
     var isOpen = Dictionary<String, Double>()
@@ -54,16 +39,16 @@ func TrimWhiteSpace(x : String?) -> String {
 }
 
 func characterIsPunctuation(character: Character) -> Bool {
-    return (character == ".") || (character == "!") || (character == "?")
+    return character == "." || character == "!" || character == "?"
 }
 
 func characterIsNewline(character: Character) -> Bool {
-    return (character == "\n") || (character == "\r")
+    return character == "\n" || character == "\r"
 }
 
 func characterIsWhitespace(character: Character) -> Bool {
     // there are others, but who cares
-    return (character == " ") || (character == "\n") || (character == "\r") || (character == "\t")
+    return character == " " || character == "\n" || character == "\r" || character == "\t"
 }
 
 func stringIsWhitespace(str: String?) -> Bool {

@@ -473,12 +473,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 		{
 			if self.currentMode == 0
 			{
-				if(keyboard_type == UIKeyboardType.DecimalPad || keyboard_type == UIKeyboardType.NumberPad)
-				{
-					return false
-				}
-				
-				return true
+				return keyboard_type != UIKeyboardType.DecimalPad && keyboard_type != UIKeyboardType.NumberPad
 			}
 			
 		}
