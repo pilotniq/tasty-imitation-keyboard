@@ -41,9 +41,27 @@ class ExtraView: UIView {
         
         super.init(coder: aDecoder)
     }
-    
-    func updateAppearance() {
 
+
+    func updateAppearance() {
+        for button in [btn1, btn2, btn3] {
+            showUnpressedAppearance(button)
+        }
     }
-    
+
+    let bluishGray = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
+    let whitish = UIColor(red:0.92, green:0.93, blue:0.94, alpha:1)
+
+    func showPressedAppearance(button: UIButton)
+    {
+        button.backgroundColor = whitish
+        button.setTitleColor(UIColor.blackColor(), forState: .Normal)
+    }
+
+    func showUnpressedAppearance(button: UIButton)
+    {
+        button.backgroundColor = bluishGray
+        button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+    }
+
 }

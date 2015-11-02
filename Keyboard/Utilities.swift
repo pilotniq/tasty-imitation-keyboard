@@ -7,34 +7,6 @@
 //
 
 import Foundation
-import UIKit
-
-// from https://gist.github.com/berkus/8a9e104f8aac5d025eb5
-//func memoize<T: Hashable, U>( body: ( (T)->U, T ) -> U ) -> (T) -> U {
-//    var memo = Dictionary<T, U>()
-//    var result: ((T)->U)!
-//    
-//    result = { x in
-//        if let q = memo[x] { return q }
-//        let r = body(result, x)
-//        memo[x] = r
-//        return r
-//    }
-//    
-//    return result
-//}
-
-//func memoize<S:Hashable, T:Hashable, U>(fn : (S, T) -> U) -> (S, T) -> U {
-//    var cache = Dictionary<FunctionParams<S,T>, U>()
-//    func memoized(val1 : S, val2: T) -> U {
-//        let key = FunctionParams(x: val1, y: val2)
-//        if cache.indexForKey(key) == nil {
-//            cache[key] = fn(val1, val2)
-//        }
-//        return cache[key]!
-//    }
-//    return memoized
-//}
 
 func memoize<T:Hashable, U>(fn : T -> U) -> T -> U {
     var cache = [T:U]()
@@ -50,22 +22,6 @@ func memoize<T:Hashable, U>(fn : T -> U) -> T -> U {
         }
     }
 }
-
-//let fibonacci = memoize {
-//    fibonacci, n in
-//    n < 2 ? Double(n) : fibonacci(n-1) + fibonacci(n-2)
-//}
-
-//func memoize<T:Hashable, U>(fn : T -> U) -> (T -> U) {
-//    var cache = Dictionary<T, U>()
-//    func memoized(val : T) -> U {
-//        if !cache.indexForKey(val) {
-//            cache[val] = fn(val)
-//        }
-//        return cache[val]!
-//    }
-//    return memoized
-//}
 
 var profile: ((id: String) -> Double?) = {
     var counterForName = Dictionary<String, Double>()
@@ -90,3 +46,27 @@ var profile: ((id: String) -> Double?) = {
         return counterForName[id]
     }
 }()
+
+// Remove trailing and leading white space.
+// Treat nil as equivalent to the empty string.
+func TrimWhiteSpace(x : String?) -> String {
+    return x == nil ? "" : x!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+}
+
+func characterIsPunctuation(character: Character) -> Bool {
+    return (character == ".") || (character == "!") || (character == "?")
+}
+
+func characterIsNewline(character: Character) -> Bool {
+    return (character == "\n") || (character == "\r")
+}
+
+func characterIsWhitespace(character: Character) -> Bool {
+    // there are others, but who cares
+    return (character == " ") || (character == "\n") || (character == "\r") || (character == "\t")
+}
+
+func stringIsWhitespace(str: String?) -> Bool {
+    return TrimWhiteSpace(str) == ""
+}
+

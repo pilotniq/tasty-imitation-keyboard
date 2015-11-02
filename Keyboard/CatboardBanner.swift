@@ -126,7 +126,7 @@ class CatboardBanner: ExtraView {
         {
             var buttons = [btn1,btn2,btn3]
         
-            for (index, button) in [btn1,btn2,btn3].enumerate() {
+            for (index, button) in buttons.enumerate() {
                 
                 let topConstraint = NSLayoutConstraint(item: button, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1.0, constant: 0)
                 
@@ -192,32 +192,12 @@ class CatboardBanner: ExtraView {
                     leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 0.5, constant: 0)
                     
                 }
-                    
-//                else
-//                {
-//                    
-//                    let prevtButton = buttons[index-1]
-//                    leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: prevtButton, attribute: .Right, multiplier: 1.0, constant: 6)
-//                    
-//                    let firstButton = buttons[0]
-//                    var widthConstraint = NSLayoutConstraint(item: firstButton, attribute: .Width, relatedBy: .Equal, toItem: button, attribute: .Width, multiplier: 1.0, constant: 1)
-//                    
-//                    widthConstraint.priority = 800
-//                    self.addConstraint(widthConstraint)
-//                    
-//                }
-                
-                //				mainView.removeConstraints([topConstraint, bottomConstraint, rightConstraint, leftConstraint])
-                //                mainView.addConstraints([topConstraint, bottomConstraint, rightConstraint, leftConstraint])
-                
+
                 self.removeConstraints([topConstraint, bottomConstraint, leftConstraint])
                 self.addConstraints([topConstraint, bottomConstraint, leftConstraint])
             }
             
         }
-        
-		
-
 	}
 
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)

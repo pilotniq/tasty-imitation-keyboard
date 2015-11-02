@@ -182,6 +182,7 @@
 				4E52A6D71A06C16C006A08CE /* DefaultSettings.swift */,
 				4E52A6D91A06C198006A08CE /* DefaultSettings.xib */,
 				4EEFD78A19E0DF15004D4974 /* Shapes.swift */,
+				73834F391BE6F5A200B24893 /* SuggestionButton.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -516,6 +517,7 @@
 				4E52A6D21A06A61F006A08CE /* ImageKey.swift in Sources */,
 				4E52A6D41A06A626006A08CE /* ExtraView.swift in Sources */,
 				82FD1A931B0B3D3800A6D23D /* KeyboardLayout.swift in Sources */,
+				73834F3A1BE6F5A200B24893 /* SuggestionButton.swift in Sources */,
 				4EC2A47019DF811E00F789E1 /* ForwardingView.swift in Sources */,
 				82FD1A801B0B2C2E00A6D23D /* CatboardBanner.swift in Sources */,
 				4E60A13A1979FA5C00854CC8 /* KeyboardKeyBackground.swift in Sources */,

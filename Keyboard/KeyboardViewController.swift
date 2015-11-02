@@ -657,7 +657,7 @@ class KeyboardViewController: UIInputViewController {
                 
                 index = index.predecessor()
                 let char = previousContext![index]
-                if self.characterIsWhitespace(char) || self.characterIsPunctuation(char) || char == "," {
+                if characterIsWhitespace(char) || characterIsPunctuation(char) || char == "," {
                     return false
                 }
                 
@@ -835,23 +835,6 @@ class KeyboardViewController: UIInputViewController {
         }
     }
     
-    func characterIsPunctuation(character: Character) -> Bool {
-        return (character == ".") || (character == "!") || (character == "?")
-    }
-    
-    func characterIsNewline(character: Character) -> Bool {
-        return (character == "\n") || (character == "\r")
-    }
-    
-    func characterIsWhitespace(character: Character) -> Bool {
-        // there are others, but who cares
-        return (character == " ") || (character == "\n") || (character == "\r") || (character == "\t")
-    }
-    
-    func stringIsWhitespace(string: String?) -> Bool {
-        return string != nil && string!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) != ""
-    }
-    
     func shouldAutoCapitalize() -> Bool {
         if !NSUserDefaults.standardUserDefaults().boolForKey(kAutoCapitalization) {
             return false
@@ -867,7 +850,7 @@ class KeyboardViewController: UIInputViewController {
             case .Words:
                 if let beforeContext = documentProxy.documentContextBeforeInput {
                     let previousCharacter = beforeContext[beforeContext.endIndex.predecessor()]
-                    return self.characterIsWhitespace(previousCharacter)
+                    return characterIsWhitespace(previousCharacter)
                 }
                 else {
                     return true
@@ -975,20 +958,13 @@ class KeyboardViewController: UIInputViewController {
 	
 	func didTTouchDownSuggestionButton(sender: AnyObject?)
 	{
-		let button = sender as! UIButton
-		
-		if let btn_title = button.titleForState(UIControlState.Normal)
-		{
-			let title = btn_title.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-			
-			if title != ""
-			{
-				button.backgroundColor = UIColor(red:0.92, green:0.93, blue:0.94, alpha:1)
-				button.setTitleColor(UIColor.blackColor(), forState: .Normal)
-			}
-		}
-	}
-	
+        if let button = sender as? UIButton {
+
+            if let btn_title = button.titleForState(UIControlState.Normal) where TrimWhiteSpace(btn_title) != "" {
+                self.bannerView?.showPressedAppearance(button)
+            }
+        }
+    }
 	
 	func didTapSuggestionButton(sender: AnyObject?)
 	{
@@ -996,25 +972,10 @@ class KeyboardViewController: UIInputViewController {
 		self.currentMode = 0
 		
 		self.autoPeriodState = .FirstSpace
-		
-		var title1 = self.bannerView!.btn1.titleForState(.Normal)
-		var title2 = self.bannerView!.btn2.titleForState(.Normal)
-		var title3 = self.bannerView!.btn3.titleForState(.Normal)
-		
-		title1 = title1!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-		title2 = title2!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-		title3 = title3!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-		
+
         onSuggestionTap(sender)
-		
-		self.bannerView!.btn1.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-		self.bannerView!.btn2.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-		self.bannerView!.btn3.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-		
-		self.bannerView!.btn1.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-		self.bannerView!.btn2.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-		self.bannerView!.btn3.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-		
+
+        self.bannerView!.updateAppearance()
 		
 		self.setCapsIfNeeded()
 		
