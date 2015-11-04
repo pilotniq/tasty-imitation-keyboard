@@ -120,8 +120,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 			
 			if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
 			{
-				let keyboardKey = view as! KeyboardKey
-				keyboardKey.highlighted = false
+                (view as? KeyboardKey)?.highlighted = false
 			}
 			
 		}
@@ -136,14 +135,12 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
             let viewChangedOwnership = false
             
             if !viewChangedOwnership {
-                
-                if view is KeyboardKey
-                {
-                    let v = view as! KeyboardKey
+
+                if let v = view as? KeyboardKey {
                     if self.isLongPressEnableKey(v.text)
                     {
                         view!.tag = 888
-                        
+
                         self.handleControl(view, controlEvent: .TouchDownRepeat)
                     }
                 }
@@ -164,10 +161,9 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 				let viewChangedOwnership = false
 				
 				if !viewChangedOwnership {
-					
-					if view is KeyboardKey
+
+                    if let v = view as? KeyboardKey
 					{
-						let v = view as! KeyboardKey
 						if self.isLongPressEnableKey(v.text)
 						{
 							return true
@@ -185,9 +181,8 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 				
 				if !viewChangedOwnership {
 					
-					if view is KeyboardKey
+					if let v = view as? KeyboardKey
 					{
-						let v = view as! KeyboardKey
 						if self.isLongPressEnableKey(v.text)
 						{
 							return true
@@ -283,8 +278,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 	func resetPopUpViews() {
 		for view in self.touchToView.values {
 			
-			let v = view as! KeyboardKey
-			v.hidePopup()
+			(view as? KeyboardKey)?.hidePopup()
 		}
 	}
 	
@@ -311,7 +305,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
     }
     
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		// println("touchesBegan")
+
 		for touch in touches {
 			let position = touch.locationInView(self)
 			let view = findNearestView(position)
@@ -320,13 +314,9 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 			
 			if(isLongPressEnable == true)
 			{
-				if view != nil
+				if view != nil && !viewChangedOwnership
 				{
-					if !viewChangedOwnership
-					{
-						self.handleControl(view, controlEvent: .TouchDown)
-						//self.touchToView[touch] = nil
-					}
+                    self.handleControl(view, controlEvent: .TouchDown)
 				}
 				
 				NSNotificationCenter.defaultCenter().postNotificationName("hideExpandViewNotification", object: nil)
@@ -334,8 +324,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 				
 				if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
 				{
-                    let	keyboardKey = view as! KeyboardKey
-					keyboardKey.highlighted = false
+                    (view as? KeyboardKey)?.highlighted = false
 				}
 				
 			}
@@ -409,11 +398,12 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
                     let expandedButtonView : CYRKeyboardButtonView! = self.getCYRView()
                     if (expandedButtonView.selectedInputIndex != NSNotFound)
                     {
-                        let inputOption = self.getCYRButton().inputOptions[expandedButtonView.selectedInputIndex] as! String
-                        
-                        self.resetPopUpViews()
-                        
-                        NSNotificationCenter.defaultCenter().postNotificationName("hideExpandViewNotification", object: nil, userInfo: ["text":inputOption])
+                        if let inputOption = self.getCYRButton().inputOptions[expandedButtonView.selectedInputIndex] as? String {
+
+                            self.resetPopUpViews()
+
+                            NSNotificationCenter.defaultCenter().postNotificationName("hideExpandViewNotification", object: nil, userInfo: ["text":inputOption])
+                        }
                         
                     }
                     
@@ -421,8 +411,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
                     
                     if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
                     {
-                        let keyboardKey = view as! KeyboardKey
-                        keyboardKey.highlighted = false
+                        (view as? KeyboardKey)?.highlighted = false
                     }
                     
                 }

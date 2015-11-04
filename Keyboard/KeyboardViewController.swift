@@ -952,9 +952,10 @@ class KeyboardViewController: UIInputViewController {
 
 	func didTTouchExitDownSuggestionButton(sender: AnyObject?)
 	{
-		let button = sender as! UIButton
-		button.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-		button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        if let button = sender as? UIButton {
+            button.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
+            button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        }
 	}
 	
 	func didTTouchDownSuggestionButton(sender: AnyObject?)
