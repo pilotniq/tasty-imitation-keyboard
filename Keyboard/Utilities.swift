@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 var profile: ((id: String) -> Double?) = {
     var counterForName = Dictionary<String, Double>()
