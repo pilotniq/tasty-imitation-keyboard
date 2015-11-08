@@ -13,7 +13,7 @@ func languageSpecificKeyboard() -> Keyboard?
     if let path = NSBundle.mainBundle().pathForResource("EnglishQWERTY", ofType: "json")
     {
         if !NSFileManager().fileExistsAtPath(path) {
-            debugMsg("File does not exist at \(path)")
+            NSLog("File does not exist at \(path)")
             return nil
         }
         
@@ -23,7 +23,7 @@ func languageSpecificKeyboard() -> Keyboard?
                 let JSON = try NSJSONSerialization.JSONObjectWithData(jsonData, options:NSJSONReadingOptions(rawValue: 0))
                 
                 guard let JSONDictionary: NSDictionary = JSON as? NSDictionary else {
-                    debugMsg("Not a Dictionary")
+                    NSLog("Not a Dictionary")
                     return nil
                 }
                 
@@ -37,7 +37,7 @@ func languageSpecificKeyboard() -> Keyboard?
                 */
                 
                 guard let pages = JSONDictionary["pages"] as? NSArray else {
-                    debugMsg("Could not find 'pages' array in root")
+                    NSLog("Could not find 'pages' array in root")
                     return nil
                 }
                 
@@ -47,12 +47,12 @@ func languageSpecificKeyboard() -> Keyboard?
                     
                     if let pageDict = page as? NSDictionary {
                         guard let pageIndex = pageDict["pageIndex"] as? Int else {
-                            debugMsg("Did not find 'pageIndex' attribute")
+                            NSLog("Did not find 'pageIndex' attribute")
                             return nil
                         }
                         
                         guard let rows = pageDict["rows"] as? NSArray else {
-                            debugMsg("Could not find 'rows' array in root")
+                            NSLog("Could not find 'rows' array in root")
                             return nil
                         }
                         
@@ -60,12 +60,12 @@ func languageSpecificKeyboard() -> Keyboard?
                             if let rowDict = row as? NSDictionary {
                                 
                                 guard let rowIndex = rowDict["rowIndex"] as? Int else {
-                                    debugMsg("Could not find 'rowIndex' attribute")
+                                    NSLog("Could not find 'rowIndex' attribute")
                                     return nil
                                 }
                                 
                                 guard let keys = rowDict["keys"] as? NSArray else {
-                                    debugMsg("Could not find 'keys' array on root")
+                                    NSLog("Could not find 'keys' array on root")
                                     return nil
                                 }
                                 
@@ -105,11 +105,11 @@ func languageSpecificKeyboard() -> Keyboard?
                 
             }
             catch let JSONError as NSError {
-                debugMsg("JSONError exception\n\(JSONError)")
+                NSLog("JSONError exception\n\(JSONError)")
                 return nil
             }
             catch {
-                debugMsg("Some other error occurred")
+                NSLog("Some other error occurred")
                 return nil
             }
         }

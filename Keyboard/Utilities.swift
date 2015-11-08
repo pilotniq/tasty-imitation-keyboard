@@ -56,3 +56,40 @@ func stringIsWhitespace(str: String?) -> Bool {
     return TrimWhiteSpace(str) == ""
 }
 
+func isInitCaps(string: String) -> Bool
+{
+    return string.characters.count > 0
+        && ("A"..."Z").contains(string[string.startIndex])
+}
+
+
+func loadJSON(fileName : String) -> NSDictionary?
+{
+    if let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "json")
+    {
+        if !NSFileManager().fileExistsAtPath(path) {
+            NSLog("File does not exist at \(path)")
+            return nil
+        }
+
+        if let jsonData = NSData(contentsOfFile: path)
+        {
+            do {
+                let JSON = try NSJSONSerialization.JSONObjectWithData(jsonData, options:NSJSONReadingOptions(rawValue: 0))
+
+                return JSON as? NSDictionary
+            }
+            catch let JSONError as NSError {
+                NSLog("JSONError exception\n\(JSONError)")
+                return nil
+            }
+            catch {
+                NSLog("Some other error occurred")
+                return nil
+            }
+        }
+    }
+
+    return nil
+}
+

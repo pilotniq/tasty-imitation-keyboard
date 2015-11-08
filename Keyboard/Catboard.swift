@@ -15,13 +15,6 @@ set the name of your KeyboardViewController subclass in the Info.plist file.
 
 let kCatTypeEnabled = "kCatTypeEnabled"
 
-var debugMsgs = ""
-
-func debugMsg(msg: String)
-{
-    debugMsgs += msg + "\n"
-}
-
 class Catboard: KeyboardViewController {
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
@@ -35,13 +28,6 @@ class Catboard: KeyboardViewController {
     
     override func keyPressed(key: Key) {
         let textDocumentProxy = self.textDocumentProxy
-        
-        // Giant hack since debugPrintln won't display anything useful to the regular stderr debugging in Xcode
-        // Stuff any debug msgs into the text buffer that spawned the kbd
-        if debugMsgs != "" {
-            textDocumentProxy.insertText(debugMsgs)
-            debugMsgs = ""
-        }
         
         let keyOutput = key.outputForCase(self.shiftState.uppercase())
         

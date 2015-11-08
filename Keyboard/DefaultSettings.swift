@@ -15,6 +15,8 @@ class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet var backButton: UIButton?
     @IBOutlet var settingsLabel: UILabel?
     @IBOutlet var pixelLine: UIView?
+
+    private var _languageDefinitions : LanguageDefinitions?
     
     let cellBackgroundColorDark = UIColor.whiteColor().colorWithAlphaComponent(CGFloat(0.25))
     let cellBackgroundColorLight = UIColor.whiteColor().colorWithAlphaComponent(CGFloat(1))
@@ -24,14 +26,12 @@ class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
     let cellLongLabelColorLight = UIColor.grayColor()
     
     // TODO: these probably don't belong here, and also need to be localized
-    var settingsList: [(String, [String])] {
-        get {
-            return [
+    var settingsList: [(String, [String])] = [
                 ("General Settings", [kAutoCapitalization, kPeriodShortcut, kKeyboardClicks]),
-                ("Extra Settings", [kSmallLowercase])
+                ("Extra Settings", [kSmallLowercase]),
+                ("Languages", ["English"])
             ]
-        }
-    }
+
     var settingsNames: [String:String] {
         get {
             return [
@@ -42,6 +42,7 @@ class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
             ]
         }
     }
+
     var settingsNotes: [String: String] {
         get {
             return [
@@ -51,13 +52,27 @@ class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
         }
     }
     
-    required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool) {
+    required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool, languageDefinitions: LanguageDefinitions) {
         super.init(globalColors: globalColors, darkMode: darkMode, solidColorMode: solidColorMode)
         self.loadNib()
+        self._languageDefinitions = languageDefinitions
+
+        if self._languageDefinitions != nil {
+            for i in 0..<settingsList.count
+            {
+                if settingsList[i].0 == "Languages" {
+                    settingsList[i] = ("Languages", (self._languageDefinitions?.LanguageNames())!)
+                }
+            }
+        }
     }
 
     required init(coder aDecoder: NSCoder) {
         fatalError("loading from nib not supported")
+    }
+
+    required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool) {
+        fatalError("init(globalColors:darkMode:solidColorMode:) has not been implemented")
     }
     
     func loadNib() {
@@ -89,11 +104,11 @@ class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
         
         self.updateAppearance()
     }
-    
+
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return self.settingsList.count
     }
-    
+
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.settingsList[section].1.count
     }
@@ -103,7 +118,7 @@ class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if section == self.settingsList.count - 1 {
+        if section == 1 { //self.settingsList.count - 1 {
             return 50
         }
         else {
@@ -124,7 +139,7 @@ class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
             }
             
             cell.sw.on = NSUserDefaults.standardUserDefaults().boolForKey(key)
-            cell.label.text = self.settingsNames[key]
+            cell.label.text = self.settingsNames[key] ?? key
             cell.longLabel.text = self.settingsNotes[key]
             
             cell.backgroundColor = (self.darkMode ? cellBackgroundColorDark : cellBackgroundColorLight)

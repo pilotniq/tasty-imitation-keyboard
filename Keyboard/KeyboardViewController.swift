@@ -34,7 +34,8 @@ class KeyboardViewController: UIInputViewController {
     
     let backspaceDelay: NSTimeInterval = 0.5
     let backspaceRepeat: NSTimeInterval = 0.07
-    
+
+    var languageDefinitions: LanguageDefinitions!
     var keyboard: Keyboard!
     var forwardingView: ForwardingView!
     var layout: KeyboardLayout?
@@ -134,7 +135,9 @@ class KeyboardViewController: UIInputViewController {
         self.currentInterfaceOrientation = KeyboardViewController.getInterfaceOrientation()
 
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        
+
+        self.languageDefinitions = LanguageDefinitions(jsonFileName: "LanguageDefinitions")
+
 		self.forwardingView = ForwardingView(frame: CGRectZero)
 		self.view.addSubview(self.forwardingView)
 		
@@ -327,21 +330,6 @@ class KeyboardViewController: UIInputViewController {
         }
     }
 	
-	func isCapitalalize(string: String) -> Bool
-	{
-		if string.characters.count > 0
-		{
-            
-			let firstChar = string[string.startIndex]
-            return ("A"..."Z").contains(firstChar)
-		}
-		else
-		{
-			return false
-		}
-		
-	}
-
     func CasedString(str : String, shiftState : ShiftState) -> String
     {
         if shiftState == .Enabled
@@ -932,7 +920,7 @@ class KeyboardViewController: UIInputViewController {
     // a settings view that replaces the keyboard when the settings button is pressed
     func createSettings() -> ExtraView? {
         // note that dark mode is not yet valid here, so we just put false for clarity
-        let settingsView = DefaultSettings(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode())
+        let settingsView = DefaultSettings(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode(), languageDefinitions: self.languageDefinitions)
         settingsView.backButton?.addTarget(self, action: Selector("toggleSettings"), forControlEvents: UIControlEvents.TouchUpInside)
         return settingsView
     }
@@ -1006,7 +994,7 @@ class KeyboardViewController: UIInputViewController {
             {
                 let tokens = self.sug_word.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) as [String]
 
-                if let lastWord = tokens.last where lastWord != "" && self.isCapitalalize(lastWord) {
+                if let lastWord = tokens.last where isInitCaps(lastWord) {
                     self.textDocumentProxy.insertText(title.capitalizedString + " ")
                 }
                 else {
