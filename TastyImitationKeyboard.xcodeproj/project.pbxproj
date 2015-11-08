@@ -33,6 +33,8 @@
 		4EF16F9819D255030076AFCB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF16F9519D255030076AFCB /* ViewController.swift */; };
 		4EF16F9B19D2550D0076AFCB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF16F9A19D2550D0076AFCB /* AppDelegate.swift */; };
 		4EF16F9F19D2552E0076AFCB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4EF16F9D19D2552E0076AFCB /* Main.storyboard */; };
+		736D00A71BEEEA04004E7C6B /* LanguageDefinitions.json in Resources */ = {isa = PBXBuildFile; fileRef = 73F0D3B41BEEB5E60032A0D7 /* LanguageDefinitions.json */; };
+		736D00A81BEEEDB8004E7C6B /* LanguageDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F0D3B71BEEB98E0032A0D7 /* LanguageDefinition.swift */; };
 		73A3F1991BDD8B66005436D1 /* FrenchAZERTY.json in Resources */ = {isa = PBXBuildFile; fileRef = 73A3F1981BDD8B66005436D1 /* FrenchAZERTY.json */; };
 		73A3F19B1BDDA917005436D1 /* EnglishQWERTY.json in Resources */ = {isa = PBXBuildFile; fileRef = 73A3F19A1BDDA917005436D1 /* EnglishQWERTY.json */; };
 		73D535181BE9CB1A00D61F2E /* KeyboardFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E8EF38119F95D74009CBF5D /* KeyboardFramework.framework */; };
@@ -622,6 +624,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				736D00A71BEEEA04004E7C6B /* LanguageDefinitions.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -683,6 +686,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				736D00A81BEEEDB8004E7C6B /* LanguageDefinition.swift in Sources */,
 				73D535201BE9CD6100D61F2E /* Utilities.swift in Sources */,
 				73D535221BEC636A00D61F2E /* KeyboardFrameworkTests.swift in Sources */,
 			);

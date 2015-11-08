@@ -62,10 +62,21 @@ func isInitCaps(string: String) -> Bool
         && ("A"..."Z").contains(string[string.startIndex])
 }
 
+// In the deployed app, JSON resources etc live in the main bundle but when running a unit test we're not running as the main bundle
+func getBundle() -> NSBundle {
+    #if DEBUG
+        if NSProcessInfo.processInfo().environment["XCInjectBundle"] != nil {
+            // Code only executes when tests are running
+            return NSBundle(forClass: self.dynamicType)
+        }
+    #endif
 
-func loadJSON(fileName : String) -> NSDictionary?
+    return NSBundle.mainBundle()
+}
+
+func loadJSON(fileName: String?) -> NSDictionary?
 {
-    if let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "json")
+    if let path = getBundle().pathForResource(fileName, ofType: "json")
     {
         if !NSFileManager().fileExistsAtPath(path) {
             NSLog("File does not exist at \(path)")
@@ -89,7 +100,7 @@ func loadJSON(fileName : String) -> NSDictionary?
             }
         }
     }
-
+    
     return nil
-}
 
+}

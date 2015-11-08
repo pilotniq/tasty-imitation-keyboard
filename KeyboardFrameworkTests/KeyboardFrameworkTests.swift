@@ -51,11 +51,33 @@ class KeyboardFrameworkTests: XCTestCase {
         }
     }
 
+    func testIsInitCaps()
+    {
+        XCTAssert(!isInitCaps(""))
+        XCTAssert(!isInitCaps("dog"))
+        XCTAssert(isInitCaps("DOG"))
+    }
+
     func testPerformanceExample() {
         // This is an example of a performance test case.
-        self.measureBlock {
+/*        self.measureBlock {
             // Put the code you want to measure the time of here.
         }
+ */
     }
-    
+
+
+    // Do a bunch of tests to validate the language definitions file
+    func testJSONLoading()
+    {
+        // Can we at least load the file as JSON?
+        // This will fail if the file is missing or ill-formed
+        XCTAssert (loadJSON("LanguageDefinitions") != nil)
+
+
+        // Make sure we barf for an invalid JSON file
+        XCTAssert (loadJSON("FileThatDoesNotExist") == nil)
+
+    }
+
 }
