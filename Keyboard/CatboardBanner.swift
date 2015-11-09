@@ -89,18 +89,6 @@ class CatboardBanner: ExtraView {
     func isOpenAccessGranted() -> Bool {
 		
         return (UIPasteboard.generalPasteboard().isKindOfClass(UIPasteboard))
-        
-//        let fm = NSFileManager.defaultManager()
-//        let containerPath = fm.containerURLForSecurityApplicationGroupIdentifier(
-//            "group.com.spanglish.www")?.path
-//        var error: NSError?
-//        fm.contentsOfDirectoryAtPath(containerPath!, error: &error)
-//        if (error != nil) {
-//            NSLog("Full Access: Off")
-//            return false
-//        }
-//        NSLog("Full Access: On");
-//        return true
     }
 
 	override func drawRect(rect: CGRect) {}

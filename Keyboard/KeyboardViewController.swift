@@ -221,15 +221,13 @@ class KeyboardViewController: UIInputViewController {
 			self.keyboard = defaultKeyboard(proxy.keyboardType!)
 			
 			preKeyboardType = proxy.keyboardType!
-			
-			
-			
+
             self.layout = self.dynamicType.layoutClass.init(model: self.keyboard, superview: self.forwardingView, layoutConstants: self.dynamicType.layoutConstants, globalColors: self.dynamicType.globalColors, darkMode: self.darkMode(), solidColorMode: self.solidColorMode())
             
             self.layout?.initialize()
             self.setMode(0)
             
-            self.setupKludge()
+//            self.setupKludge()
             
             self.updateKeyCaps(self.shiftState.uppercase())
             self.setCapsIfNeeded()
@@ -246,7 +244,7 @@ class KeyboardViewController: UIInputViewController {
         let darkMode = { () -> Bool in
                 return self.textDocumentProxy.keyboardAppearance == UIKeyboardAppearance.Dark
         }()
-        
+
         return darkMode
     }
     
