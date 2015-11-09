@@ -63,6 +63,37 @@ class Page {
     }
 }
 
+class SpecialUnicodeSymbols {
+
+    class var ReturnSymbol : String {
+        get {
+            return "\u{21B2}" // DOWNWARDS ARROW WITH TIP LEFTWARDS
+        }
+    }
+
+    class var NextKeyboardSymbol : String {
+        get {
+            // 🌐= GLOBE WITH MERIDIANS
+            // Looks all blue on iOS :(
+            return "\u{1F310}"
+
+            // Symbol not supported on iOS
+            // "\u{1F5A6}" // ⌨ KEYBOARD
+        }
+    }
+
+    class var SmilingFace : String {
+        get {
+            return "\u{263A}" // WHITE SMILING FACE
+        }
+    }
+
+    class var GearSymbol : String {
+        get {
+            return "\u{2699}" // ⚙ GEAR
+        }
+    }
+}
 class Key: Hashable {
     enum KeyType {
         case Character
@@ -198,7 +229,7 @@ class Key: Hashable {
     class func ReturnKey() -> Key
     {
         let returnKey = Key(.Return)
-        returnKey.uppercaseKeyCap = "return"
+        returnKey.uppercaseKeyCap = SpecialUnicodeSymbols.ReturnSymbol
         returnKey.uppercaseOutput = "\n"
         returnKey.lowercaseOutput = "\n"
         return returnKey
@@ -220,6 +251,14 @@ class Key: Hashable {
         keyModeChangeLetters.toMode = 0
         return keyModeChangeLetters
     }
+
+    class func NextKbdKey() -> Key
+    {
+        let nextKbdKey = Key(.KeyboardChange)
+
+        return nextKbdKey
+    }
+
 
 }
 
