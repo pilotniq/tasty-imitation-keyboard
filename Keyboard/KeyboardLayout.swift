@@ -248,8 +248,6 @@ extension CGSize: Hashable {
 // handles the layout for the keyboard, including key spacing and arrangement
 class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     
-    class var shouldPoolKeys: Bool { get { return true }}
-    
     var layoutConstants: LayoutConstants.Type
     var globalColors: GlobalColors.Type
     
@@ -303,17 +301,6 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         
-        // pre-allocate all keys if no cache
-        if !self.dynamicType.shouldPoolKeys {
-            if self.keyPool.isEmpty {
-                for p in 0..<self.model.pages.count {
-                    self.positionKeys(p)
-                }
-                self.updateKeyAppearance()
-                self.updateKeyCaps(true, uppercase: uppercase, characterUppercase: characterUppercase, shiftState: shiftState)
-            }
-        }
-        
         self.positionKeys(pageNum)
         
         // reset state
@@ -331,11 +318,9 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             }
         }
         
-        if self.dynamicType.shouldPoolKeys {
-            self.updateKeyAppearance()
-            self.updateKeyCaps(true, uppercase: uppercase, characterUppercase: characterUppercase, shiftState: shiftState)
-        }
-        
+        self.updateKeyAppearance()
+        self.updateKeyCaps(true, uppercase: uppercase, characterUppercase: characterUppercase, shiftState: shiftState)
+
         CATransaction.commit()
     }
     
@@ -350,41 +335,32 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         }
         
         if let keyMap = self.generateKeyFrames(self.model, bounds: self.superview.bounds, page: pageNum) {
-            if self.dynamicType.shouldPoolKeys {
-                self.modelToView.removeAll(keepCapacity: true)
-                self.viewToModel.removeAll(keepCapacity: true)
-                
-                self.resetKeyPool()
-                
-                var foundCachedKeys = [Key]()
-                
-                // pass 1: reuse any keys that match the required size
-                for (key, frame) in keyMap {
-                    if let keyView = self.pooledKey(key: key, model: self.model, frame: frame) {
-                        foundCachedKeys.append(key)
-                        setupKey(keyView, key, frame)
-                    }
-                }
-            
-                
-                // pass 2: fill in the blanks
-                for (key, frame) in keyMap {
-                    let keyView = self.generateKey()
+            self.modelToView.removeAll(keepCapacity: true)
+            self.viewToModel.removeAll(keepCapacity: true)
+
+            self.resetKeyPool()
+
+            var foundCachedKeys = [Key]()
+
+            // pass 1: reuse any keys that match the required size
+            for (key, frame) in keyMap {
+                if let keyView = self.pooledKey(key: key, model: self.model, frame: frame) {
+                    foundCachedKeys.append(key)
                     setupKey(keyView, key, frame)
                 }
             }
-            else {
-                for (key, frame) in keyMap {
-                    if let keyView = self.pooledKey(key: key, model: self.model, frame: frame) {
-                        setupKey(keyView, key, frame)
-                    }
-                }
+
+
+            // pass 2: fill in the blanks
+            for (key, frame) in keyMap {
+                let keyView = self.generateKey()
+                setupKey(keyView, key, frame)
             }
         }
-        
+
         CATransaction.commit()
     }
-    
+
     func updateKeyAppearance() {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
@@ -567,71 +543,31 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     ///////////////////////////
     // KEY POOLING FUNCTIONS //
     ///////////////////////////
-    
+
+
     // if pool is disabled, always returns a unique key view for the corresponding key model
     func pooledKey(key aKey: Key, model: Keyboard, frame: CGRect) -> KeyboardKey? {
-        if !self.dynamicType.shouldPoolKeys {
-            var p: Int!
-            var r: Int!
-            var k: Int!
-            
-            // TODO: O(N^2) in terms of total # of keys since pooledKey is called for each key, but probably doesn't matter
-            var foundKey: Bool = false
-            for (pp, page) in model.pages.enumerate() {
-                for (rr, row) in page.rows.enumerate() {
-                    for (kk, key) in row.enumerate() {
-                        if key == aKey {
-                            p = pp
-                            r = rr
-                            k = kk
-                            foundKey = true
-                        }
-                        if foundKey {
-                            break
-                        }
-                    }
-                    if foundKey {
-                        break
-                    }
-                }
-                if foundKey {
-                    break
-                }
-            }
-            
-            let id = "p\(p)r\(r)k\(k)"
-            if let key = self.nonPooledMap[id] {
-                return key
-            }
-            else {
-                let key = generateKey()
-                self.nonPooledMap[id] = key
-                return key
-            }
-        }
-        else {
-            if var keyArray = self.sizeToKeyMap[frame.size] {
-                if let key = keyArray.last {
-                    if keyArray.count == 1 {
-                        self.sizeToKeyMap.removeValueForKey(frame.size)
-                    }
-                    else {
-                        keyArray.removeLast()
-                        self.sizeToKeyMap[frame.size] = keyArray
-                    }
-                    return key
+        if var keyArray = self.sizeToKeyMap[frame.size] {
+            if let key = keyArray.last {
+                if keyArray.count == 1 {
+                    self.sizeToKeyMap.removeValueForKey(frame.size)
                 }
                 else {
-                    return nil
+                    keyArray.removeLast()
+                    self.sizeToKeyMap[frame.size] = keyArray
                 }
-                
+                return key
             }
             else {
                 return nil
             }
+
+        }
+        else {
+            return nil
         }
     }
-    
+
     func createNewKey() -> KeyboardKey {
         return ImageKey(vibrancy: nil)
     }
@@ -651,67 +587,60 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             return keyView
         }
         
-        if self.dynamicType.shouldPoolKeys {
-            if !self.sizeToKeyMap.isEmpty {
-                var (size, keyArray) = self.sizeToKeyMap[self.sizeToKeyMap.startIndex]
-                
-                if let key = keyArray.last {
-                    if keyArray.count == 1 {
-                        self.sizeToKeyMap.removeValueForKey(size)
-                    }
-                    else {
-                        keyArray.removeLast()
-                        self.sizeToKeyMap[size] = keyArray
-                    }
-                    
-                    return key
+
+        if !self.sizeToKeyMap.isEmpty {
+            var (size, keyArray) = self.sizeToKeyMap[self.sizeToKeyMap.startIndex]
+
+            if let key = keyArray.last {
+                if keyArray.count == 1 {
+                    self.sizeToKeyMap.removeValueForKey(size)
                 }
+                else {
+                    keyArray.removeLast()
+                    self.sizeToKeyMap[size] = keyArray
+                }
+
+                return key
             }
         }
 
         return createAndSetupNewKey()
     }
-    
+
     // if pool is disabled, doesn't do anything
     func resetKeyPool() {
-        if self.dynamicType.shouldPoolKeys {
-            self.sizeToKeyMap.removeAll(keepCapacity: true)
-            
-            for key in self.keyPool {
-                if var keyArray = self.sizeToKeyMap[key.frame.size] {
-                    keyArray.append(key)
-                    self.sizeToKeyMap[key.frame.size] = keyArray
-                }
-                else {
-                    var keyArray = [KeyboardKey]()
-                    keyArray.append(key)
-                    self.sizeToKeyMap[key.frame.size] = keyArray
-                }
-                key.hidden = true
+
+        self.sizeToKeyMap.removeAll(keepCapacity: true)
+
+        for key in self.keyPool {
+            if var keyArray = self.sizeToKeyMap[key.frame.size] {
+                keyArray.append(key)
+                self.sizeToKeyMap[key.frame.size] = keyArray
             }
+            else {
+                var keyArray = [KeyboardKey]()
+                keyArray.append(key)
+                self.sizeToKeyMap[key.frame.size] = keyArray
+            }
+            key.hidden = true
         }
     }
-    
+
     // TODO: no support for more than one of the same shape
     // if pool disabled, always returns new shape
     func getShape(shapeClass: Shape.Type) -> Shape {
         let className = NSStringFromClass(shapeClass)
-        
-        if self.dynamicType.shouldPoolKeys {
-            if let shape = self.shapePool[className] {
-                return shape
-            }
-            else {
-                let shape = shapeClass.init(frame: CGRectZero)
-                self.shapePool[className] = shape
-                return shape
-            }
+
+        if let shape = self.shapePool[className] {
+            return shape
         }
         else {
-            return shapeClass.init(frame: CGRectZero)
+            let shape = shapeClass.init(frame: CGRectZero)
+            self.shapePool[className] = shape
+            return shape
         }
     }
-    
+
     //////////////////////
     // LAYOUT FUNCTIONS //
     //////////////////////
