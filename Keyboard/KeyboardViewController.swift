@@ -83,13 +83,9 @@ class KeyboardViewController: UIInputViewController {
     
     var keyboardHeight: CGFloat {
         get {
-            if let constraint = self.heightConstraint {
-                return constraint.constant
-            }
-            else {
-                return 0
-            }
+            return self.heightConstraint?.constant ?? 0
         }
+
         set {
             self.setHeight(newValue)
         }
@@ -100,8 +96,6 @@ class KeyboardViewController: UIInputViewController {
 	
 	var viewLongPopUp:CYRKeyboardButtonView = CYRKeyboardButtonView()
 	var button = CYRKeyboardButton()
-	
-	var isAllowFullAccess : Bool = false
 	
 	var keyboard_type: UIKeyboardType!
 	var preKeyboardType = UIKeyboardType.Default
@@ -389,16 +383,7 @@ class KeyboardViewController: UIInputViewController {
 		}
 		
 	}
-    /*
-    BUG NOTE
 
-    None of the UIContentContainer methods are called for this controller.
-    */
-	
-    //override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-    //    super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
-    //}
-	
     func setupKeys() {
         if self.layout == nil {
             return
@@ -528,16 +513,13 @@ class KeyboardViewController: UIInputViewController {
 				//
 				// optimization: ensures smooth animation
 				if let keyPool = self.layout?.keyPool {
-					for view1 in keyPool {
-						view1.shouldRasterize = true
+					for view in keyPool {
+						view.shouldRasterize = true
 					}
 				}
 				
-				for view1 in self.forwardingView.subviews
-				{
-					let v = view1 
-					v.removeFromSuperview()
-					
+                for view in self.forwardingView.subviews {
+					view.removeFromSuperview()
 				}
 				
 				self.keyboardHeight = self.heightForOrientation(self.currentInterfaceOrientation, withTopBanner: true)
@@ -827,13 +809,13 @@ class KeyboardViewController: UIInputViewController {
             return false
         }
         
-        let traits = self.textDocumentProxy
-        if let autocapitalization = traits.autocapitalizationType {
-            let documentProxy = self.textDocumentProxy
-            
+        let documentProxy = self.textDocumentProxy
+        if let autocapitalization = documentProxy.autocapitalizationType {
+
             switch autocapitalization {
             case .None:
                 return false
+
             case .Words:
                 if let beforeContext = documentProxy.documentContextBeforeInput {
                     let previousCharacter = beforeContext[beforeContext.endIndex.predecessor()]
@@ -875,6 +857,7 @@ class KeyboardViewController: UIInputViewController {
                 else {
                     return true
                 }
+
             case .AllCharacters:
                 return true
             }
@@ -887,13 +870,13 @@ class KeyboardViewController: UIInputViewController {
     
     // this only works if full access is enabled
     func playKeySound() {
-        if !NSUserDefaults.standardUserDefaults().boolForKey(kKeyboardClicks) {
-            return
-        }
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
-            AudioServicesPlaySystemSound(1104)
-        })
+        #if FULLACCESS
+            if isOpenAccessGranted() {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+                    AudioServicesPlaySystemSound(1104)
+                })
+            }
+        #endif
     }
     
     //////////////////////////////////////

@@ -19,9 +19,7 @@ class CatboardBanner: ExtraView {
     var catLabel: UILabel = UILabel()
 	
 	var touchToView: [UITouch:UIView]
-	
-     var isAllowFullAccess : Bool = false
-	
+
     required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool) {
 		self.touchToView = [:]
 		
@@ -64,14 +62,12 @@ class CatboardBanner: ExtraView {
     
     override func updateAppearance() {
 
-		isAllowFullAccess = isOpenAccessGranted()
-        
 		btn1 = suggestionButton("The")
         btn2 = suggestionButton("I")
         btn3 = suggestionButton("What")
         btn4 = suggestionButton("Enable Allow Full Access")
 
-        if(isAllowFullAccess == true)
+        if isOpenAccessGranted()
         {
             self.addSubview(self.btn1)
             self.addSubview(self.btn2)
@@ -84,13 +80,7 @@ class CatboardBanner: ExtraView {
 		
 		addConstraintsToButtons()
     }
-
     
-    func isOpenAccessGranted() -> Bool {
-		
-        return (UIPasteboard.generalPasteboard().isKindOfClass(UIPasteboard))
-    }
-
 	override func drawRect(rect: CGRect) {}
 	
 	override func hitTest(point: CGPoint, withEvent event: UIEvent!) -> UIView? {
@@ -110,7 +100,7 @@ class CatboardBanner: ExtraView {
 	func addConstraintsToButtons()
 	{
         
-        if(isAllowFullAccess == true)
+        if isOpenAccessGranted()
         {
             var buttons = [btn1,btn2,btn3]
         

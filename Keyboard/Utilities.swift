@@ -62,16 +62,21 @@ func isInitCaps(string: String) -> Bool
         && ("A"..."Z").contains(string[string.startIndex])
 }
 
+// HACKHACK I need a locally defined class that I can get a reference to self for as a param to NSBundle()
+class foo
+{
+
+}
+
 // In the deployed app, JSON resources etc live in the main bundle but when running a unit test we're not running as the main bundle
 func getBundle() -> NSBundle {
-    #if DEBUG
-        if NSProcessInfo.processInfo().environment["XCInjectBundle"] != nil {
-            // Code only executes when tests are running
-            return NSBundle(forClass: self.dynamicType)
-        }
-    #endif
 
+#if UNIT_TESTS
+    return NSBundle(forClass: foo.self)
+#else
     return NSBundle.mainBundle()
+#endif
+
 }
 
 func loadJSON(fileName: String?) -> NSDictionary?
@@ -103,4 +108,38 @@ func loadJSON(fileName: String?) -> NSDictionary?
     
     return nil
 
+}
+
+func isOpenAccessGranted() -> Bool {
+    #if FULLACCESS
+        return (UIPasteboard.generalPasteboard().isKindOfClass(UIPasteboard))
+    #else
+        return true
+    #endif
+}
+
+// http://stackoverflow.com/questions/3552108/finding-closest-object-to-cgpoint b/c I'm lazy
+func distanceBetween(rect: CGRect, point: CGPoint) -> CGFloat {
+    if CGRectContainsPoint(rect, point) {
+        return 0
+    }
+
+    var closest = rect.origin
+
+    if (rect.origin.x + rect.size.width < point.x) {
+        closest.x += rect.size.width
+    }
+    else if (point.x > rect.origin.x) {
+        closest.x = point.x
+    }
+    if (rect.origin.y + rect.size.height < point.y) {
+        closest.y += rect.size.height
+    }
+    else if (point.y > rect.origin.y) {
+        closest.y = point.y
+    }
+
+    let a = pow(Double(closest.y - point.y), 2)
+    let b = pow(Double(closest.x - point.x), 2)
+    return CGFloat(sqrt(a + b));
 }

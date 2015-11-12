@@ -232,41 +232,10 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
             }
             
         }
-        
-        if closest != nil {
-            return closest!.0
-        }
-        else {
-            return nil
-        }
-    }
-    
-    // http://stackoverflow.com/questions/3552108/finding-closest-object-to-cgpoint b/c I'm lazy
-    func distanceBetween(rect: CGRect, point: CGPoint) -> CGFloat {
-        if CGRectContainsPoint(rect, point) {
-            return 0
-        }
 
-        var closest = rect.origin
-        
-        if (rect.origin.x + rect.size.width < point.x) {
-            closest.x += rect.size.width
-        }
-        else if (point.x > rect.origin.x) {
-            closest.x = point.x
-        }
-        if (rect.origin.y + rect.size.height < point.y) {
-            closest.y += rect.size.height
-        }
-        else if (point.y > rect.origin.y) {
-            closest.y = point.y
-        }
-        
-        let a = pow(Double(closest.y - point.y), 2)
-        let b = pow(Double(closest.x - point.x), 2)
-        return CGFloat(sqrt(a + b));
+        return closest?.0
     }
-    
+        
     // reset tracked views without cancelling current touch
     func resetTrackedViews() {
         for view in self.touchToView.values {
@@ -344,18 +313,15 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 	}
 	
 	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		//println("touchesMoved")
 		for touch in touches
 		{
 			let position = touch.locationInView(self)
 			
-			if(isLongPressEnable)
+			if isLongPressEnable
 			{
-				let expandedButtonView : CYRKeyboardButtonView! = self.getCYRView()
-				
-				if expandedButtonView != nil
-				{
-					expandedButtonView.updateSelectedInputIndexForPoint(position)
+                if let expandedButtonView = self.getCYRView() {
+
+                    expandedButtonView.updateSelectedInputIndexForPoint(position)
 				}
 			}
 			else
@@ -396,8 +362,8 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
                 if(isLongPressKeyPress == true)
                 {
                     let expandedButtonView : CYRKeyboardButtonView! = self.getCYRView()
-                    if (expandedButtonView.selectedInputIndex != NSNotFound)
-                    {
+                    if expandedButtonView.selectedInputIndex != NSNotFound {
+
                         if let inputOption = self.getCYRButton().inputOptions[expandedButtonView.selectedInputIndex] as? String {
 
                             self.resetPopUpViews()
@@ -446,7 +412,9 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
             }
         }
     }
-	
+
+    // TODO Current code determines what chars have long press lists of alternates by enumerating the legend of the key.
+    // Really this should just be a property of the key, defined when the values were read from a config file
 	func isLongPressEnableKey(text:NSString) -> Bool
 	{
 		let alphabet_lengh = text.length
@@ -469,60 +437,31 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 		
 		return false
 	}
-	
-	func isSubViewContainsCYRView() -> Bool
-	{
-		for anyView in self.superview!.subviews
-		{
-			if anyView is CYRKeyboardButtonView
-			{
-				return true
-			}
-		}
-		return false
-	}
+
 	
 	func getCYRView() -> CYRKeyboardButtonView!
 	{
-		if isSubViewContainsCYRView()
-		{
-			for anyView in self.superview!.subviews
-			{
-				if anyView is CYRKeyboardButtonView
-				{
-					return anyView as! CYRKeyboardButtonView
-				}
-			}
-		}
-		
+        for anyView in self.superview!.subviews {
+
+            if anyView is CYRKeyboardButtonView {
+
+                return anyView as! CYRKeyboardButtonView
+            }
+        }
+
 		return nil
-	}
-	
-	func isSubViewContainsCYRButton() -> Bool
-	{
-		for anyView in self.superview!.subviews
-		{
-			if anyView is CYRKeyboardButton
-			{
-				return true
-			}
-		}
-		return false
 	}
 	
 	func getCYRButton() -> CYRKeyboardButton!
 	{
-		if isSubViewContainsCYRButton()
-		{
-			for anyView in self.superview!.subviews
-			{
-				if anyView is CYRKeyboardButton
-				{
-					return anyView as! CYRKeyboardButton
-				}
-			}
-		}
-		
+        for anyView in self.superview!.subviews {
+
+            if anyView is CYRKeyboardButton {
+
+                return anyView as! CYRKeyboardButton
+            }
+        }
+
 		return nil
 	}
 	
