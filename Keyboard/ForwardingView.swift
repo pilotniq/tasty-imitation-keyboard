@@ -217,7 +217,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
             if view.hidden {
                 continue
             }
-            
+
             view.alpha = 1
             
             let distance = distanceBetween(view.frame, point: position)

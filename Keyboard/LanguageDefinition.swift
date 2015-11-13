@@ -12,20 +12,20 @@ import Foundation
 // the name of the language, the characters required to type that language etc.
 //
 // Note that the language information says nothing about keyboard layout and doesn't attempt an exhaustive listing of the kbds that
-// could be used to type the language. We can determine elsewhere if a kbd contains all the necessary chars.
+// could be used to type the language. We can determine programmatically elsewhere if a kbd contains all the necessary chars.
 public class LanguageDefinition {
 
     // Name of the language in English
-    private var _englishName : String
+    private let _englishName : String
 
     // Name of the language in that language's native script
-    private var _nativeName : String
+    private let _nativeName : String
 
     // Chars that a keyboard must contain for you to be able to type this language
-    private var _requiredChars : [String]
+    private let _requiredChars : [String]
 
     // The name of the JSON keyboard definition file for the default keyboard for this language
-    private var _defaultKbd : String
+    private let _defaultKbd : String
 
     init(englishName: String, nativeName: String, requiredChars: [String], defaultKbd: String)
     {

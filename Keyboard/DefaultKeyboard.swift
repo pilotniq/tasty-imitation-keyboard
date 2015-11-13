@@ -16,7 +16,10 @@ func languageSpecificKeyboard() -> Keyboard?
             NSLog("File does not exist at \(path)")
             return nil
         }
-        
+
+        // Keyboards have pages. Pages have rows.
+        //Rows have keys.
+        // Keys have characters.
         if let jsonData = NSData(contentsOfFile: path)
         {
             do {
@@ -26,15 +29,6 @@ func languageSpecificKeyboard() -> Keyboard?
                     NSLog("Not a Dictionary")
                     return nil
                 }
-                
-                /*
-                
-                guard let keyboardName = JSONDictionary["keyboardName"] as? String else {
-                debugMsg("Could not find 'keyboardName' element on root")
-                return nil
-                }
-                
-                */
                 
                 guard let pages = JSONDictionary["pages"] as? NSArray else {
                     NSLog("Could not find 'pages' array in root")
@@ -46,51 +40,40 @@ func languageSpecificKeyboard() -> Keyboard?
                 for page in pages {
                     
                     if let pageDict = page as? NSDictionary {
-                        guard let pageIndex = pageDict["pageIndex"] as? Int else {
-                            NSLog("Did not find 'pageIndex' attribute")
-                            return nil
-                        }
-                        
-                        guard let rows = pageDict["rows"] as? NSArray else {
-                            NSLog("Could not find 'rows' array in root")
-                            return nil
-                        }
-                        
-                        for row in rows {
-                            if let rowDict = row as? NSDictionary {
-                                
-                                guard let rowIndex = rowDict["rowIndex"] as? Int else {
-                                    NSLog("Could not find 'rowIndex' attribute")
-                                    return nil
-                                }
-                                
-                                guard let keys = rowDict["keys"] as? NSArray else {
-                                    NSLog("Could not find 'keys' array on root")
-                                    return nil
-                                }
-                                
-                                // HACKHACK Splice in the shift key
-                                if rowIndex == 2 {
-                                    let keyModel = Key(.Shift)
-                                    
-                                    newKeyboard.addKey(keyModel, row: rowIndex, page: pageIndex)
-                                }
-                                
-                                for oneKey in keys {
-                                    if let oneKeyRecord = oneKey as? NSDictionary {
-                                        if let keyLabel = oneKeyRecord["label"] as? String {
-                                            let keyModel = Key(.Character)
-                                            keyModel.setLetter(keyLabel)
-                                            keyModel.isTopRow = rowIndex == 0
-                                            
-                                            newKeyboard.addKey(keyModel, row: rowIndex, page: pageIndex)
+
+                        if let pageIndex = pageDict["pageIndex"] as? Int,
+                            let rows = pageDict["rows"] as? NSArray {
+
+                                for row in rows {
+                                    if let rowDict = row as? NSDictionary {
+
+                                        if let rowIndex = rowDict["rowIndex"] as? Int,
+                                            let keys = rowDict["keys"] as? NSArray {
+
+                                                // HACKHACK Splice in the shift key
+                                                if rowIndex == 2 {
+                                                    let keyModel = Key(.Shift)
+
+                                                    newKeyboard.addKey(keyModel, row: rowIndex, page: pageIndex)
+                                                }
+
+                                                for oneKey in keys {
+                                                    if let oneKeyRecord = oneKey as? NSDictionary {
+                                                        if let keyLabel = oneKeyRecord["label"] as? String {
+                                                            let keyModel = Key(.Character)
+                                                            keyModel.setLetter(keyLabel)
+                                                            keyModel.isTopRow = rowIndex == 0
+
+                                                            newKeyboard.addKey(keyModel, row: rowIndex, page: pageIndex)
+                                                        }
+                                                        
+                                                        // TODO store the ambiguous key values as well as the key label
+                                                        
+                                                    }
+                                                }
                                         }
-                                        
-                                        // TODO store the ambiguous key values as well as the key label
-                                        
                                     }
                                 }
-                            }
                         }
                     }
                 }

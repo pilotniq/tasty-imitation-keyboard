@@ -221,7 +221,7 @@ class KeyboardViewController: UIInputViewController {
             self.layout?.initialize()
             self.setMode(0)
             
-//            self.setupKludge()
+            self.setupKludge()
             
             self.updateKeyCaps(self.shiftState.uppercase())
             self.setCapsIfNeeded()
