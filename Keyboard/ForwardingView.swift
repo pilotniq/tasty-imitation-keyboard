@@ -218,8 +218,6 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
                 continue
             }
 
-            view.alpha = 1
-            
             let distance = distanceBetween(view.frame, point: position)
             
             if closest != nil {
