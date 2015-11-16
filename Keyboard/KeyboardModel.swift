@@ -284,6 +284,16 @@ class Key: Hashable {
         return keyModeChangeLetters
     }
 
+    class func ModeChangeSpecialChars() -> Key
+    {
+        let keyModeChangeSpecialCharacters = Key(.ModeChange)
+        keyModeChangeSpecialCharacters.uppercaseKeyCap = "#+="
+        keyModeChangeSpecialCharacters.toMode = 2
+
+        return keyModeChangeSpecialCharacters
+    }
+
+
     class func NextKbdKey() -> Key
     {
         let nextKbdKey = Key(.KeyboardChange)

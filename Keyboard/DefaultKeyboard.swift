@@ -119,10 +119,7 @@ func addNumericPage(defaultKeyboard: Keyboard)
     AddSpecialCharacters(defaultKeyboard, characters: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"], row: 0, page: 1)
     AddSpecialCharacters(defaultKeyboard, characters: ["-", "/", ":", ";", "(", ")", "$", "&", "@", "\""], row: 1, page: 1)
 
-    let keyModeChangeSpecialCharacters = Key(.ModeChange)
-    keyModeChangeSpecialCharacters.uppercaseKeyCap = "#+="
-    keyModeChangeSpecialCharacters.toMode = 2
-    defaultKeyboard.addKey(keyModeChangeSpecialCharacters, row: 2, page: 1)
+    defaultKeyboard.addKey(Key.ModeChangeSpecialChars(), row: 2, page: 1)
 
     AddSpecialCharacters(defaultKeyboard, characters: [".", ",", "?", "!", "'"], row: 2, page: 1)
 
@@ -183,8 +180,7 @@ func FailSafeKeyboard() -> Keyboard {
     AddCharacters(defaultKeyboard, characters: ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"], row: 0, page: 0)
     AddCharacters(defaultKeyboard, characters: ["A", "S", "D", "F", "G", "H", "J", "K", "L"], row: 1, page: 0)
 	
-    let keyModel = Key(.Shift)
-    defaultKeyboard.addKey(keyModel, row: 2, page: 0)
+    defaultKeyboard.addKey(Key(.Shift), row: 2, page: 0)
 
     AddCharacters(defaultKeyboard, characters: ["Z", "X", "C", "V", "B", "N", "M"], row: 2, page: 0)
     

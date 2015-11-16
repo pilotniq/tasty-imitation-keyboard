@@ -143,28 +143,6 @@ NSString *const CYRKeyboardButtonKeyPressedKey = @"CYRKeyboardButtonKeyPressedKe
     return description;
 }
 
-//- (void)setInput:(NSString *)input
-//{
-//    //[self willChangeValueForKey:NSStringFromSelector(@selector(input))];
-//    self.input = input;
-//    //[self didChangeValueForKey:NSStringFromSelector(@selector(input))];
-//    
-//    _inputLabel.text = _input;
-//}
-//
-//- (void)setInputOptions:(NSArray *)inputOptions
-//{
-//    //[self willChangeValueForKey:NSStringFromSelector(@selector(inputOptions))];
-//    self.inputOptions = inputOptions;
-//    //[self didChangeValueForKey:NSStringFromSelector(@selector(inputOptions))];
-//    
-////    if (_inputOptions.count > 0) {
-////        //[self setupInputOptionsConfiguration];
-////    } else {
-////        //[self tearDownInputOptionsConfiguration];
-////    }
-//}
-
 - (void)setStyle:(CYRKeyboardButtonStyle)style
 {
     [self willChangeValueForKey:NSStringFromSelector(@selector(style))];
@@ -363,6 +341,15 @@ NSString *const CYRKeyboardButtonKeyPressedKey = @"CYRKeyboardButtonKeyPressedKe
     } else {
         self.position = CYRKeyboardButtonPositionRight;
     }
+}
+
+- (void) initializePopup: (UIView*) forwardingView
+{
+    self.hidden = YES;
+    self.forwordingView = forwardingView;
+    self.frame = CGRectMake(0, 0, 20, 20);
+    [self setupInputOptionsConfigurationWithView: forwardingView];
+    self.hidden = YES;
 }
 
 - (void)setupInputOptionsConfiguration

@@ -151,5 +151,5 @@ extern NSString *const CYRKeyboardButtonKeyPressedKey;
 - (void)setupInputOptionsConfigurationWithView:(UIView*)forwordingView;
 - (void)tearDownInputOptionsConfigurationWithView:(UIView*)forwordingView;
 - (void)tearDownInputOptionsConfiguration;
-
+- (void) initializePopup: (UIView*) forwardingView;
 @end

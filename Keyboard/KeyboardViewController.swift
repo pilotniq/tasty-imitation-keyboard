@@ -909,14 +909,10 @@ class KeyboardViewController: UIInputViewController {
 	// MARK: Added methods for extra features
 	func initializePopUp()
 	{
-		button.hidden = true
-		button.forwordingView = forwardingView
-		button.frame = CGRectMake(0, 0, 20, 20)
-		button.tag = 111
+        button.initializePopup(self.forwardingView)
 		self.view.insertSubview(self.button, aboveSubview: self.forwardingView)
-		button.setupInputOptionsConfigurationWithView(forwardingView)
-		button.hidden = true
-		viewLongPopUp.hidden = true
+
+        viewLongPopUp.hidden = true
 	}
 
 	func didTTouchExitDownSuggestionButton(sender: AnyObject?)
