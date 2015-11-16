@@ -946,7 +946,7 @@ class KeyboardViewController: UIInputViewController {
 
         onSuggestionTap(sender)
 
-        self.bannerView!.updateAppearance()
+        self.bannerView?.updateAppearance()
 		
 		self.setCapsIfNeeded()
 		
@@ -986,7 +986,20 @@ class KeyboardViewController: UIInputViewController {
         }
     }
 
+    func getLongPresses(sender: KeyboardKey) -> [String]?
+    {
+        return self.layout?.viewToModel[sender]?.getLongPressesForShiftState(self.shiftState)
+    }
 
+    func longPressEnabledKey(sender : KeyboardKey?) -> Bool
+    {
+        if sender == nil {
+            return false
+        }
+
+        let longPresses = self.getLongPresses(sender!)
+        return longPresses != nil && longPresses!.count > 0
+    }
 
 	func keyCharDoubleTapped(sender: KeyboardKey)
 	{
@@ -994,10 +1007,7 @@ class KeyboardViewController: UIInputViewController {
 		{
 			sender.hidePopup()
 			
-			var arrOptions = self.getInputOption(sender.text.uppercaseString) as [String]
-			
-			if arrOptions.count > 0
-			{
+            if let arrOptions = self.getLongPresses(sender) where arrOptions.count > 0 {
 				if arrOptions[0] != ""
 				{
 					var offsetY : CGFloat = 9
@@ -1045,10 +1055,7 @@ class KeyboardViewController: UIInputViewController {
 					self.view.insertSubview(self.viewLongPopUp, aboveSubview: self.forwardingView)
 					self.forwardingView.isLongPressEnable = true
 					self.view.bringSubviewToFront(self.viewLongPopUp)
-					//self.forwardingView.resetTrackedViews()
-					//sender.hidePopup()
-					//self.view.addSubview(self.viewLongPopUp)
-					
+
 					sender.tag = 0
 				}
 			}
@@ -1089,39 +1096,4 @@ class KeyboardViewController: UIInputViewController {
 		
 	}
     
-    let lowerCaseCousins: [String : [String]] = [
-        "A" : ["a","á", "à", "ä", "â", "ã", "å", "æ","ā"],
-        "E" : ["e", "é", "è", "ë", "ê", "ę", "ė", "ē"],
-        "U" : ["u", "ú", "ü", "ù", "û", "ū"],
-        "I" : ["i", "í", "ï", "ì", "î", "į", "ī"],
-        "O" : ["o", "ó", "ò", "ö", "ô", "õ", "ø", "œ", "ō"],
-        "S" : ["s","š"],
-        "D" : ["d", "đ"],
-        "C" : ["c", "ç", "ć", "č"],
-        "N" : ["n","ñ", "ń"],
-        "." : [".com",".edu",".net",".org"]
-    ]
-
-    let upperCaseCousins: [String : [String]] = [
-        "A" : ["A","Á","À","Ä","Â","Ã","Å","Æ","Ā"],
-        "E" : ["E","É","È","Ë","Ê","Ę","Ė","Ē"],
-        "U" : ["U","Ú","Ü","Ù","Û"],
-        "I" : ["I","Í","Ï","Ì","Î","Į","Ī"],
-        "O" : ["O","Ó","Ò","Ö","Ô","Õ","Ø","Œ","Ō"],
-        "S" : ["S","Š"],
-        "D" : ["D","Đ"],
-        "C" : ["C","Ç","Ć","Č"],
-        "N" : ["N","Ñ","Ń"],
-        "." : [".com",".edu",".net",".org"]
-    ]
-
-	func getInputOption(strChar : String) -> [String]
-	{
-        if let cousins = self.shiftState == .Enabled || self.shiftState == .Locked ? upperCaseCousins[strChar] : lowerCaseCousins[strChar] {
-            return cousins
-        }
-        else {
-            return [""]
-        }
-    }
 }

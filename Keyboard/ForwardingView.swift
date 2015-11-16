@@ -21,6 +21,8 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 	
 	var currentMode: Int = 0
 	var keyboard_type: UIKeyboardType?
+
+    var viewController: KeyboardViewController?  = nil
 	
     private func MakeLongPressGesturesRecognizer()
     {
@@ -55,6 +57,12 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 		
         self.MakeLongPressGesturesRecognizer()
         self.MakeSwipeGestureRecognizers()
+    }
+
+    convenience init(frame: CGRect, viewController: KeyboardViewController) {
+        self.init(frame: frame)
+
+        self.viewController = viewController
     }
     
     required init(coder: NSCoder) {
@@ -132,17 +140,12 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
             let position = longPress.locationInView(self)
             let view = findNearestView(position)
             
-            let viewChangedOwnership = false
-            
-            if !viewChangedOwnership {
+            if let v = view as? KeyboardKey {
+                if self.isLongPressEnableKey(v)
+                {
+                    view!.tag = 888
 
-                if let v = view as? KeyboardKey {
-                    if self.isLongPressEnableKey(v.text)
-                    {
-                        view!.tag = 888
-
-                        self.handleControl(view, controlEvent: .TouchDownRepeat)
-                    }
+                    self.handleControl(view, controlEvent: .TouchDownRepeat)
                 }
             }
         }
@@ -156,40 +159,12 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 			if (gestureRecognizer.state == UIGestureRecognizerState.Possible)
 			{
 				let position = touch.locationInView(self)
-				let view = findNearestView(position)
-				
-				let viewChangedOwnership = false
-				
-				if !viewChangedOwnership {
-
-                    if let v = view as? KeyboardKey
-					{
-						if self.isLongPressEnableKey(v.text)
-						{
-							return true
-						}
-					}
-				}
-				return false
+                return self.isLongPressEnableKey(findNearestView(position) as? KeyboardKey)
 			}
 			else if (gestureRecognizer.state == UIGestureRecognizerState.Ended)
 			{
 				let position = gestureRecognizer.locationInView(self)
-				let view = findNearestView(position)
-				
-				let viewChangedOwnership = false
-				
-				if !viewChangedOwnership {
-					
-					if let v = view as? KeyboardKey
-					{
-						if self.isLongPressEnableKey(v.text)
-						{
-							return true
-						}
-					}
-				}
-				return false
+                return self.isLongPressEnableKey(findNearestView(position) as? KeyboardKey)
 			}
 		}
 		else
@@ -411,29 +386,17 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
         }
     }
 
-    // TODO Current code determines what chars have long press lists of alternates by enumerating the legend of the key.
-    // Really this should just be a property of the key, defined when the values were read from a config file
-	func isLongPressEnableKey(text:NSString) -> Bool
-	{
-		let alphabet_lengh = text.length
-		
-		if(alphabet_lengh > 1)
-		{
-			return false
-		}
-		
-		let alphaBets = NSCharacterSet(charactersInString: "AEUIOSDCNaeuiosdcn.")
-		
-		if text.rangeOfCharacterFromSet(alphaBets).location != NSNotFound
-		{
-			if self.currentMode == 0
-			{
-				return keyboard_type != UIKeyboardType.DecimalPad && keyboard_type != UIKeyboardType.NumberPad
-			}
-			
-		}
-		
-		return false
+    func isLongPressEnableKey(key: KeyboardKey?) -> Bool {
+        // Assume for now that decimal pad and number pad keys can't do long press.
+        if self.currentMode == 0
+        {
+            return keyboard_type != UIKeyboardType.DecimalPad && keyboard_type != UIKeyboardType.NumberPad
+        }
+
+        // REVIEW We need to determine whether the key that got pressed has a list of long presses for the current state
+        // but the only way to get that is to go through a portal to the view controller. This seems unnecessarily convoluted.
+
+        return self.viewController != nil && self.viewController!.longPressEnabledKey(key)
 	}
 
 	

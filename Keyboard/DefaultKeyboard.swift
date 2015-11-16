@@ -29,22 +29,23 @@ func languageSpecificKeyboard() -> Keyboard?
                     NSLog("Not a Dictionary")
                     return nil
                 }
-                
+
                 guard let pages = JSONDictionary["pages"] as? NSArray else {
                     NSLog("Could not find 'pages' array in root")
                     return nil
                 }
-                
+
                 let newKeyboard = Keyboard()
-                
+
                 for page in pages {
-                    
+
                     if let pageDict = page as? NSDictionary {
 
                         if let pageIndex = pageDict["pageIndex"] as? Int,
                             let rows = pageDict["rows"] as? NSArray {
 
                                 for row in rows {
+
                                     if let rowDict = row as? NSDictionary {
 
                                         if let rowIndex = rowDict["rowIndex"] as? Int,
@@ -52,23 +53,34 @@ func languageSpecificKeyboard() -> Keyboard?
 
                                                 // HACKHACK Splice in the shift key
                                                 if rowIndex == 2 {
-                                                    let keyModel = Key(.Shift)
 
-                                                    newKeyboard.addKey(keyModel, row: rowIndex, page: pageIndex)
+                                                    newKeyboard.addKey(Key(.Shift), row: rowIndex, page: pageIndex)
                                                 }
 
                                                 for oneKey in keys {
                                                     if let oneKeyRecord = oneKey as? NSDictionary {
-                                                        if let keyLabel = oneKeyRecord["label"] as? String {
-                                                            let keyModel = Key(.Character)
-                                                            keyModel.setLetter(keyLabel)
+
+                                                        // Chars mapped to a key are:
+                                                        // (Mandatory): label
+                                                        // (Optional) : long press values
+                                                        // (Optional) : shifted label
+                                                        // (Optional) : shifted long press values
+                                                        if let label = oneKeyRecord["label"] as? String {
+                                                            let longPress = oneKeyRecord["longPress"] as? [String]
+                                                            let shiftLabel = oneKeyRecord["shiftLabel"] as? String
+                                                            let shiftLongPress = oneKeyRecord["shiftLongPress"] as? [String]
+
+                                                            let keyModel = Key(
+                                                                type: .Character,
+                                                                label: label,
+                                                                longPress: longPress,
+                                                                shiftLabel: shiftLabel,
+                                                                shiftLongPress: shiftLongPress)
+
                                                             keyModel.isTopRow = rowIndex == 0
 
                                                             newKeyboard.addKey(keyModel, row: rowIndex, page: pageIndex)
                                                         }
-                                                        
-                                                        // TODO store the ambiguous key values as well as the key label
-                                                        
                                                     }
                                                 }
                                         }
@@ -190,11 +202,12 @@ func FailSafeKeyboard() -> Keyboard {
 func defaultLanguageSpecificKeyboard() -> Keyboard
 {
     if let defaultKeyboard = languageSpecificKeyboard() {
+
         addDefaultBottomRowKeys(defaultKeyboard, modeChange: Key.ModeChangeNumbersKey(), pageNumber: 0)
-        
         return defaultKeyboard
     }
     else {
+
         return FailSafeKeyboard()
     }
 }
@@ -218,10 +231,10 @@ func defaultKeyboardEmail() -> Keyboard {
     if let defaultKeyboard = languageSpecificKeyboard() {
         
         addEmailBottomRowKeys(defaultKeyboard)
-        
         return defaultKeyboard
     }
     else {
+
         return FailSafeKeyboard()
     }
     

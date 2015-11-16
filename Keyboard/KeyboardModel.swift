@@ -111,10 +111,14 @@ class Key: Hashable {
     
     var isTopRow: Bool
     var type: KeyType
-    var uppercaseKeyCap: String?
-    var lowercaseKeyCap: String?
-    var uppercaseOutput: String?
-    var lowercaseOutput: String?
+    var uppercaseKeyCap: String? = nil
+    var lowercaseKeyCap: String? = nil
+    var uppercaseOutput: String? = nil
+    var lowercaseOutput: String? = nil
+
+    var longPress: [String]? = nil // The values to show on long press unshifted
+    var shiftLongPress: [String]? = nil // The values to show on long press shifted
+
     var toMode: Int? //if the key is a mode button, this indicates which page it links to
     
     var isCharacter: Bool {
@@ -147,6 +151,17 @@ class Key: Hashable {
             return (self.uppercaseOutput != nil) || (self.lowercaseOutput != nil)
         }
     }
+
+    func getLongPressesForShiftState(shiftState: ShiftState) -> [String]
+    {
+        if let cousins = shiftState == .Enabled || shiftState == .Locked ? self.shiftLongPress : self.longPress {
+            return cousins
+        }
+        else {
+            return [""]
+        }
+    }
+
     
     // TODO: this is kind of a hack
     var hashValue: Int
@@ -165,7 +180,24 @@ class Key: Hashable {
         self.lowercaseKeyCap = key.lowercaseKeyCap
         self.uppercaseOutput = key.uppercaseOutput
         self.lowercaseOutput = key.lowercaseOutput
+        self.longPress = key.longPress
+        self.shiftLongPress = key.shiftLongPress
+
         self.toMode = key.toMode
+    }
+
+    convenience init(type: KeyType, label: String?, longPress: [String]?, shiftLabel: String?, shiftLongPress: [String]?)
+    {
+        self.init(type)
+
+        self.lowercaseKeyCap = label
+        self.lowercaseOutput = label
+
+        self.longPress = longPress
+        self.shiftLongPress = shiftLongPress
+
+        self.uppercaseKeyCap = shiftLabel
+        self.uppercaseOutput = shiftLabel
     }
     
     func setLetter(letter: String) {
@@ -211,8 +243,8 @@ class Key: Hashable {
     
     class func PeriodKey() -> Key
     {
-        let dotModel = Key(.Character)
-        dotModel.setLetter(".")
+        let longPressValues = [".com",".edu",".net",".org"]
+        let dotModel = Key(type: .Character, label: ".", longPress: longPressValues, shiftLabel: ".", shiftLongPress: longPressValues)
         
         return dotModel
     }

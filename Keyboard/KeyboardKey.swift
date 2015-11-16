@@ -419,12 +419,6 @@ class KeyboardKey: UIControl {
         self.connector!.layer.zPosition = -1
         self.addSubview(self.connector!)
         
-//        self.drawBorder = true
-        
-        if direction == Direction.Up {
-//            self.popup!.drawUnder = false
-//            self.connector!.drawUnder = false
-        }
     }
     
     func showPopup() {
