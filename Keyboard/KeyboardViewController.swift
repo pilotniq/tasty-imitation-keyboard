@@ -132,7 +132,7 @@ class KeyboardViewController: UIInputViewController {
 
         self.languageDefinitions = LanguageDefinitions(jsonFileName: "LanguageDefinitions")
 
-		self.forwardingView = ForwardingView(frame: CGRectZero)
+		self.forwardingView = ForwardingView(frame: CGRectZero, viewController: self)
 		self.view.addSubview(self.forwardingView)
 		
         if let aBanner = self.createBanner() {
@@ -994,7 +994,7 @@ class KeyboardViewController: UIInputViewController {
         }
 
         let longPresses = self.getLongPresses(sender!)
-        return longPresses != nil && longPresses!.count > 0
+        return longPresses != nil && longPresses!.count > 0 && longPresses![0] != ""
     }
 
 	func keyCharDoubleTapped(sender: KeyboardKey)

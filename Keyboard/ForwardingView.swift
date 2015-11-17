@@ -387,17 +387,21 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
     }
 
     func isLongPressEnableKey(key: KeyboardKey?) -> Bool {
-        // Assume for now that decimal pad and number pad keys can't do long press.
-        if self.currentMode == 0
-        {
-            return keyboard_type != UIKeyboardType.DecimalPad && keyboard_type != UIKeyboardType.NumberPad
-        }
 
         // REVIEW We need to determine whether the key that got pressed has a list of long presses for the current state
         // but the only way to get that is to go through a portal to the view controller. This seems unnecessarily convoluted.
 
-        return self.viewController != nil && self.viewController!.longPressEnabledKey(key)
-	}
+        if self.viewController != nil && self.viewController!.longPressEnabledKey(key) {
+            // Assume for now that decimal pad and number pad keys can't do long press.
+            if self.currentMode == 0
+            {
+                return keyboard_type != UIKeyboardType.DecimalPad && keyboard_type != UIKeyboardType.NumberPad
+            }
+        }
+
+        return false
+
+    }
 
 	
 	func getCYRView() -> CYRKeyboardButtonView!
