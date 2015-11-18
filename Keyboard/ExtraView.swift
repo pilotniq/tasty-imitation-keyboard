@@ -20,18 +20,26 @@ class ExtraView: UIView {
     }
     
     var solidColorMode: Bool
-	
+
 	var btn1 : UIButton = UIButton()
 	var btn2 : UIButton = UIButton()
 	var btn3 : UIButton = UIButton()
 	var btn4 : UIButton = UIButton()
-	
+
+    var buttons: [UIButton] {
+        get {
+            return [self.btn1, self.btn2, self.btn3]
+        }
+    }
+
     required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool) {
         self.globalColors = globalColors
         self.darkMode = darkMode
         self.solidColorMode = solidColorMode
-        
+
         super.init(frame: CGRectZero)
+
+        self.hidden = true
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -40,11 +48,13 @@ class ExtraView: UIView {
         self.solidColorMode = false
         
         super.init(coder: aDecoder)
+
+        self.hidden = true
     }
 
 
     func updateAppearance() {
-        for button in [btn1, btn2, btn3] {
+        for button in self.buttons {
             showUnpressedAppearance(button)
         }
     }

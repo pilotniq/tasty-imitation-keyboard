@@ -13,9 +13,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
     var touchToView: [UITouch:UIView]
 	
 	var gesture = UILongPressGestureRecognizer()
-    var leftSwipeGestureRecognizer = UISwipeGestureRecognizer()
-    var rightSwipeGestureRecognizer = UISwipeGestureRecognizer()
-	
+
 	var isLongPressEnable = false
 	var isLongPressKeyPress = false
 	
@@ -34,17 +32,6 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
         self.addGestureRecognizer(gesture)
     }
     
-    private func MakeSwipeGestureRecognizers()
-    {
-        leftSwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: Selector("handleLeftSwipe:"))
-        leftSwipeGestureRecognizer.direction = .Left
-        self.addGestureRecognizer(leftSwipeGestureRecognizer)
-        
-        rightSwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: Selector("handleRightSwipe:"))
-        rightSwipeGestureRecognizer.direction = .Right
-        self.addGestureRecognizer(rightSwipeGestureRecognizer)
-    }
-    
     override init(frame: CGRect) {
         self.touchToView = [:]
         
@@ -56,7 +43,6 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
         self.opaque = false
 		
         self.MakeLongPressGesturesRecognizer()
-        self.MakeSwipeGestureRecognizers()
     }
 
     convenience init(frame: CGRect, viewController: KeyboardViewController) {
@@ -80,7 +66,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
             return nil
         }
         else {
-            return (CGRectContainsPoint(self.bounds, point) ? self : nil)
+            return CGRectContainsPoint(self.bounds, point) ? self : nil
         }
     }
     
@@ -98,17 +84,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
             }
         }
     }
-	
-    func handleLeftSwipe(sender: UISwipeGestureRecognizer)
-    {
-        NSLog("Swipe left")
-    }
-    
-    func handleRightSwipe(sender: UISwipeGestureRecognizer)
-    {
-        NSLog("Swipe right")
-    }
-    
+
 	@IBAction func handleLongGesture(longPress: UIGestureRecognizer)
 	{
 		if (longPress.state == UIGestureRecognizerState.Ended)
@@ -208,7 +184,14 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 
         return closest?.0
     }
-        
+
+    func removeSubviews()
+    {
+        for view in self.subviews {
+            view.removeFromSuperview()
+        }
+    }
+
     // reset tracked views without cancelling current touch
     func resetTrackedViews() {
         for view in self.touchToView.values {
@@ -356,16 +339,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
                 }
                 else
                 {
-                    if self.bounds.contains(touchPosition)
-                    {
-                        self.handleControl(view, controlEvent: .TouchUpInside)
-                    }
-                    else
-                    {
-                        self.handleControl(view, controlEvent: .TouchCancel)
-                    }
-                    
-                    //self.touchToView[touch] = nil
+                    self.handleControl(view, controlEvent: self.bounds.contains(touchPosition) ? .TouchUpInside : .TouchCancel)
                 }
                 
                 self.touchToView[touch] = nil

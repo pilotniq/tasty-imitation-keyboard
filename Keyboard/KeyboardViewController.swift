@@ -91,7 +91,6 @@ class KeyboardViewController: UIInputViewController {
         }
     }
 	
-	//MARK:- Extra variables for extra features
 	var sug_word : String = ""
 	
 	var viewLongPopUp:CYRKeyboardButtonView = CYRKeyboardButtonView()
@@ -135,19 +134,16 @@ class KeyboardViewController: UIInputViewController {
 		self.forwardingView = ForwardingView(frame: CGRectZero, viewController: self)
 		self.view.addSubview(self.forwardingView)
 		
-        if let aBanner = self.createBanner() {
-            for button in [aBanner.btn1, aBanner.btn2, aBanner.btn3] {
-                button.addTarget(self, action: "didTapSuggestionButton:", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchDragOutside])
-                button.addTarget(self, action: "didTTouchDownSuggestionButton:", forControlEvents: [.TouchDown, .TouchDragInside, .TouchDragEnter])
-                button.addTarget(self, action: "didTTouchExitDownSuggestionButton:", forControlEvents: [.TouchDragExit, .TouchCancel])
-            }
-			
-			aBanner.hidden = true
-			self.view.insertSubview(aBanner, aboveSubview: self.forwardingView)
-			self.bannerView = aBanner
-		}
-		
-		initializePopUp()
+        self.bannerView = self.createBanner()
+        for button in self.bannerView!.buttons {
+            button.addTarget(self, action: "didTapSuggestionButton:", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchDragOutside])
+            button.addTarget(self, action: "didTTouchDownSuggestionButton:", forControlEvents: [.TouchDown, .TouchDragInside, .TouchDragEnter])
+            button.addTarget(self, action: "didTTouchExitDownSuggestionButton:", forControlEvents: [.TouchDragExit, .TouchCancel])
+        }
+
+        self.view.insertSubview(self.bannerView!, aboveSubview: self.forwardingView)
+
+        initializePopUp()
 		
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("defaultsChanged:"), name: NSUserDefaultsDidChangeNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("hideExpandView:"), name: "hideExpandViewNotification", object: nil)
@@ -165,7 +161,6 @@ class KeyboardViewController: UIInputViewController {
     }
     
     func defaultsChanged(notification: NSNotification) {
-        //_ = notification.object as? NSUserDefaults
         self.updateKeyCaps(self.shiftState.uppercase())
     }
     
@@ -283,11 +278,8 @@ class KeyboardViewController: UIInputViewController {
     override func loadView() {
         super.loadView()
 		
-        if let aBanner = self.createBanner() {
-            aBanner.hidden = true
-            self.view.insertSubview(aBanner, belowSubview: self.forwardingView)
-            self.bannerView = aBanner
-        }
+        self.bannerView = self.createBanner()
+        self.view.insertSubview(self.bannerView!, belowSubview: self.forwardingView)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -301,25 +293,15 @@ class KeyboardViewController: UIInputViewController {
         self.forwardingView.resetTrackedViews()
         self.shiftStartingState = nil
         self.shiftWasMultitapped = false
-        
-        // optimization: ensures smooth animation
-        if let keyPool = self.layout?.keyPool {
-            for view in keyPool {
-                view.shouldRasterize = true
-            }
-        }
-        
+
+        self.layout?.rasterizeKeys(true)
+
         self.keyboardHeight = self.heightForOrientation(toInterfaceOrientation, withTopBanner: true)
         self.currentInterfaceOrientation = toInterfaceOrientation
     }
     
     override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
-        // optimization: ensures quick mode and shift transitions
-        if let keyPool = self.layout?.keyPool {
-            for view in keyPool {
-                view.shouldRasterize = false
-            }
-        }
+        self.layout?.rasterizeKeys(false)
     }
 	
     func CasedString(str : String, shiftState : ShiftState) -> String
@@ -510,18 +492,10 @@ class KeyboardViewController: UIInputViewController {
 				self.forwardingView.resetTrackedViews()
 				self.shiftStartingState = nil
 				self.shiftWasMultitapped = false
-				//
-				// optimization: ensures smooth animation
-				if let keyPool = self.layout?.keyPool {
-					for view in keyPool {
-						view.shouldRasterize = true
-					}
-				}
-				
-                for view in self.forwardingView.subviews {
-					view.removeFromSuperview()
-				}
-				
+
+                self.layout?.rasterizeKeys(true)
+                self.forwardingView.removeSubviews()
+
 				self.keyboardHeight = self.heightForOrientation(self.currentInterfaceOrientation, withTopBanner: true)
 				
 				self.constraintsAdded = false
@@ -659,8 +633,7 @@ class KeyboardViewController: UIInputViewController {
     func backspaceDown(sender: KeyboardKey) {
         self.cancelBackspaceTimers()
         
-        let textDocumentProxy = self.textDocumentProxy
-        textDocumentProxy.deleteBackward()
+        self.textDocumentProxy.deleteBackward()
         
         self.setCapsIfNeeded()
         
@@ -760,8 +733,7 @@ class KeyboardViewController: UIInputViewController {
         if self.settingsView == nil {
             if let aSettings = self.createSettings() {
                 aSettings.darkMode = self.darkMode()
-                
-                aSettings.hidden = true
+
                 self.view.addSubview(aSettings)
                 self.settingsView = aSettings
                 
@@ -892,10 +864,9 @@ class KeyboardViewController: UIInputViewController {
     }
     
     // a banner that sits in the empty space on top of the keyboard
-    func createBanner() -> ExtraView? {
+    func createBanner() -> ExtraView {
         // note that dark mode is not yet valid here, so we just put false for clarity
         return ExtraView(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode())
-        //return nil
     }
     
     // a settings view that replaces the keyboard when the settings button is pressed

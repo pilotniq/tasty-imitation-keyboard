@@ -264,7 +264,15 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     var darkMode: Bool
     var solidColorMode: Bool
     var initialized: Bool
-    
+
+    // optimization: ensures quick mode and shift transitions
+    func rasterizeKeys(rasterize: Bool)
+    {
+        for view in self.keyPool {
+            view.shouldRasterize = rasterize
+        }
+    }
+
     required init(model: Keyboard, superview: UIView, layoutConstants: LayoutConstants.Type, globalColors: GlobalColors.Type, darkMode: Bool, solidColorMode: Bool)
     {
         self.layoutConstants = layoutConstants
