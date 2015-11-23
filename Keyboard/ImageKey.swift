@@ -31,12 +31,7 @@ class ImageKey: KeyboardKey {
         let switchColors = self.highlighted || self.selected
         
         if switchColors {
-            if let downTextColor = self.downTextColor {
-                self.image?.tintColor = downTextColor
-            }
-            else {
-                self.image?.tintColor = self.textColor
-            }
+            self.image?.tintColor = self.downTextColor ?? self.textColor
         }
         else {
             self.image?.tintColor = self.textColor

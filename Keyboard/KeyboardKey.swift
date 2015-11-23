@@ -307,10 +307,6 @@ class KeyboardKey: UIControl {
     }
     
     func redrawText() {
-//        self.keyView.frame = self.bounds
-//        self.button.frame = self.bounds
-//        
-//        self.button.setTitle(self.text, forState: UIControlState.Normal)
     }
     
     func redrawShape() {
@@ -338,43 +334,18 @@ class KeyboardKey: UIControl {
         let switchColors = self.highlighted || self.selected
         
         if switchColors {
-            if let downColor = self.downColor {
-                self.displayView.fillColor = downColor
-            }
-            else {
-                self.displayView.fillColor = self.color
-            }
-            
-            if let downUnderColor = self.downUnderColor {
-                self.underView?.fillColor = downUnderColor
-            }
-            else {
-                self.underView?.fillColor = self.underColor
-            }
-            
-            if let downBorderColor = self.downBorderColor {
-                self.borderView?.strokeColor = downBorderColor
-            }
-            else {
-                self.borderView?.strokeColor = self.borderColor
-            }
-            
-            if let downTextColor = self.downTextColor {
-                self.label.textColor = downTextColor
-                self.popupLabel?.textColor = downTextColor
-                self.shape?.color = downTextColor
-            }
-            else {
-                self.label.textColor = self.textColor
-                self.popupLabel?.textColor = self.textColor
-                self.shape?.color = self.textColor
-            }
+            self.displayView.fillColor = self.downColor ?? self.color
+            self.underView?.fillColor = self.downUnderColor ?? self.underColor
+            self.borderView?.strokeColor = self.downBorderColor ?? self.borderColor
+
+            let textColor = self.downTextColor ?? self.textColor
+            self.label.textColor = textColor
+            self.popupLabel?.textColor = textColor
+            self.shape?.color = textColor
         }
         else {
             self.displayView.fillColor = self.color
-            
             self.underView?.fillColor = self.underColor
-            
             self.borderView?.strokeColor = self.borderColor
             
             self.label.textColor = self.textColor
