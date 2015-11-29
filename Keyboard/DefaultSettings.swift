@@ -7,6 +7,11 @@
 //
 
 import UIKit
+
+let SwitchTag = 1
+let LabelTag = 2
+let LongLabelTag = 3
+
 class ColorScheme
 {
     func labelTextColor() -> UIColor {
@@ -89,7 +94,6 @@ class DarkColorScheme: ColorScheme
 
     override func sectionBackgroundColor() -> UIColor {
         return UIColor.darkGrayColor().colorWithAlphaComponent(CGFloat(0.5))
-        //return UIColor.grayColor()
     }
 
     override func settingsBackgroundColor() -> UIColor {
@@ -225,14 +229,17 @@ class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
         return self.settingsList[section].0
     }
 
+    func formatHeader(label: UILabel?) {
+        let colorScheme = ColorScheme.ColorSchemeChooser(darkMode)
+        label?.textColor = colorScheme.sectionLabelColor()
+        label?.backgroundColor=colorScheme.sectionBackgroundColor()
+    }
+
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label = UILabel()
-
         label.text = self.settingsList[section].0
 
-        let colorScheme = ColorScheme.ColorSchemeChooser(darkMode)
-        label.textColor = colorScheme.sectionLabelColor()
-        label.backgroundColor=colorScheme.sectionBackgroundColor()
+        formatHeader(label)
 
         return label
     }
@@ -274,24 +281,27 @@ class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
         self.pixelLine?.backgroundColor = defaultColor.colorWithAlphaComponent(CGFloat(0.5))
 
         self.backButton?.setTitleColor(defaultColor, forState: UIControlState.Normal)
-//        self.backButton?.backgroundColor = colorScheme.backButtonBackgroundColor()
 
         self.settingsLabel?.textColor = colorScheme.labelTextColor()
-  //      self.settingsLabel?.backgroundColor = colorScheme.settingsBackgroundColor()
 
         self.effectsView?.backgroundColor = colorScheme.effectsBackgroundColor()
+
+        // We have to explicitly redraw the section headings or they stay the same color if the user
+        // flips between dark mode and light mode.
+        self.tableView?.reloadSections(NSIndexSet(indexesInRange: NSMakeRange(0, settingsList.count)), withRowAnimation: UITableViewRowAnimation.Automatic)
 
         if let visibleCells = self.tableView?.visibleCells {
             for cell in visibleCells {
 
                 cell.backgroundColor = colorScheme.cellBackgroundColor()
-                let label = cell.viewWithTag(2) as? UILabel
+                let label = cell.viewWithTag(LabelTag) as? UILabel
                 label?.textColor = colorScheme.cellLabelColor()
-                let longLabel = cell.viewWithTag(3) as? UITextView
+                let longLabel = cell.viewWithTag(LongLabelTag) as? UITextView
                 longLabel?.textColor = colorScheme.cellLongLabelColor()
 
             }
         }
+
     }
 
     func toggleSetting(sender: UISwitch) {
@@ -331,9 +341,9 @@ class DefaultSettingsTableViewCell: UITableViewCell {
         self.longLabel.selectable = false
         self.longLabel.backgroundColor = UIColor.clearColor()
 
-        self.sw.tag = 1
-        self.label.tag = 2
-        self.longLabel.tag = 3
+        self.sw.tag = SwitchTag
+        self.label.tag = LabelTag
+        self.longLabel.tag = LongLabelTag
 
         self.addSubview(self.sw)
         self.addSubview(self.label)
