@@ -13,7 +13,7 @@ This is the demo banner. The banner is needed so that the top row popups have so
 with something (or leave it blank if you like.)
 */
 
-class CatboardBanner: ExtraView {
+class CatboardBanner: SuggestionView {
     
     var catSwitch: UISwitch = UISwitch()
     var catLabel: UILabel = UILabel()

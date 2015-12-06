@@ -114,7 +114,7 @@ class DarkColorScheme: ColorScheme
 
 }
 
-class DefaultSettings: ExtraView, UITableViewDataSource, UITableViewDelegate {
+class DefaultSettings: LightDarkView, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet var tableView: UITableView?
     @IBOutlet var effectsView: UIVisualEffectView?

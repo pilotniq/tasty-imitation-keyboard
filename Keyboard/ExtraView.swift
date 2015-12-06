@@ -8,7 +8,8 @@
 
 import UIKit
 
-class ExtraView: UIView {
+// Base class that knows about dark mode vs. light mode
+class LightDarkView: UIView {
     
     var globalColors: GlobalColors.Type?
     var darkMode: Bool {
@@ -20,17 +21,6 @@ class ExtraView: UIView {
     }
     
     var solidColorMode: Bool
-
-	var btn1 : UIButton = UIButton()
-	var btn2 : UIButton = UIButton()
-	var btn3 : UIButton = UIButton()
-	var btn4 : UIButton = UIButton()
-
-    var buttons: [UIButton] {
-        get {
-            return [self.btn1, self.btn2, self.btn3]
-        }
-    }
 
     required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool) {
         self.globalColors = globalColors
@@ -54,6 +44,25 @@ class ExtraView: UIView {
 
 
     func updateAppearance() {
+    }
+
+}
+
+// The view to house the row of suggestion buttons across the top of the keyboard
+class SuggestionView: LightDarkView  {
+
+    var btn1 : UIButton = UIButton()
+    var btn2 : UIButton = UIButton()
+    var btn3 : UIButton = UIButton()
+    var btn4 : UIButton = UIButton()
+
+    var buttons: [UIButton] {
+        get {
+            return [self.btn1, self.btn2, self.btn3]
+        }
+    }
+
+    override func updateAppearance() {
         for button in self.buttons {
             showUnpressedAppearance(button)
         }
@@ -73,5 +82,5 @@ class ExtraView: UIView {
         button.backgroundColor = bluishGray
         button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
     }
-
+    
 }

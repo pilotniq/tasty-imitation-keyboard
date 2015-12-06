@@ -41,8 +41,8 @@ class KeyboardViewController: UIInputViewController {
     var layout: KeyboardLayout?
     var heightConstraint: NSLayoutConstraint?
     
-    var bannerView: ExtraView?
-    var settingsView: ExtraView?
+    var bannerView: SuggestionView?
+    var settingsView: LightDarkView?
     
     var currentMode: Int {
         didSet {
@@ -864,13 +864,13 @@ class KeyboardViewController: UIInputViewController {
     }
     
     // a banner that sits in the empty space on top of the keyboard
-    func createBanner() -> ExtraView {
+    func createBanner() -> SuggestionView {
         // note that dark mode is not yet valid here, so we just put false for clarity
-        return ExtraView(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode())
+        return SuggestionView(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode())
     }
     
     // a settings view that replaces the keyboard when the settings button is pressed
-    func createSettings() -> ExtraView? {
+    func createSettings() -> LightDarkView? {
         // note that dark mode is not yet valid here, so we just put false for clarity
         let settingsView = DefaultSettings(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode(), languageDefinitions: self.languageDefinitions)
         settingsView.backButton?.addTarget(self, action: Selector("toggleSettings"), forControlEvents: UIControlEvents.TouchUpInside)

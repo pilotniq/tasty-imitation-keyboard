@@ -77,7 +77,7 @@ class Catboard: KeyboardViewController {
         super.setupKeys()
     }
     
-    override func createBanner() -> ExtraView {
+    override func createBanner() -> SuggestionView {
         return CatboardBanner(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode())
     }
     
