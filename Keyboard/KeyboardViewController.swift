@@ -790,10 +790,9 @@ class KeyboardViewController: UIInputViewController {
                     let previousCharacter = beforeContext[beforeContext.endIndex.predecessor()]
                     return characterIsWhitespace(previousCharacter)
                 }
-                else {
-                    return true
-                }
-                
+
+                return true
+
             case .Sentences:
                 if let beforeContext = documentProxy.documentContextBeforeInput {
                     let offset = min(3, beforeContext.characters.count)
@@ -804,12 +803,7 @@ class KeyboardViewController: UIInputViewController {
                         let char = beforeContext[index]
                         
                         if characterIsPunctuation(char) {
-                            if i == 0 {
-                                return false //not enough spaces after punctuation
-                            }
-                            else {
-                                return true //punctuation with at least one space after it
-                            }
+                            return i > 0 //punctuation with at least one space after it
                         }
                         else {
                             if !characterIsWhitespace(char) {
@@ -820,13 +814,10 @@ class KeyboardViewController: UIInputViewController {
                             }
                         }
                     }
-                    
-                    return true //either got 3 spaces or hit start of line
-                }
-                else {
-                    return true
                 }
 
+                return true
+                
             case .AllCharacters:
                 return true
             }
