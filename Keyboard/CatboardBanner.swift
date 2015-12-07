@@ -65,19 +65,11 @@ class CatboardBanner: SuggestionView {
 		btn1 = suggestionButton("The")
         btn2 = suggestionButton("I")
         btn3 = suggestionButton("What")
-        btn4 = suggestionButton("Enable Allow Full Access")
 
-        if isOpenAccessGranted()
-        {
-            self.addSubview(self.btn1)
-            self.addSubview(self.btn2)
-            self.addSubview(self.btn3)
-        }
-        else
-        {
-            self.addSubview(self.btn4)
-        }
-		
+        self.addSubview(self.btn1)
+        self.addSubview(self.btn2)
+        self.addSubview(self.btn3)
+
 		addConstraintsToButtons()
     }
     
@@ -99,82 +91,44 @@ class CatboardBanner: SuggestionView {
 	
 	func addConstraintsToButtons()
 	{
-        
-        if isOpenAccessGranted()
-        {
-            var buttons = [btn1,btn2,btn3]
-        
-            for (index, button) in buttons.enumerate() {
-                
-                let topConstraint = NSLayoutConstraint(item: button, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1.0, constant: 0)
-                
-                let bottomConstraint = NSLayoutConstraint(item: button, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1.0, constant: 0)
-                
-                var rightConstraint : NSLayoutConstraint!
-                
-                if index == 2
-                {
-                    rightConstraint = NSLayoutConstraint(item: button, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1.0, constant: 0)
-                    self.addConstraint(rightConstraint)
-                }
-                
-                var leftConstraint : NSLayoutConstraint!
-                
-                if index == 0
-                {
-                    leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1.0, constant: 0)
-                }
-                else
-                {
-                    
-                    let prevtButton = buttons[index-1]
-                    leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: prevtButton, attribute: .Right, multiplier: 1.0, constant: 1)
-                    
-                    let firstButton = buttons[0]
-                    let widthConstraint = NSLayoutConstraint(item: firstButton, attribute: .Width, relatedBy: .Equal, toItem: button, attribute: .Width, multiplier: 1.0, constant: 1)
-                    
-                    widthConstraint.priority = 800
-                    self.addConstraint(widthConstraint)
-                    
-                }
-                
-                self.removeConstraints([topConstraint, bottomConstraint, leftConstraint])
-                self.addConstraints([topConstraint, bottomConstraint, leftConstraint])
-            }
-        }
-        else
-        {
-            let buttons = [btn4]
-            
-            for (index, button) in buttons.enumerate() {
-                
-                let topConstraint = NSLayoutConstraint(item: button, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1.0, constant: 0)
-                
-                let bottomConstraint = NSLayoutConstraint(item: button, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1.0, constant: 0)
-                
-                var rightConstraint : NSLayoutConstraint!
-                
-                if index == buttons.count - 1
-                {
-                    
-                    rightConstraint = NSLayoutConstraint(item: button, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1.0, constant: 0)
-                    self.addConstraint(rightConstraint)
-                }
-                
-                
-                var leftConstraint : NSLayoutConstraint!
-                
-                if index == 0
-                {
-                    
-                    leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 0.5, constant: 0)
-                    
-                }
+        var buttons = [btn1,btn2,btn3]
 
-                self.removeConstraints([topConstraint, bottomConstraint, leftConstraint])
-                self.addConstraints([topConstraint, bottomConstraint, leftConstraint])
+        for (index, button) in buttons.enumerate() {
+
+            let topConstraint = NSLayoutConstraint(item: button, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1.0, constant: 0)
+
+            let bottomConstraint = NSLayoutConstraint(item: button, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1.0, constant: 0)
+
+            var rightConstraint : NSLayoutConstraint!
+
+            if index == 2
+            {
+                rightConstraint = NSLayoutConstraint(item: button, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1.0, constant: 0)
+                self.addConstraint(rightConstraint)
             }
-            
+
+            var leftConstraint : NSLayoutConstraint!
+
+            if index == 0
+            {
+                leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1.0, constant: 0)
+            }
+            else
+            {
+
+                let prevtButton = buttons[index-1]
+                leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: prevtButton, attribute: .Right, multiplier: 1.0, constant: 1)
+
+                let firstButton = buttons[0]
+                let widthConstraint = NSLayoutConstraint(item: firstButton, attribute: .Width, relatedBy: .Equal, toItem: button, attribute: .Width, multiplier: 1.0, constant: 1)
+
+                widthConstraint.priority = 800
+                self.addConstraint(widthConstraint)
+
+            }
+
+            self.removeConstraints([topConstraint, bottomConstraint, leftConstraint])
+            self.addConstraints([topConstraint, bottomConstraint, leftConstraint])
         }
 	}
 

@@ -143,16 +143,9 @@ class DefaultSettings: LightDarkView, UITableViewDataSource, UITableViewDelegate
 
     var settingsNotes: [String: String] {
         get {
-            #if FULLACCESS
-                return [
-                    kKeyboardClicks: "Please note that keyboard clicks will work only if “Allow Full Access” is enabled in the keyboard settings. Unfortunately, this is a limitation of the operating system.",
-                    kSmallLowercase: "Changes your key caps to lowercase when Shift is off, making it easier to tell what mode you are in."
-                ]
-            #else
                 return [
                     kSmallLowercase: "Changes your key caps to lowercase when Shift is off, making it easier to tell what mode you are in."
                 ]
-            #endif
         }
     }
 

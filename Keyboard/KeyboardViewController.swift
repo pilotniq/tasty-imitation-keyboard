@@ -266,12 +266,9 @@ class KeyboardViewController: UIInputViewController {
 		
 		self.bannerView?.frame = CGRectMake(0, 0, self.view.bounds.width, metric("topBanner"))
 		
-		let proxy = textDocumentProxy
-		
-		self.bannerView!.hidden = proxy.keyboardType == UIKeyboardType.NumberPad || proxy.keyboardType == UIKeyboardType.DecimalPad
-		
-		let newOrigin = CGPointMake(0, self.view.bounds.height - self.forwardingView.bounds.height)
-		self.forwardingView.frame.origin = newOrigin
+		self.bannerView!.hidden = textDocumentProxy.keyboardType == UIKeyboardType.NumberPad || textDocumentProxy.keyboardType == UIKeyboardType.DecimalPad
+
+		self.forwardingView.frame.origin = CGPointMake(0, self.view.bounds.height - self.forwardingView.bounds.height)
 		
 	}
 	
@@ -840,15 +837,10 @@ class KeyboardViewController: UIInputViewController {
         
     }
     
-    // this only works if full access is enabled
+    // This only works if full access is enabled.
+    // Current over-arching goal is to implement a kbd that does not require full access so we can't play sound.
+    // But leave this as a stub in case Apple relaxes what you can do as a kbd later.
     func playKeySound() {
-        #if FULLACCESS
-            if isOpenAccessGranted() {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
-                    AudioServicesPlaySystemSound(1104)
-                })
-            }
-        #endif
     }
     
     //////////////////////////////////////
