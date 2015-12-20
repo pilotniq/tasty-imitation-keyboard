@@ -8,12 +8,10 @@
 
 import UIKit
 
-class ForwardingView: UIView,UIGestureRecognizerDelegate {
+class ForwardingView: UIView, UIGestureRecognizerDelegate {
     
     var touchToView: [UITouch:UIView]
 	
-	var gesture = UILongPressGestureRecognizer()
-
 	var isLongPressEnable = false
 	var isLongPressKeyPress = false
 	
@@ -24,7 +22,7 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 	
     private func MakeLongPressGesturesRecognizer()
     {
-        gesture = UILongPressGestureRecognizer(target: self, action: "handleLongGesture:")
+        let gesture = UILongPressGestureRecognizer(target: self, action: "handleLongGesture:")
         
         gesture.minimumPressDuration = 0.5
         gesture.delegate = self
@@ -157,10 +155,11 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 	
     // TODO: there's a bit of "stickiness" to Apple's implementation
     func findNearestView(position: CGPoint) -> UIView? {
+
         if !self.bounds.contains(position) {
             return nil
         }
-        
+
         var closest: (UIView, CGFloat)? = nil
         
         for view in self.subviews {
@@ -263,6 +262,10 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
 						self.handleControl(view, controlEvent: .TouchDownRepeat)
 					}
 				}
+                else {
+                    NSLog("Oops")
+
+                }
 			}
 			
 		}
@@ -317,16 +320,16 @@ class ForwardingView: UIView,UIGestureRecognizerDelegate {
                 
                 if(isLongPressKeyPress == true)
                 {
-                    let expandedButtonView : CYRKeyboardButtonView! = self.getCYRView()
-                    if expandedButtonView.selectedInputIndex != NSNotFound {
+                    if let expandedButtonView : CYRKeyboardButtonView = self.getCYRView() {
+                        if expandedButtonView.selectedInputIndex != NSNotFound {
 
-                        if let inputOption = self.getCYRButton().inputOptions[expandedButtonView.selectedInputIndex] as? String {
+                            if let inputOption = self.getCYRButton().inputOptions[expandedButtonView.selectedInputIndex] as? String {
 
-                            self.resetPopUpViews()
+                                self.resetPopUpViews()
 
-                            NSNotificationCenter.defaultCenter().postNotificationName("hideExpandViewNotification", object: nil, userInfo: ["text":inputOption])
+                                NSNotificationCenter.defaultCenter().postNotificationName("hideExpandViewNotification", object: nil, userInfo: ["text":inputOption])
+                            }
                         }
-                        
                     }
                     
                     isLongPressKeyPress = false

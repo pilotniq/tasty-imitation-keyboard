@@ -266,7 +266,7 @@ class KeyboardViewController: UIInputViewController {
 		
 		self.bannerView?.frame = CGRectMake(0, 0, self.view.bounds.width, metric("topBanner"))
 		
-		self.bannerView!.hidden = textDocumentProxy.keyboardType == UIKeyboardType.NumberPad || textDocumentProxy.keyboardType == UIKeyboardType.DecimalPad
+		self.bannerView?.hidden = textDocumentProxy.keyboardType == UIKeyboardType.NumberPad || textDocumentProxy.keyboardType == UIKeyboardType.DecimalPad
 
 		self.forwardingView.frame.origin = CGPointMake(0, self.view.bounds.height - self.forwardingView.bounds.height)
 		
@@ -427,16 +427,17 @@ class KeyboardViewController: UIInputViewController {
     
     var keyWithDelayedPopup: KeyboardKey?
     var popupDelayTimer: NSTimer?
-    
+
     func showPopup(sender: KeyboardKey) {
         if sender == self.keyWithDelayedPopup {
             self.popupDelayTimer?.invalidate()
         }
-		
-		self.view.sendSubviewToBack(self.bannerView!)
-		
+
 		let proxy = textDocumentProxy
         if proxy.keyboardType != UIKeyboardType.NumberPad && proxy.keyboardType != UIKeyboardType.DecimalPad {
+
+            // Push the top row of suggestion buttons back so we can draw the popup over the top
+            self.view.sendSubviewToBack(self.bannerView!)
 
             sender.showPopup()
 		}
@@ -459,8 +460,13 @@ class KeyboardViewController: UIInputViewController {
         self.keyWithDelayedPopup?.hidePopup()
         self.keyWithDelayedPopup = nil
         self.popupDelayTimer = nil
+
+        // Restore the top row of suggestion buttons.
+        // We had to push them to the back so the key popup could draw in that space.
+        self.view.bringSubviewToFront(self.bannerView!)
+
     }
-    
+
     /////////////////////
     // POPUP DELAY END //
     /////////////////////
@@ -563,6 +569,7 @@ class KeyboardViewController: UIInputViewController {
         }
         
         self.setCapsIfNeeded()
+
     }
 	
     func handleAutoPeriod(key: Key) {
@@ -817,7 +824,7 @@ class KeyboardViewController: UIInputViewController {
                 }
 
                 return true
-                
+
             case .AllCharacters:
                 return true
             }
