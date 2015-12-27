@@ -29,6 +29,11 @@ let kAutoCapitalization = "kAutoCapitalization"
 let kPeriodShortcut = "kPeriodShortcut"
 let kKeyboardClicks = "kKeyboardClicks"
 let kSmallLowercase = "kSmallLowercase"
+let kActiveLanguageCode = "kActiveLanguageCode"
+let kActiveKeyboardName = "kActiveKeyboardName"
+
+let vEnglishLanguageCode = "EN"
+let vQwertyKeyboardFileName = "EnglishQWERTY"
 
 class KeyboardViewController: UIInputViewController {
     
@@ -113,27 +118,12 @@ class KeyboardViewController: UIInputViewController {
         let screenSize : CGSize = UIScreen.mainScreen().bounds.size
         return screenSize.width < screenSize.height ? UIInterfaceOrientation.Portrait : UIInterfaceOrientation.LandscapeLeft
     }
-    
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-        NSUserDefaults.standardUserDefaults().registerDefaults([
-            kAutoCapitalization: true,
-            kPeriodShortcut: true,
-            kKeyboardClicks: false,
-            kSmallLowercase: false
-        ])
-        
-        self.shiftState = .Disabled
-        self.currentMode = 0
-        
-        self.currentInterfaceOrientation = KeyboardViewController.getInterfaceOrientation()
 
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    private func InitializeLayout()
+    {
+        self.forwardingView = ForwardingView(frame: CGRectZero, viewController: self)
+        self.view.addSubview(self.forwardingView)
 
-        self.languageDefinitions = LanguageDefinitions(jsonFileName: "LanguageDefinitions")
-
-		self.forwardingView = ForwardingView(frame: CGRectZero, viewController: self)
-		self.view.addSubview(self.forwardingView)
-		
         self.bannerView = self.createBanner()
         for button in self.bannerView!.buttons {
             button.addTarget(self, action: "didTapSuggestionButton:", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchDragOutside])
@@ -144,7 +134,30 @@ class KeyboardViewController: UIInputViewController {
         self.view.insertSubview(self.bannerView!, aboveSubview: self.forwardingView)
 
         initializePopUp()
-		
+
+    }
+
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+        NSUserDefaults.standardUserDefaults().registerDefaults([
+            kAutoCapitalization: true,
+            kPeriodShortcut: true,
+            kKeyboardClicks: false,
+            kSmallLowercase: false,
+            kActiveLanguageCode: vEnglishLanguageCode,
+            kActiveKeyboardName: vQwertyKeyboardFileName
+        ])
+
+        self.shiftState = .Disabled
+        self.currentMode = 0
+        
+        self.currentInterfaceOrientation = KeyboardViewController.getInterfaceOrientation()
+
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+
+        self.languageDefinitions = LanguageDefinitions(jsonFileName: "LanguageDefinitions")
+
+		InitializeLayout()
+
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("defaultsChanged:"), name: NSUserDefaultsDidChangeNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("hideExpandView:"), name: "hideExpandViewNotification", object: nil)
     }
@@ -182,7 +195,32 @@ class KeyboardViewController: UIInputViewController {
             self.kludge = kludge
         }
     }
-    
+
+    private func layoutHelper()
+    {
+
+        let proxy = textDocumentProxy
+        self.keyboard = defaultKeyboard(proxy.keyboardType!)
+
+        preKeyboardType = proxy.keyboardType!
+
+        self.layout = self.dynamicType.layoutClass.init(model: self.keyboard, superview: self.forwardingView, layoutConstants: self.dynamicType.layoutConstants, globalColors: self.dynamicType.globalColors, darkMode: self.darkMode(), solidColorMode: self.solidColorMode())
+
+        self.layout?.initialize()
+        self.setMode(0)
+
+        self.setupKludge()
+
+        self.updateKeyCaps(self.shiftState.uppercase())
+        self.setCapsIfNeeded()
+
+        self.updateAppearances(self.darkMode())
+        self.addInputTraitsObservers()
+
+        self.constraintsAdded = true
+
+    }
+
     /*
     BUG NOTE
 
@@ -205,26 +243,9 @@ class KeyboardViewController: UIInputViewController {
     var constraintsAdded: Bool = false
     func setupLayout() {
         if !constraintsAdded {
-			
-			let proxy = textDocumentProxy 
-			self.keyboard = defaultKeyboard(proxy.keyboardType!)
-			
-			preKeyboardType = proxy.keyboardType!
+            
+            layoutHelper()
 
-            self.layout = self.dynamicType.layoutClass.init(model: self.keyboard, superview: self.forwardingView, layoutConstants: self.dynamicType.layoutConstants, globalColors: self.dynamicType.globalColors, darkMode: self.darkMode(), solidColorMode: self.solidColorMode())
-            
-            self.layout?.initialize()
-            self.setMode(0)
-            
-            self.setupKludge()
-            
-            self.updateKeyCaps(self.shiftState.uppercase())
-            self.setCapsIfNeeded()
-            
-            self.updateAppearances(self.darkMode())
-            self.addInputTraitsObservers()
-            
-            self.constraintsAdded = true
         }
     }
     
@@ -301,40 +322,111 @@ class KeyboardViewController: UIInputViewController {
         self.layout?.rasterizeKeys(false)
     }
 	
-    func CasedString(str : String, shiftState : ShiftState) -> String
+
+    // If the char we got was one of the selections from pressing the keyboard select button then don't insert it into the text document.
+    // Instead take the appropriate action.
+    // For now, huge hack to decide that that's what we should do.
+    // Returns true if action was taken, else false indicating the caller can treat the text as typed and take action like inserting into the buffer.
+    //
+    // TODO: The globe button stays highlighted even though we're done.
+    func HandleKeyboardSelection(selection : String) -> Bool
     {
-        if shiftState == .Enabled
-        {
-            return str.capitalizedString
+        if selection == SpecialUnicodeSymbols.NextKeyboardSymbol {
+
+            self.advanceTapped()
+            return true
+
+        } else if selection == SpecialUnicodeSymbols.SmilingFace {
+
+            self.textDocumentProxy.insertText("EMOJI GOES HERE")
+            return true
+
+        } else if selection.characters.count == 2 {
+// switch language and keyboard
+            ChangeKeyboardLanguage(selection)
+            return true
         }
-        else if shiftState == .Locked
-        {
-            return str.uppercaseString
-        }
-        else
-        {
-            return str
+
+        return false
+    }
+
+    // For now, change language and set the default keyboard for that language.
+    // TODO: Allow for specification of kbd independent of keyboard e.g. choose QWERTY or AZERTY layout for French.
+    func ChangeKeyboardLanguage(languageCode: String)
+    {
+        if languageCode != CurrentLanguageCode() {
+
+            if let newKeyboardFileName = LanguageDefinitions.Singleton().KeyboardFileForLanguageCode(languageCode) {
+
+                NSUserDefaults.standardUserDefaults().setValue(languageCode, forKey: kActiveLanguageCode)
+                NSUserDefaults.standardUserDefaults().setValue(newKeyboardFileName, forKey: kActiveKeyboardName)
+
+                //self.tearDownSubViews()
+
+                //self.InitializeLayout()
+
+
+                self.RebootKeyboard()
+
+            }
         }
     }
 
+    private func RebootKeyboard()
+    {
+        self.forwardingView.resetTrackedViews()
+        self.shiftStartingState = nil
+        self.shiftWasMultitapped = false
+
+        self.layout?.rasterizeKeys(true)
+        self.forwardingView.removeSubviews()
+
+        self.keyboardHeight = self.heightForOrientation(self.currentInterfaceOrientation, withTopBanner: true)
+
+        self.constraintsAdded = false
+        self.setupLayout()
+    }
+
+    private func tearDownSubViews() {
+        self.forwardingView?.removeFromSuperview()
+        self.forwardingView = nil
+        
+        self.bannerView?.removeFromSuperview()
+        self.bannerView = nil
+
+        self.kludge?.removeFromSuperview()
+        self.kludge = nil
+
+        self.settingsView?.removeFromSuperview()
+        self.settingsView = nil
+
+        self.button.removeFromSuperview()
+        self.viewLongPopUp.removeFromSuperview()
+
+        self.constraintsAdded = false
+    }
 
 	func hideExpandView(notification: NSNotification)
 	{
 		
-		if notification.userInfo != nil
-        {
+        if notification.userInfo != nil {
+
             if let title = notification.userInfo!["text"] as? String {
 
-                self.textDocumentProxy.insertText(CasedString(title, shiftState: self.shiftState))
+                if !HandleKeyboardSelection(title) {
+
+                    self.textDocumentProxy.insertText(CasedString(title, shiftState: self.shiftState))
+                }
 
                 self.setCapsIfNeeded()
             }
 		}
 		
-		if self.forwardingView.isLongPressEnable == false
-		{
-			self.view.bringSubviewToFront(self.bannerView!)
+        if !self.forwardingView.isLongPressEnable {
+
+            self.view.bringSubviewToFront(self.bannerView!)
 		}
+
 		viewLongPopUp.hidden = true
 
 	}
@@ -375,21 +467,27 @@ class KeyboardViewController: UIInputViewController {
                         keyView.removeTarget(nil, action: nil, forControlEvents: UIControlEvents.AllEvents)
 						
                         switch key.type {
+
                         case Key.KeyType.KeyboardChange:
-                            keyView.addTarget(self, action: "advanceTapped:", forControlEvents: .TouchUpInside)
+                            keyView.addTarget(self, action: Selector("keyCharLongPressed:"), forControlEvents: .TouchDownRepeat)
+
                         case Key.KeyType.Backspace:
                             let cancelEvents: UIControlEvents = [UIControlEvents.TouchUpInside, UIControlEvents.TouchUpInside, UIControlEvents.TouchDragExit, UIControlEvents.TouchUpOutside, UIControlEvents.TouchCancel, UIControlEvents.TouchDragOutside]
                             
                             keyView.addTarget(self, action: "backspaceDown:", forControlEvents: .TouchDown)
                             keyView.addTarget(self, action: "backspaceUp:", forControlEvents: cancelEvents)
+
                         case Key.KeyType.Shift:
                             keyView.addTarget(self, action: Selector("shiftDown:"), forControlEvents: .TouchDown)
                             keyView.addTarget(self, action: Selector("shiftUp:"), forControlEvents: .TouchUpInside)
                             keyView.addTarget(self, action: Selector("shiftDoubleTapped:"), forControlEvents: .TouchDownRepeat)
+
                         case Key.KeyType.ModeChange:
                             keyView.addTarget(self, action: Selector("modeChangeTapped:"), forControlEvents: .TouchDown)
+
                         case Key.KeyType.Settings:
                             keyView.addTarget(self, action: Selector("toggleSettings"), forControlEvents: .TouchUpInside)
+
                         default:
                             break
                         }
@@ -401,7 +499,7 @@ class KeyboardViewController: UIInputViewController {
                                 keyView.addTarget(self, action: Selector("hidePopupDelay:"), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchDragOutside])
                             }
 							
-							keyView.addTarget(self, action: Selector("keyCharDoubleTapped:"), forControlEvents: .TouchDownRepeat)
+							keyView.addTarget(self, action: Selector("keyCharLongPressed:"), forControlEvents: .TouchDownRepeat)
                         }
                         
                         if key.hasOutput {
@@ -492,18 +590,7 @@ class KeyboardViewController: UIInputViewController {
 		dispatch_async(dispatch_get_main_queue(), {
 			if proxy.keyboardType! != self.preKeyboardType
 			{
-				self.forwardingView.resetTrackedViews()
-				self.shiftStartingState = nil
-				self.shiftWasMultitapped = false
-
-                self.layout?.rasterizeKeys(true)
-                self.forwardingView.removeSubviews()
-
-				self.keyboardHeight = self.heightForOrientation(self.currentInterfaceOrientation, withTopBanner: true)
-				
-				self.constraintsAdded = false
-				self.setupLayout()
-				
+                self.RebootKeyboard()
 			}
 			
 		})
@@ -725,13 +812,14 @@ class KeyboardViewController: UIInputViewController {
         self.setupKeys()
     }
     
-    func advanceTapped(sender: KeyboardKey) {
+    func advanceTapped() {
         self.forwardingView.resetTrackedViews()
         self.shiftStartingState = nil
         self.shiftWasMultitapped = false
         
         self.advanceToNextInputMode()
     }
+
     @IBAction func toggleSettings() {
         // lazy load settings
         if self.settingsView == nil {
@@ -958,70 +1046,69 @@ class KeyboardViewController: UIInputViewController {
         return longPresses != nil && longPresses!.count > 0 && longPresses![0] != ""
     }
 
-	func keyCharDoubleTapped(sender: KeyboardKey)
-	{
-		if sender.tag == 888
-		{
-			sender.hidePopup()
-			
-            if let arrOptions = self.getLongPresses(sender) where arrOptions.count > 0 {
-				if arrOptions[0] != ""
-				{
-					var offsetY : CGFloat = 9
-					
-                    if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight {
-                        offsetY = 3
-                    }
-                    else {
-                        switch  KeyboardViewController.getDeviceType() {
-                        case TTDeviceType.TTDeviceTypeIPhone4, TTDeviceType.TTDeviceTypeIPhone5:
-                            offsetY = 9
-                            
-                        case TTDeviceType.TTDeviceTypeIPhone6:
-                            offsetY = 13
-                            
-                        case TTDeviceType.TTDeviceTypeIPhone6p:
-                            offsetY = 16
-                        }
-                    }
-					
-					self.button.removeFromSuperview()
-					
-					self.button.frame = CGRectMake(sender.frame.origin.x, sender.frame.origin.y + sender.frame.size.height - offsetY, sender.frame.size.width, sender.frame.size.height)
-					
-					self.view.insertSubview(self.button, aboveSubview: self.forwardingView)
-					
-                    let isTopRow:Bool = self.layout?.keyForView(sender)?.isTopRow ?? false
-					self.viewLongPopUp = self.button.showLongPopUpOptions(isTopRow)
-					self.button.input = sender.text
-					self.button.hidden = true
-					self.button.inputOptions = arrOptions
-					self.viewLongPopUp.hidden = false
-					
-					for anyView in self.view.subviews
-					{
-						if anyView is CYRKeyboardButtonView
-						{
-							anyView.removeFromSuperview()
-						}
-					}
-					
-					self.viewLongPopUp.userInteractionEnabled = false;
-					
-					button.setupInputOptionsConfigurationWithView(forwardingView)
-					self.view.insertSubview(self.viewLongPopUp, aboveSubview: self.forwardingView)
-					self.forwardingView.isLongPressEnable = true
-					self.view.bringSubviewToFront(self.viewLongPopUp)
+    func keyCharLongPressed(sender: KeyboardKey)
+    {
+        if sender.tag == LongPressActivated
+        {
+            sender.hidePopup()
 
-					sender.tag = 0
-				}
-			}
-		}
-	}
+            if let arrOptions = self.getLongPresses(sender) where arrOptions.count > 0 && arrOptions[0] != "" {
+
+                var offsetY : CGFloat = 9
+
+                if self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || self.currentInterfaceOrientation == UIInterfaceOrientation.LandscapeRight {
+                    offsetY = 3
+                }
+                else {
+                    switch  KeyboardViewController.getDeviceType() {
+                    case TTDeviceType.TTDeviceTypeIPhone4, TTDeviceType.TTDeviceTypeIPhone5:
+                        offsetY = 9
+
+                    case TTDeviceType.TTDeviceTypeIPhone6:
+                        offsetY = 13
+
+                    case TTDeviceType.TTDeviceTypeIPhone6p:
+                        offsetY = 16
+                    }
+                }
+
+                self.button.removeFromSuperview()
+
+                self.button.frame = CGRectMake(sender.frame.origin.x, sender.frame.origin.y + sender.frame.size.height - offsetY, sender.frame.size.width, sender.frame.size.height)
+
+                self.view.insertSubview(self.button, aboveSubview: self.forwardingView)
+
+                let isTopRow:Bool = self.layout?.keyForView(sender)?.isTopRow ?? false
+                self.viewLongPopUp = self.button.showLongPopUpOptions(isTopRow)
+                self.button.input = sender.text
+                self.button.hidden = true
+                self.button.inputOptions = arrOptions
+                self.viewLongPopUp.hidden = false
+
+                for anyView in self.view.subviews
+                {
+                    if anyView is CYRKeyboardButtonView
+                    {
+                        anyView.removeFromSuperview()
+                    }
+                }
+
+                self.viewLongPopUp.userInteractionEnabled = false;
+
+                button.setupInputOptionsConfigurationWithView(forwardingView)
+                self.view.insertSubview(self.viewLongPopUp, aboveSubview: self.forwardingView)
+                self.forwardingView.isLongPressEnable = true
+                self.view.bringSubviewToFront(self.viewLongPopUp)
+                
+                sender.tag = 0
+                
+            }
+        }
+    }
 	
 	class func getDeviceType()->TTDeviceType
 	{
-		var height = UIScreen.mainScreen().bounds.size.height
+        var height = UIScreen.mainScreen().bounds.size.height
 		
 		if UIScreen.mainScreen().bounds.size.height < UIScreen.mainScreen().bounds.size.width
 		{

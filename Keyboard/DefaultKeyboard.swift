@@ -10,102 +10,105 @@ import Foundation
 
 func languageSpecificKeyboard() -> Keyboard?
 {
-    if let path = NSBundle.mainBundle().pathForResource("EnglishQWERTY", ofType: "json")
-    {
-        if !NSFileManager().fileExistsAtPath(path) {
-            NSLog("File does not exist at \(path)")
-            return nil
-        }
+    if let keyboardFileName = NSUserDefaults.standardUserDefaults().stringForKey(kActiveKeyboardName) {
 
-        // Keyboards have pages. Pages have rows.
-        //Rows have keys.
-        // Keys have characters.
-        if let jsonData = NSData(contentsOfFile: path)
+        if let path = NSBundle.mainBundle().pathForResource(keyboardFileName, ofType: "json")
         {
-            do {
-                let JSON = try NSJSONSerialization.JSONObjectWithData(jsonData, options:NSJSONReadingOptions(rawValue: 0))
-                
-                guard let JSONDictionary: NSDictionary = JSON as? NSDictionary else {
-                    NSLog("Not a Dictionary")
-                    return nil
-                }
+            if !NSFileManager().fileExistsAtPath(path) {
+                NSLog("File does not exist at \(path)")
+                return nil
+            }
 
-                guard let pages = JSONDictionary["pages"] as? NSArray else {
-                    NSLog("Could not find 'pages' array in root")
-                    return nil
-                }
+            // Keyboards have pages. Pages have rows.
+            // Rows have keys.
+            // Keys have characters.
+            if let jsonData = NSData(contentsOfFile: path)
+            {
+                do {
+                    let JSON = try NSJSONSerialization.JSONObjectWithData(jsonData, options:NSJSONReadingOptions(rawValue: 0))
 
-                let newKeyboard = Keyboard()
+                    guard let JSONDictionary: NSDictionary = JSON as? NSDictionary else {
+                        NSLog("Not a Dictionary")
+                        return nil
+                    }
 
-                for page in pages {
+                    guard let pages = JSONDictionary["pages"] as? NSArray else {
+                        NSLog("Could not find 'pages' array in root")
+                        return nil
+                    }
 
-                    if let pageDict = page as? NSDictionary {
+                    let newKeyboard = Keyboard()
 
-                        if let pageIndex = pageDict["pageIndex"] as? Int,
-                            let rows = pageDict["rows"] as? NSArray {
+                    for page in pages {
 
-                                for row in rows {
+                        if let pageDict = page as? NSDictionary {
 
-                                    if let rowDict = row as? NSDictionary {
+                            if let pageIndex = pageDict["pageIndex"] as? Int,
+                                let rows = pageDict["rows"] as? NSArray {
 
-                                        if let rowIndex = rowDict["rowIndex"] as? Int,
-                                            let keys = rowDict["keys"] as? NSArray {
+                                    for row in rows {
 
-                                                // HACKHACK Splice in the shift key
-                                                if rowIndex == 2 {
+                                        if let rowDict = row as? NSDictionary {
 
-                                                    newKeyboard.addKey(Key(.Shift), row: rowIndex, page: pageIndex)
-                                                }
+                                            if let rowIndex = rowDict["rowIndex"] as? Int,
+                                                let keys = rowDict["keys"] as? NSArray {
 
-                                                for oneKey in keys {
-                                                    if let oneKeyRecord = oneKey as? NSDictionary {
+                                                    // HACKHACK Splice in the shift key
+                                                    if rowIndex == 2 {
 
-                                                        // Chars mapped to a key are:
-                                                        // (Mandatory): label
-                                                        // (Optional) : long press values
-                                                        // (Optional) : shifted label
-                                                        // (Optional) : shifted long press values
-                                                        if let label = oneKeyRecord["label"] as? String {
-                                                            let longPress = oneKeyRecord["longPress"] as? [String]
-                                                            let shiftLabel = oneKeyRecord["shiftLabel"] as? String
-                                                            let shiftLongPress = oneKeyRecord["shiftLongPress"] as? [String]
+                                                        newKeyboard.addKey(Key(.Shift), row: rowIndex, page: pageIndex)
+                                                    }
 
-                                                            let keyModel = Key(
-                                                                type: .Character,
-                                                                label: label,
-                                                                longPress: longPress,
-                                                                shiftLabel: shiftLabel,
-                                                                shiftLongPress: shiftLongPress)
+                                                    for oneKey in keys {
+                                                        if let oneKeyRecord = oneKey as? NSDictionary {
 
-                                                            keyModel.isTopRow = rowIndex == 0
+                                                            // Chars mapped to a key are:
+                                                            // (Mandatory): label
+                                                            // (Optional) : long press values
+                                                            // (Optional) : shifted label
+                                                            // (Optional) : shifted long press values
+                                                            if let label = oneKeyRecord["label"] as? String {
+                                                                let longPress = oneKeyRecord["longPress"] as? [String]
+                                                                let shiftLabel = oneKeyRecord["shiftLabel"] as? String
+                                                                let shiftLongPress = oneKeyRecord["shiftLongPress"] as? [String]
 
-                                                            newKeyboard.addKey(keyModel, row: rowIndex, page: pageIndex)
+                                                                let keyModel = Key(
+                                                                    type: .Character,
+                                                                    label: label,
+                                                                    longPress: longPress,
+                                                                    shiftLabel: shiftLabel,
+                                                                    shiftLongPress: shiftLongPress)
+
+                                                                keyModel.isTopRow = rowIndex == 0
+
+                                                                newKeyboard.addKey(keyModel, row: rowIndex, page: pageIndex)
+                                                            }
                                                         }
                                                     }
-                                                }
+                                            }
                                         }
                                     }
-                                }
+                            }
                         }
                     }
+                    
+                    
+                    newKeyboard.addKey(Key(.Backspace), row: 2, page: 0)
+                    
+                    addNumericPage(newKeyboard)
+                    addSymbolsPage(newKeyboard)
+                    
+                    return newKeyboard
+                    
                 }
-                
-                
-                newKeyboard.addKey(Key(.Backspace), row: 2, page: 0)
-                
-                addNumericPage(newKeyboard)
-                addSymbolsPage(newKeyboard)
-
-                return newKeyboard
-                
-            }
-            catch let JSONError as NSError {
-                NSLog("JSONError exception\n\(JSONError)")
-                return nil
-            }
-            catch {
-                NSLog("Some other error occurred")
-                return nil
+                catch let JSONError as NSError {
+                    NSLog("JSONError exception\n\(JSONError)")
+                    return nil
+                }
+                catch {
+                    NSLog("Some other error occurred")
+                    return nil
+                }
             }
         }
     }

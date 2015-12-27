@@ -7,6 +7,7 @@
 //
 
 import UIKit
+let LongPressActivated = 888
 
 class ForwardingView: UIView, UIGestureRecognizerDelegate {
     
@@ -117,7 +118,7 @@ class ForwardingView: UIView, UIGestureRecognizerDelegate {
             if let v = view as? KeyboardKey {
                 if self.isLongPressEnableKey(v)
                 {
-                    view!.tag = 888
+                    view!.tag = LongPressActivated
 
                     self.handleControl(view, controlEvent: .TouchDownRepeat)
                 }

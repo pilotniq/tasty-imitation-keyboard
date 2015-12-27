@@ -2,9 +2,10 @@
     "languages": [
                   {
                     "language": {
+                    "langCode": "EN",
                     "englishName": "English",
                     "nativeName": "English",
-                    "defaultKbd": "EnglishQWERTY.json",
+                    "defaultKbd": "EnglishQWERTY",
                     "requiredCharacters": [
                                            "a", "b", "c", "d",
                                            "e", "f", "g", "h",
@@ -12,7 +13,7 @@
                                            "m", "n", "o", "p",
                                            "q", "r", "s", "t",
                                            "u", "v", "w", "x",
-                                           "y", "z",
+                                           "y", "z", "'",
                                            "A", "B", "C", "D",
                                            "E", "F", "G", "H",
                                            "I", "J", "K", "L",
@@ -26,9 +27,10 @@
 
                   {
                     "language": {
-                    "englishName": "French (CA)",
-                    "nativeName": "Français (CA)",
-                    "defaultKbd": "EnglishQWERTY.json",
+                    "langCode": "FR",
+                    "englishName": "French",
+                    "nativeName": "Français",
+                    "defaultKbd": "FrenchAZERTY",
                     "requiredCharacters": [
                                          "a", "b", "c", "d",
                                          "e", "f", "g", "h",
@@ -36,7 +38,7 @@
                                          "m", "n", "o", "p",
                                          "q", "r", "s", "t",
                                          "u", "v", "w", "x",
-                                         "y", "z",
+                                         "y", "z", "'",
                                          "A", "B", "C", "D",
                                          "E", "F", "G", "H",
                                          "I", "J", "K", "L",
@@ -48,35 +50,13 @@
                     }
                   },
 
-                  {
-                    "language": {
-                    "englishName": "French (FR)",
-                    "nativeName": "Français (FR)",
-                    "defaultKbd": "EnglishAZERTY.json",
-                    "requiredCharacters": [
-                                         "a", "b", "c", "d",
-                                         "e", "f", "g", "h",
-                                         "i", "j", "k", "l",
-                                         "m", "n", "o", "p",
-                                         "q", "r", "s", "t",
-                                         "u", "v", "w", "x",
-                                         "y", "z",
-                                         "A", "B", "C", "D",
-                                         "E", "F", "G", "H",
-                                         "I", "J", "K", "L",
-                                         "M", "N", "O", "P",
-                                         "Q", "R", "S", "T",
-                                         "U", "V", "W", "X",
-                                         "Y", "Z"
-                                         ]
-                    }
-                  },
 
                   {
                     "language": {
+                    "langCode": "IT",
                     "englishName": "Italian",
                     "nativeName": "Italiano",
-                    "defaultKbd": "EnglishQWERTY.json",
+                    "defaultKbd": "EnglishQWERTY",
                     "requiredCharacters": [
                                          "a", "b", "c", "d",
                                          "e", "f", "g", "h",
@@ -84,7 +64,7 @@
                                          "m", "n", "o", "p",
                                          "q", "r", "s", "t",
                                          "u", "v", "w", "x",
-                                         "y", "z",
+                                         "y", "z", "'",
                                          "A", "B", "C", "D",
                                          "E", "F", "G", "H",
                                          "I", "J", "K", "L",

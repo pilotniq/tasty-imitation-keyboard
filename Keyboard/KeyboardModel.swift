@@ -152,9 +152,45 @@ class Key: Hashable {
         }
     }
 
+    func EnabledLanguageCodes() -> [String]
+    {
+        var enabledCodes: [String] = []
+
+        let defs = LanguageDefinitions.Singleton().definitions
+
+        for definition in defs {
+            let n = definition.DescriptiveName
+
+            if NSUserDefaults.standardUserDefaults().boolForKey(n) {
+                enabledCodes.append(definition.LangCode)
+            }
+        }
+
+        // Make sure at least one language is always enabled
+        if enabledCodes.count == 0 {
+            enabledCodes.append("EN")
+        }
+
+        return enabledCodes
+    }
+
     func getLongPressesForShiftState(shiftState: ShiftState) -> [String]
     {
-        if let cousins = shiftState == .Enabled || shiftState == .Locked ? self.shiftLongPress : self.longPress {
+        if self.type == .KeyboardChange {
+            let enabledLangs = self.EnabledLanguageCodes()
+
+            var values : [String] = [SpecialUnicodeSymbols.NextKeyboardSymbol, SpecialUnicodeSymbols.SmilingFace]
+
+            // Allow switching between languages if more than one language is enabled
+            if enabledLangs.count > 1 {
+                for enabled in enabledLangs {
+                    values.append(enabled)
+                }
+            }
+
+            return values
+        }
+        else if let cousins = shiftState == .Enabled || shiftState == .Locked ? self.shiftLongPress : self.longPress {
             return cousins
         }
         else {
@@ -252,7 +288,7 @@ class Key: Hashable {
     class func SpaceKey() -> Key
     {
         let space = Key(.Space)
-        space.uppercaseKeyCap = "space"
+        space.uppercaseKeyCap = CurrentLanguageCode()
         space.uppercaseOutput = " "
         space.lowercaseOutput = " "
         return space

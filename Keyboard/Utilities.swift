@@ -143,3 +143,23 @@ func distanceBetween(rect: CGRect, point: CGPoint) -> CGFloat {
     let b = pow(Double(closest.x - point.x), 2)
     return CGFloat(sqrt(a + b));
 }
+
+func CurrentLanguageCode() -> String {
+    return NSUserDefaults.standardUserDefaults().stringForKey(kActiveLanguageCode) ?? vEnglishLanguageCode
+}
+
+func CasedString(str : String, shiftState : ShiftState) -> String
+{
+    if shiftState == .Enabled
+    {
+        return str.capitalizedString
+    }
+    else if shiftState == .Locked
+    {
+        return str.uppercaseString
+    }
+    else
+    {
+        return str
+    }
+}

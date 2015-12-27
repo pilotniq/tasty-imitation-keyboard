@@ -15,6 +15,10 @@ import Foundation
 // could be used to type the language. We can determine programmatically elsewhere if a kbd contains all the necessary chars.
 public class LanguageDefinition {
 
+    // The ISO 639-1 language code.
+    // REVIEW What to do about languages that don't have an ISO 639-1 code?
+    private let _langCode : String
+
     // Name of the language in English
     private let _englishName : String
 
@@ -27,13 +31,21 @@ public class LanguageDefinition {
     // The name of the JSON keyboard definition file for the default keyboard for this language
     private let _defaultKbd : String
 
-    init(englishName: String, nativeName: String, requiredChars: [String], defaultKbd: String)
+    init(langCode: String,
+        englishName: String, nativeName: String, requiredChars: [String], defaultKbd: String)
     {
+        self._langCode = langCode
         self._englishName = englishName
         self._nativeName = nativeName
         self._requiredChars = requiredChars
         self._defaultKbd = defaultKbd
 
+    }
+
+    var LangCode : String {
+        get {
+            return self._langCode
+        }
     }
 
     var EnglishName : String {
@@ -60,10 +72,18 @@ public class LanguageDefinition {
         }
     }
 
+    var DescriptiveName : String {
+        get {
+            return EnglishName + "/" + NativeName
+        }
+    }
+
     // Default English language definition to be used in case of an emergency
     // e.g. failing to load language definitions from the JSON language definition file.
     class private func EnglishLanguageDefinition() -> LanguageDefinition {
-        return LanguageDefinition(englishName: "English",
+        return LanguageDefinition(
+            langCode: "EN",
+            englishName: "English",
             nativeName: "English",
             requiredChars: [
                 "a", "b", "c", "d",
@@ -72,7 +92,7 @@ public class LanguageDefinition {
                 "m", "n", "o", "p",
                 "q", "r", "s", "t",
                 "u", "v", "w", "x",
-                "y", "z",
+                "y", "z", "'",
                 "A", "B", "C", "D",
                 "E", "F", "G", "H",
                 "I", "J", "K", "L",
@@ -86,6 +106,9 @@ public class LanguageDefinition {
 
 
 }
+
+// class var not yet supported so make it global
+private var _Singleton: LanguageDefinitions? = nil
 
 // Define the set of languages currently supported
 public class LanguageDefinitions {
@@ -105,13 +128,16 @@ public class LanguageDefinitions {
 
             if let languageProperties = language["language"] as? NSDictionary {
 
+                
                 if let englishName = languageProperties["englishName"] as? String,
                     let nativeName = languageProperties["nativeName"] as? String,
                     let defaultKbd = languageProperties["defaultKbd"] as? String,
-                    let requiredChars = languageProperties["requiredCharacters"] as? [String] {
+                    let requiredChars = languageProperties["requiredCharacters"] as? [String],
+                    let langCode = languageProperties["langCode"] as? String {
 
                         definitions.append(
                             LanguageDefinition(
+                                langCode: langCode,
                                 englishName: englishName,
                                 nativeName: nativeName,
                                 requiredChars: requiredChars,
@@ -141,11 +167,28 @@ public class LanguageDefinitions {
     {
         var names : [String] = []
 
-        for languageDefinition in definitions
-        {
-            names.append(languageDefinition.EnglishName + "/" + languageDefinition.NativeName)
+        for languageDefinition in definitions {
+            names.append(languageDefinition.DescriptiveName)
         }
 
         return names
+    }
+
+    func KeyboardFileForLanguageCode(langCode: String) -> String? {
+        for lang in self.definitions {
+            if lang.LangCode == langCode {
+                return lang.DefaultKbdName
+            }
+        }
+
+        return nil
+    }
+
+    class func Singleton() -> LanguageDefinitions {
+        if _Singleton == nil {
+            _Singleton = LanguageDefinitions(jsonFileName: "LanguageDefinitions")
+        }
+
+        return _Singleton!
     }
 }
