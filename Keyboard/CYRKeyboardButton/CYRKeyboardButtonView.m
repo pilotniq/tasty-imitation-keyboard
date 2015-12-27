@@ -35,22 +35,6 @@
 #import "CYRKeyboardButton.h"
 #import "TurtleBezierPath.h"
 
-// The code I inherited used the .length method of NSString but this counts Unicode chars above the BMP
-// as two. Make sure those get counted as 1 by a little hack that converts to UTF32: [text lengthOfBytesUsingEncoding:NSUTF32StringEncoding] / 4
-// Note that this still assumes that combining diacritics should be counted separately.
-unsigned long NumUniChars (NSString * text)
-{
-    return 1;
-
-    // There is logic throughout the file that checks to see if the individual elements being displayed are > 1 char but there are many bugs.
-    // The intent appears to be to make the rect for the element wider if necessary but it results in the text and the box that go around it being misaligned.
-    // I have hacked a lie: I tell the code there's always one char which appears to work very nicely.
-    // For now, the only place where I am creating the CYRKeyboardButtonView with elements > 1 is for the popup for changing keyboard:
-    // That has some symbols (globe symbol and an emoji) and the language codes (two Latin script letters e.g. 'EN').
-    // TODO: Fix the actual layout logic or remove all the special casing for > 1 char.
-
-}
-
 @interface CYRKeyboardButtonView ()<UIGestureRecognizerDelegate>
 {
     BOOL _topRow;
@@ -60,7 +44,6 @@ unsigned long NumUniChars (NSString * text)
 @property (nonatomic, assign) CYRKeyboardButtonPosition expandedPosition;
 @property (nonatomic, strong) NSMutableArray *inputOptionRects;
 @property (nonatomic, assign) NSInteger selectedInputIndex;
-
 
 @end
 
@@ -317,47 +300,6 @@ unsigned long NumUniChars (NSString * text)
     
     [inputOptions enumerateObjectsUsingBlock:^(NSString *optionString, NSUInteger idx, BOOL *stop) {
         CGRect optionRect = [self.inputOptionRects[idx] CGRectValue];
-		
-		UIFont *fontt ;
-		
-		if (NumUniChars(optionString) > 1)
-        {
-			if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
-			{
-				fontt = self.button.inputOptionsFont;
-			}
-			else
-			{
-				fontt = [UIFont systemFontOfSize:18];
-				if (![self isLandScapeOrientation])
-				{
-					if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
-					{
-						optionRect.origin.x = optionRect.origin.x + 10;
-					}
-					else
-					{
-						optionRect.origin.x = optionRect.origin.x - 10;
-					}
-					
-					
-				}
-				else
-				{
-					if ([UIDevice currentDevice].userInterfaceIdiom != UIUserInterfaceIdiomPad)
-					{
-						optionRect.origin.x = optionRect.origin.x + 12;
-					}
-					
-				}
-			}
-			
-			
-		}
-		else
-		{
-			fontt = self.button.inputOptionsFont;
-		}
 
         // Draw the text
 		UIColor *stringColor = self.button.keyTextColor;
@@ -372,7 +314,7 @@ unsigned long NumUniChars (NSString * text)
         NSAttributedString *attributedString = [[NSAttributedString alloc]
                                                 initWithString:optionString
                                                 attributes:
-                                                @{NSFontAttributeName : fontt, NSForegroundColorAttributeName : stringColor, NSParagraphStyleAttributeName : p}];
+                                                @{NSFontAttributeName : self.button.inputOptionsFont, NSForegroundColorAttributeName : stringColor, NSParagraphStyleAttributeName : p}];
         [attributedString drawInRect:stringRect];
     }];
     
@@ -385,36 +327,14 @@ unsigned long NumUniChars (NSString * text)
 -(void)drawCustomSelectedViewFromIndex
 {
 	CGRect optionRect = [self.inputOptionRects[self.selectedInputIndex] CGRectValue];
-	
-	NSString *optionString = self.button.inputOptions[0];
-	if (NumUniChars(optionString) > 1)
-	{
-		if (![self isLandScapeOrientation])
-		{
-			if ([UIDevice currentDevice].userInterfaceIdiom != UIUserInterfaceIdiomPad)
-			{
-				optionRect.origin.x = optionRect.origin.x - 10;
-			}
-			
-		}
-		else
-		{
-			if ([UIDevice currentDevice].userInterfaceIdiom != UIUserInterfaceIdiomPad)
-			{
-				optionRect.origin.x = optionRect.origin.x + 12;
-			}
-			
-		}
-	}
-	
-	
-	if (inPutOptionSelectView == nil)
+
+    if (inPutOptionSelectView == nil)
 	{
 		inPutOptionSelectView = [[UIView alloc]initWithFrame:optionRect];
 		inPutOptionSelectView.backgroundColor = [UIColor clearColor];
 		
 		inPutOptionSelectView.layer.cornerRadius = 4;
-        inPutOptionSelectView.layer.borderColor = [[UIColor blueColor] colorWithAlphaComponent:0.5].CGColor;//[UIColor blueColor].CGColor;
+        inPutOptionSelectView.layer.borderColor = [[UIColor blueColor] colorWithAlphaComponent:0.5].CGColor;
 		inPutOptionSelectView.layer.borderWidth = 1;
 		
 		[self addSubview:inPutOptionSelectView];
@@ -458,7 +378,7 @@ unsigned long NumUniChars (NSString * text)
 				[path forward:CGRectGetHeight(keyRect) - 8.5f + 1 - 10];//lower small left
 				
 				[path rightArc:minorRadius turn:90];
-				[path forward:lowerWidth - 2 * minorRadius]; //  lowerWidth - 2 * minorRadius + 0.5f
+				[path forward:lowerWidth - 2 * minorRadius];
 				[path rightArc:minorRadius turn:90];
 				
 				[path forward:(CGRectGetHeight(keyRect) - 2 * minorRadius) - 10];//lower small right
@@ -488,7 +408,7 @@ unsigned long NumUniChars (NSString * text)
 				[path leftArc:majorRadius turn:48]; // #6
 				[path forward:CGRectGetHeight(keyRect) - 8.5f + 1];
 				[path rightArc:minorRadius turn:90];
-				[path forward:lowerWidth - 2 * minorRadius]; //  lowerWidth - 2 * minorRadius + 0.5f
+				[path forward:lowerWidth - 2 * minorRadius];
 				[path rightArc:minorRadius turn:90];
 				[path forward:CGRectGetHeight(keyRect) - 2 * minorRadius];
 				[path leftArc:majorRadius turn:48];
@@ -622,37 +542,13 @@ unsigned long NumUniChars (NSString * text)
 - (UIBezierPath *)expandedInputViewPath
 {
     CGRect keyRect = [self convertRect:self.button.frame fromView:self.button.superview];
-	
-	NSString *optionChar = self.button.inputOptions[0];
-	
-	float widthOneOption = 0.0;
-
-	for (NSString *strOption in self.button.inputOptions)
-	{
-		if (NumUniChars(strOption) > 1)
-		{
-			CGSize stringSize = [strOption sizeWithAttributes:@{NSFontAttributeName : self.button.inputOptionsFont}];
-			widthOneOption = widthOneOption + stringSize.width;
-			
-		}
-	}
 
     UIEdgeInsets insets = UIEdgeInsetsMake(7, 13, 7, 13);
     CGFloat margin = 7.f;
 	
-	CGFloat upperWidth;
+	CGFloat upperWidth = insets.left + insets.right + self.button.inputOptions.count * CGRectGetWidth(keyRect) + margin * (self.button.inputOptions.count - 1) - margin/2;
 
-	if (NumUniChars(optionChar) > 1)
-	{
-		upperWidth = insets.left + insets.right + widthOneOption + margin * (self.button.inputOptions.count - 1) - margin/2;
-	}
-	else
-	{
-		upperWidth = insets.left + insets.right + self.button.inputOptions.count * CGRectGetWidth(keyRect) + margin * (self.button.inputOptions.count - 1) - margin/2;
-	}
-	
-	
-	
+
     CGFloat lowerWidth = CGRectGetWidth(_button.frame);
     CGFloat majorRadius = 10.f;
     CGFloat minorRadius = 4.f;
@@ -854,93 +750,7 @@ unsigned long NumUniChars (NSString * text)
 	{
 		keyRect = CGRectMake(keyRect.origin.x, keyRect.origin.y + 22, keyRect.size.width -2 , keyRect.size.height );
 	}
-	
-	
-	NSString *optionChar = self.button.inputOptions[0];
-	
-	CGSize stringSize = [optionChar sizeWithAttributes:@{NSFontAttributeName : self.button.inputOptionsFont}];
 
-	if (NumUniChars(optionChar) > 1)
-	{
-        keyRect.size.width = stringSize.width - 5;
-		
-		if ([self isLandScapeOrientation])
-		{
-			int screenWidth = [UIScreen mainScreen].bounds.size.width;
-			
-			if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
-			{
-				if (keyRect.origin.x > 850)
-				{
-					keyRect.origin.x = keyRect.origin.x - 35;
-				}
-				keyRect.size.width = stringSize.width + 45;
-			}
-			else
-			{
-				if (screenWidth == 667)//iphone6
-				{
-					if(keyRect.origin.x == 519)
-					{
-						keyRect.origin.x = keyRect.origin.x + 8;  // url
-					}
-					else
-					{
-						keyRect.origin.x = keyRect.origin.x - 10;
-					}
-					
-					
-				}
-				else if (screenWidth == 736)//iphone6p
-				{
-					if(keyRect.origin.x <= 577)
-					{
-						keyRect.origin.x = keyRect.origin.x + 11;  // url
-					}
-					else
-					{
-						keyRect.origin.x = keyRect.origin.x - 5;
-					}
-
-				}
-				else if(screenWidth == 568) // iPhone 5
-				{
-					if(keyRect.origin.x >= 450)
-					{
-						keyRect.origin.x = keyRect.origin.x - 15;
-					}
-					else
-					{
-						keyRect.origin.x = keyRect.origin.x - 5;
-					}
-					
-				}
-				else if (screenWidth == 480)//iphone4
-				{
-					keyRect.origin.x = keyRect.origin.x - 18;
-				}
-			}
-		}
-		else
-		{
-			if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
-			{
-				
-                if(keyRect.origin.x < 240 )
-                {
-                    keyRect.origin.x = keyRect.origin.x - 45;
-                }
-				else if (keyRect.origin.x > 628)
-				{
-					keyRect.origin.x = keyRect.origin.x - 25;
-				}
-                
-				keyRect.size.width = stringSize.width + 20;
-			}
-		}
-		
-	}
-	
     __block NSMutableArray *inputOptionRects = [NSMutableArray arrayWithCapacity:self.button.inputOptions.count];
 	
     CGFloat offset = 0;
