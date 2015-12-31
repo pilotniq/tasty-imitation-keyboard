@@ -1,0 +1,170 @@
+{
+    "keyboardName": "AZERTY",
+    "pages": [
+              {
+              "pageIndex": 0,
+              "rows": [
+                       {
+                       "rowIndex": 0,
+                       "keys": [
+                                {
+                                "label": "a",
+                                "longPress": ["a","á", "à", "ä", "â", "ã", "å", "æ","ā"],
+                                "shiftLabel": "A",
+                                "shiftLongPress": ["A","Á","À","Ä","Â","Ã","Å","Æ","Ā"]
+                                },
+
+                                {
+                                "label": "z",
+                                "shiftLabel": "Z"
+                                },
+
+                                {
+                                "label": "e",
+                                "longPress": ["e", "é", "è", "ë", "ê", "ę", "ė", "ē"],
+                                "shiftLabel": "E",
+                                "shiftLongPress": ["E","É","È","Ë","Ê","Ę","Ė","Ē"]
+                                },
+
+                                {
+                                "label": "r",
+                                "shiftLabel": "R"
+                                },
+
+                                {
+                                "label": "t",
+                                "shiftLabel": "T"
+                                },
+
+                                {
+                                "label": "y",
+                                "shiftLabel": "Y"
+                                },
+
+                                {
+                                "label": "u",
+                                "longPress": ["u", "ú", "ü", "ù", "û", "ū"],
+                                "shiftLabel": "U",
+                                "shiftLongPress": ["U","Ú","Ü","Ù","Û"]
+                                },
+
+                                {
+                                "label": "i",
+                                "longPress": ["i", "í", "ï", "ì", "î", "į", "ī"],
+                                "shiftLabel": "I",
+                                "shiftLongPress": ["I","Í","Ï","Ì","Î","Į","Ī"]
+                                },
+
+                                {
+                                "label": "o",
+                                "longPress": ["o", "ó", "ò", "ö", "ô", "õ", "ø", "œ", "ō"],
+                                "shiftLabel": "O",
+                                "shiftLongPress": ["O","Ó","Ò","Ö","Ô","Õ","Ø","Œ","Ō"]
+                                },
+
+                                {
+                                "label": "p",
+                                "shiftLabel": "P"
+                                }
+                                ]
+                       },
+                       {
+                       "rowIndex": 1,
+                       "keys": [
+                                {
+                                "label": "q",
+                                "shiftLabel": "Q"
+                                },
+
+                                {
+                                "label": "s",
+                                "longPress": ["s","š"],
+                                "shiftLabel": "S",
+                                "shiftLongPress": ["S","Š"]
+                                },
+
+                                {
+                                "label": "d",
+                                "longPress": ["d", "đ"],
+                                "shiftLabel": "D",
+                                "shiftLongPress": ["D","Đ"]
+                                },
+
+                                {
+                                "label": "f",
+                                "shiftLabel": "F"
+                                },
+
+                                {
+                                "label": "g",
+                                "shiftLabel": "G"
+                                },
+
+                                {
+                                "label": "h",
+                                "shiftLabel": "H"
+                                },
+
+                                {
+                                "label": "j",
+                                "shiftLabel": "J"
+                                },
+
+                                {
+                                "label": "k",
+                                "shiftLabel": "K"
+                                },
+
+                                {
+                                "label": "l",
+                                "shiftLabel": "L"
+                                }
+                                ]
+                       },
+                       {
+                       "rowIndex": 2,
+                       "keys": [
+                                {
+                                "label": "w",
+                                "shiftLabel": "W"
+                                },
+
+                                {
+                                "label": "x",
+                                "shiftLabel": "X"
+                                },
+
+                                {
+                                "label": "c",
+                                "longPress": ["c", "ç", "ć", "č"],
+                                "shiftLabel": "C",
+                                "shiftLongPress": ["C","Ç","Ć","Č"]
+                                },
+
+                                {
+                                "label": "v",
+                                "shiftLabel": "V"
+                                },
+
+                                {
+                                "label": "b",
+                                "shiftLabel": "B"
+                                },
+                                
+                                {
+                                "label": "n",
+                                "longPress": ["n","ñ", "ń"],
+                                "shiftLabel": "N",
+                                "shiftLongPress": ["N","Ñ","Ń"]
+                                },
+                                
+                                {
+                                "label": "m",
+                                "shiftLabel": "M"
+                                }
+                                ]
+                       }
+                       ]
+              }
+              ]
+}
