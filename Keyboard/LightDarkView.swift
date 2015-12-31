@@ -6,7 +6,6 @@ import UIKit
 
 class LightDarkView: UIView {
     
-    var globalColors: GlobalColors.Type?
     var darkMode: Bool {
         didSet {
             if oldValue != darkMode {
@@ -17,8 +16,7 @@ class LightDarkView: UIView {
     
     var solidColorMode: Bool
 
-    required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool) {
-        self.globalColors = globalColors
+    required init(darkMode: Bool, solidColorMode: Bool) {
         self.darkMode = darkMode
         self.solidColorMode = solidColorMode
 
@@ -28,7 +26,6 @@ class LightDarkView: UIView {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        self.globalColors = nil
         self.darkMode = false
         self.solidColorMode = false
         

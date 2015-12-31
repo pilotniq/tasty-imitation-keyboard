@@ -8,9 +8,7 @@
 
 import UIKit
 
-let SwitchTag = 1
-let LabelTag = 2
-let LongLabelTag = 3
+let LanguagesSection: Int = 2
 
 class ColorScheme
 {
@@ -34,6 +32,11 @@ class ColorScheme
     func cellLongLabelColor() -> UIColor {
         return UIColor.grayColor()
     }
+
+    func cellKbdChangerColor() -> UIColor {
+        return UIColor.greenColor()
+    }
+
 
     func tableBackgroundColor() -> UIColor {
         return UIColor.whiteColor().colorWithAlphaComponent(1.0)
@@ -112,6 +115,11 @@ class DarkColorScheme: ColorScheme
         return UIColor.whiteColor()
     }
 
+    override func cellKbdChangerColor() -> UIColor {
+        return UIColor.whiteColor()
+    }
+
+
 }
 
 class DefaultSettings: LightDarkView, UITableViewDataSource, UITableViewDelegate {
@@ -149,18 +157,13 @@ class DefaultSettings: LightDarkView, UITableViewDataSource, UITableViewDelegate
         }
     }
 
-    required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool, languageDefinitions: LanguageDefinitions) {
-        super.init(globalColors: globalColors, darkMode: darkMode, solidColorMode: solidColorMode)
+    required init(darkMode: Bool, solidColorMode: Bool, languageDefinitions: LanguageDefinitions) {
+        super.init(darkMode: darkMode, solidColorMode: solidColorMode)
         self.loadNib()
         self._languageDefinitions = languageDefinitions
 
         if self._languageDefinitions != nil {
-            for i in 0..<settingsList.count
-            {
-                if settingsList[i].0 == "Languages" {
-                    settingsList[i] = ("Languages", (self._languageDefinitions?.LanguageNames())!)
-                }
-            }
+            settingsList[LanguagesSection] = ("Languages", (self._languageDefinitions?.LangCodes())!)
         }
     }
 
@@ -168,8 +171,8 @@ class DefaultSettings: LightDarkView, UITableViewDataSource, UITableViewDelegate
         fatalError("loading from nib not supported")
     }
 
-    required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool) {
-        fatalError("init(globalColors:darkMode:solidColorMode:) has not been implemented")
+    required init(darkMode: Bool, solidColorMode: Bool) {
+        fatalError("init(darkMode:solidColorMode:) has not been implemented")
     }
 
     func loadNib() {
@@ -192,7 +195,7 @@ class DefaultSettings: LightDarkView, UITableViewDataSource, UITableViewDelegate
             }
         }
 
-        self.tableView?.registerClass(DefaultSettingsTableViewCell.self, forCellReuseIdentifier: "cell")
+        //self.tableView?.registerClass(DefaultSettingsTableViewCell.self, forCellReuseIdentifier: "cell")
         self.tableView?.estimatedRowHeight = 44;
         self.tableView?.rowHeight = UITableViewAutomaticDimension;
 
@@ -238,31 +241,35 @@ class DefaultSettings: LightDarkView, UITableViewDataSource, UITableViewDelegate
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCellWithIdentifier("cell") as? DefaultSettingsTableViewCell {
-            let key = self.settingsList[indexPath.section].1[indexPath.row]
+        let key = self.settingsList[indexPath.section].1[indexPath.row]
+        let colorScheme = ColorScheme.ColorSchemeChooser(darkMode)
 
-            if cell.sw.allTargets().count == 0 {
-                cell.sw.addTarget(self, action: Selector("toggleSetting:"), forControlEvents: UIControlEvents.ValueChanged)
-            }
+        if indexPath.section == LanguagesSection {
+            let descriptiveName = LanguageDefinitions.Singleton().DescriptiveNameForLangCode(key)
 
-            cell.sw.on = NSUserDefaults.standardUserDefaults().boolForKey(key)
-            cell.label.text = self.settingsNames[key] ?? key
-            cell.longLabel.text = self.settingsNotes[key]
+            let cell = LanguageSettingsCell(style: UITableViewCellStyle.Default, reuseIdentifier: nil)
+            cell.initializeValues(descriptiveName, langCode: key, colorScheme: colorScheme)
 
-            let colorScheme = ColorScheme.ColorSchemeChooser(darkMode)
-
-            cell.backgroundColor = colorScheme.cellBackgroundColor()
-            cell.label.textColor = colorScheme.cellLabelColor()
-            cell.longLabel.textColor = colorScheme.cellLongLabelColor()
-
-            cell.changeConstraints()
+            return cell
+        }
+        else if let explanatoryText = self.settingsNotes[key] {
+            let cell = OptionWithDescription(style: UITableViewCellStyle.Default, reuseIdentifier: nil)
+            cell.initializeValues(key,
+                label: self.settingsNames[key] ?? key,
+                description: explanatoryText,
+                colorScheme: colorScheme)
 
             return cell
         }
         else {
-            assert(false, "this is a bad thing that just happened")
-            return UITableViewCell()
+            let cell = DefaultSettingsTableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: nil)
+            cell.initializeValues(key,
+                label: self.settingsNames[key] ?? key,
+                colorScheme: colorScheme)
+
+            return cell
         }
+
     }
 
     override func updateAppearance() {
@@ -285,13 +292,7 @@ class DefaultSettings: LightDarkView, UITableViewDataSource, UITableViewDelegate
 
         if let visibleCells = self.tableView?.visibleCells {
             for cell in visibleCells {
-
-                cell.backgroundColor = colorScheme.cellBackgroundColor()
-                let label = cell.viewWithTag(LabelTag) as? UILabel
-                label?.textColor = colorScheme.cellLabelColor()
-                let longLabel = cell.viewWithTag(LongLabelTag) as? UITextView
-                longLabel?.textColor = colorScheme.cellLongLabelColor()
-
+                (cell as? DefaultSettingsTableViewCell)?.applyColorScheme(colorScheme)
             }
         }
 
@@ -300,47 +301,33 @@ class DefaultSettings: LightDarkView, UITableViewDataSource, UITableViewDelegate
     func toggleSetting(sender: UISwitch) {
         if let cell = sender.superview as? UITableViewCell {
             if let indexPath = self.tableView?.indexPathForCell(cell) {
-                let key = self.settingsList[indexPath.section].1[indexPath.row]
+                let descriptor = self.settingsList[indexPath.section].1[indexPath.row]
+                let key = indexPath.section == LanguagesSection ? LanguageDefinitions.Singleton().DescriptiveNameForLangCode(descriptor) : descriptor
+                
                 NSUserDefaults.standardUserDefaults().setBool(sender.on, forKey: key)
             }
         }
     }
 }
 
+// The settings form has a list of options. The cells in the list are implemented using a simple class hierarchy.
+// DefaultSettingsTableViewCell     All options have at least a title and a switch to toggle them on and off.
+// OptionWithDescription            Same as above but with added explanatory text
+// LanguageSettingsCell             Options for enabling a language and choosing a keyboard layout for the language.
+
 class DefaultSettingsTableViewCell: UITableViewCell {
 
     var sw: UISwitch
     var label: UILabel
-    var longLabel: UITextView
-    var constraintsSetForLongLabel: Bool
-    var cellConstraints: [NSLayoutConstraint]
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         self.sw = UISwitch()
-        self.label = UILabel()
-        self.longLabel = UITextView()
-        self.cellConstraints = []
-
-        self.constraintsSetForLongLabel = false
+        self.label = UILabel(frame: CGRectZero)
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.sw.translatesAutoresizingMaskIntoConstraints = false
         self.label.translatesAutoresizingMaskIntoConstraints = false
-        self.longLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        self.longLabel.text = nil
-        self.longLabel.scrollEnabled = false
-        self.longLabel.selectable = false
-        self.longLabel.backgroundColor = UIColor.clearColor()
-
-        self.sw.tag = SwitchTag
-        self.label.tag = LabelTag
-        self.longLabel.tag = LongLabelTag
-
-        self.addSubview(self.sw)
-        self.addSubview(self.label)
-        self.addSubview(self.longLabel)
 
         self.addConstraints()
     }
@@ -349,62 +336,276 @@ class DefaultSettingsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func addConstraints() {
-        let margin: CGFloat = 8
-        let sideMargin = margin * 2
+    func initializeValues(setting: String, label: String, colorScheme: ColorScheme)
+    {
+        self.sw.on = NSUserDefaults.standardUserDefaults().boolForKey(setting)
+        self.label.text = label
 
-        let hasLongText = self.longLabel.text != nil && !self.longLabel.text.isEmpty
-        if hasLongText {
-            let switchSide = NSLayoutConstraint(item: sw, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Right, multiplier: 1, constant: -sideMargin)
-            let switchTop = NSLayoutConstraint(item: sw, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Top, multiplier: 1, constant: margin)
-            let labelSide = NSLayoutConstraint(item: label, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Left, multiplier: 1, constant: sideMargin)
-            let labelCenter = NSLayoutConstraint(item: label, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: sw, attribute: NSLayoutAttribute.CenterY, multiplier: 1, constant: 0)
-
-            self.addConstraint(switchSide)
-            self.addConstraint(switchTop)
-            self.addConstraint(labelSide)
-            self.addConstraint(labelCenter)
-
-            let left = NSLayoutConstraint(item: longLabel, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Left, multiplier: 1, constant: sideMargin)
-            let right = NSLayoutConstraint(item: longLabel, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Right, multiplier: 1, constant: -sideMargin)
-            let top = NSLayoutConstraint(item: longLabel, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: sw, attribute: NSLayoutAttribute.Bottom, multiplier: 1, constant: margin)
-            let bottom = NSLayoutConstraint(item: longLabel, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Bottom, multiplier: 1, constant: -margin)
-
-            self.addConstraint(left)
-            self.addConstraint(right)
-            self.addConstraint(top)
-            self.addConstraint(bottom)
-
-            self.cellConstraints += [switchSide, switchTop, labelSide, labelCenter, left, right, top, bottom]
-
-            self.constraintsSetForLongLabel = true
-        }
-        else {
-            let switchSide = NSLayoutConstraint(item: sw, attribute: NSLayoutAttribute.Right, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Right, multiplier: 1, constant: -sideMargin)
-            let switchTop = NSLayoutConstraint(item: sw, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Top, multiplier: 1, constant: margin)
-            let switchBottom = NSLayoutConstraint(item: sw, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Bottom, multiplier: 1, constant: -margin)
-            let labelSide = NSLayoutConstraint(item: label, attribute: NSLayoutAttribute.Left, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Left, multiplier: 1, constant: sideMargin)
-            let labelCenter = NSLayoutConstraint(item: label, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: sw, attribute: NSLayoutAttribute.CenterY, multiplier: 1, constant: 0)
-
-            self.addConstraint(switchSide)
-            self.addConstraint(switchTop)
-            self.addConstraint(switchBottom)
-            self.addConstraint(labelSide)
-            self.addConstraint(labelCenter)
-
-            self.cellConstraints += [switchSide, switchTop, switchBottom, labelSide, labelCenter]
-
-            self.constraintsSetForLongLabel = false
-        }
+        self.applyColorScheme(colorScheme)
     }
 
-    // XXX: not in updateConstraints because it doesn't play nice with UITableViewAutomaticDimension for some reason
-    func changeConstraints() {
-        let hasLongText = self.longLabel.text != nil && !self.longLabel.text.isEmpty
-        if hasLongText != self.constraintsSetForLongLabel {
-            self.removeConstraints(self.cellConstraints)
-            self.cellConstraints.removeAll()
-            self.addConstraints()
-        }
+    func applyColorScheme(colorScheme: ColorScheme)
+    {
+        self.backgroundColor = colorScheme.cellBackgroundColor()
+        self.label.textColor = colorScheme.cellLabelColor()
+
+    }
+
+    func addConstraints() {
+        self.addSubview(self.sw)
+        self.addSubview(self.label)
+
+        let views = ["label": self.label, "sw" : self.sw]
+        let metrics = ["pad" : 8.0, "widePad" : 16.0]
+
+        var allConstraints = [NSLayoutConstraint]()
+
+        let topRowConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
+        "H:|-pad-[label(>=150)]-[sw]-pad-|",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += topRowConstraints
+
+        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
+            "V:|-pad-[label]",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += verticalConstraints
+
+        let verticalConstraints2 = NSLayoutConstraint.constraintsWithVisualFormat(
+            "V:|-pad-[sw]",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += verticalConstraints2
+
+        NSLayoutConstraint.activateConstraints(allConstraints)
+    }
+
+}
+
+class OptionWithDescription : DefaultSettingsTableViewCell
+{
+    var longLabel: UITextView
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        self.longLabel = MakeUITextView()
+
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func initializeValues(setting: String, label: String, description: String, colorScheme: ColorScheme)
+    {
+        self.longLabel.text = description
+        super.initializeValues(setting, label: label, colorScheme: colorScheme)
+    }
+
+    override func applyColorScheme(colorScheme: ColorScheme)
+    {
+        super.applyColorScheme(colorScheme)
+
+        self.longLabel.textColor = colorScheme.cellLongLabelColor()
+    }
+
+    override func addConstraints() {
+        self.addSubview(self.sw)
+        self.addSubview(self.label)
+        self.addSubview(self.longLabel)
+
+        self.addSubview(self.longLabel)
+
+        let views = ["label": self.label, "longLabel": self.longLabel, "sw" : self.sw]
+        let metrics = ["pad" : 8.0, "widePad" : 16.0]
+
+        var allConstraints = [NSLayoutConstraint]()
+
+        let topRowConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
+            "H:|-pad-[label(>=150)]-[sw]-pad-|",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += topRowConstraints
+
+        let secondRowConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
+            "H:|-widePad-[longLabel]-widePad-|",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += secondRowConstraints
+
+        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
+            "V:|-pad-[label]-pad-[longLabel]-pad-|",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += verticalConstraints
+
+        let verticalConstraints3 = NSLayoutConstraint.constraintsWithVisualFormat(
+            "V:|-pad-[sw]",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += verticalConstraints3
+
+        NSLayoutConstraint.activateConstraints(allConstraints)
     }
 }
+
+
+class LanguageSettingsCell : DefaultSettingsTableViewCell
+{
+    var kbdChanger: UITextView
+    var kbdName: UITextView
+    var kbdLayoutChooserView: KeyboardLayoutSelection? = nil
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+
+        self.kbdName = MakeUITextView()
+        self.kbdChanger = MakeUITextView()
+
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+
+    func initializeValues(descriptiveName: String, langCode: String, colorScheme: ColorScheme)
+    {
+        self.sw.on = NSUserDefaults.standardUserDefaults().boolForKey(descriptiveName)
+        self.label.text = descriptiveName
+        self.kbdName.text = LanguageDefinitions.Singleton().KeyboardFileForLanguageCode(langCode)
+
+        self.kbdChanger.text = "Change..."
+        self.kbdChanger.userInteractionEnabled = true
+
+        let recognizer = UITapGestureRecognizer(target: self, action: "goclick:")
+        recognizer.delegate = self
+
+        self.kbdChanger.addGestureRecognizer(recognizer)
+//        self.kbdChanger.addTarget(self, action: "goclick:", forControlEvents: .TouchDown)
+
+        self.applyColorScheme(colorScheme)
+    }
+
+    @objc func goclick(recognizer: UITapGestureRecognizer)
+    {
+        NSLog("Hello world")
+        toggleKeyboardLayoutForm()
+    }
+
+    func toggleKeyboardLayoutForm()
+    {
+        // lazy load settings
+        if self.kbdLayoutChooserView == nil {
+
+            self.kbdLayoutChooserView = KeyboardLayoutSelection(globalColors: GlobalColors.self, darkMode: false, solidColorMode: false, currentLayout: self.kbdName.text, compatibleLayouts: ["QWERTY", "AZERTY", "QWERTZ", "DVORAK"])
+
+            if let chooserView = self.kbdLayoutChooserView {
+
+                self.addSubview(self.kbdLayoutChooserView!)
+
+
+                chooserView.translatesAutoresizingMaskIntoConstraints = false
+
+                let widthConstraint = NSLayoutConstraint(item: chooserView, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Width, multiplier: 1, constant: 0)
+                let heightConstraint = NSLayoutConstraint(item: chooserView, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Height, multiplier: 1, constant: 0)
+                let centerXConstraint = NSLayoutConstraint(item: chooserView, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant: 0)
+                let centerYConstraint = NSLayoutConstraint(item: chooserView, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.CenterY, multiplier: 1, constant: 0)
+
+                self.addConstraint(widthConstraint)
+                self.addConstraint(heightConstraint)
+                self.addConstraint(centerXConstraint)
+                self.addConstraint(centerYConstraint)
+
+                self.hidden = true
+            }
+
+        }
+        else {
+            self.kbdLayoutChooserView?.hidden = true
+            self.kbdLayoutChooserView?.removeFromSuperview()
+            self.kbdLayoutChooserView = nil
+        }
+
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func applyColorScheme(colorScheme: ColorScheme)
+    {
+        super.applyColorScheme(colorScheme)
+
+        self.kbdChanger.textColor = colorScheme.cellKbdChangerColor()
+    }
+
+    override func addConstraints() {
+        self.addSubview(self.sw)
+        self.addSubview(self.label)
+        self.addSubview(self.kbdName)
+
+        self.addSubview(self.kbdChanger)
+
+        let views = ["label": self.label, "kbdName": self.kbdName, "sw" : self.sw, "kbdChanger": self.kbdChanger]
+        let metrics = ["pad" : 8.0, "widePad" : 16.0]
+
+        var allConstraints = [NSLayoutConstraint]()
+
+        let topRowConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
+            "H:|-pad-[label(>=150)]-[sw]-pad-|",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += topRowConstraints
+
+
+        let secondRowConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
+            "H:|-pad-[kbdName(>=10)]-pad-[kbdChanger]",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += secondRowConstraints
+
+        let verticalConstraints2 = NSLayoutConstraint.constraintsWithVisualFormat(
+            "V:|-pad-[label]-pad-[kbdChanger]-pad-|",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += verticalConstraints2
+
+        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
+            "V:|-pad-[label]-pad-[kbdName]-pad-|",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += verticalConstraints
+
+        let verticalConstraints3 = NSLayoutConstraint.constraintsWithVisualFormat(
+            "V:|-pad-[sw]",
+            options: [],
+            metrics: metrics,
+            views:views)
+        allConstraints += verticalConstraints3
+
+        NSLayoutConstraint.activateConstraints(allConstraints)
+    }
+
+}
+
+func MakeUITextView() -> UITextView
+{
+    let view = UITextView(frame: CGRectZero)
+    view.text = nil
+    view.backgroundColor = UIColor.clearColor()
+    view.scrollEnabled = false
+    view.selectable = false
+    view.translatesAutoresizingMaskIntoConstraints = false
+
+    return view
+}
+
+

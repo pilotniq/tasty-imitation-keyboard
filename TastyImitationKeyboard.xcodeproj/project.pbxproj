@@ -33,6 +33,9 @@
 		4EF16F9819D255030076AFCB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF16F9519D255030076AFCB /* ViewController.swift */; };
 		4EF16F9B19D2550D0076AFCB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF16F9A19D2550D0076AFCB /* AppDelegate.swift */; };
 		4EF16F9F19D2552E0076AFCB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4EF16F9D19D2552E0076AFCB /* Main.storyboard */; };
+		73240AB91C338685007CA329 /* AZERTY.json in Resources */ = {isa = PBXBuildFile; fileRef = 73240AB71C338685007CA329 /* AZERTY.json */; };
+		73240ABA1C338685007CA329 /* QWERTY.json in Resources */ = {isa = PBXBuildFile; fileRef = 73240AB81C338685007CA329 /* QWERTY.json */; };
+		73240ABC1C338A63007CA329 /* KeyboardLayoutSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73240ABB1C338A63007CA329 /* KeyboardLayoutSelection.swift */; };
 		736C09081C15022E00B71DF7 /* SuggestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736C09071C15022E00B71DF7 /* SuggestionView.swift */; };
 		736D00A71BEEEA04004E7C6B /* LanguageDefinitions.json in Resources */ = {isa = PBXBuildFile; fileRef = 73F0D3B41BEEB5E60032A0D7 /* LanguageDefinitions.json */; };
 		736D00A81BEEEDB8004E7C6B /* LanguageDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F0D3B71BEEB98E0032A0D7 /* LanguageDefinition.swift */; };
@@ -152,6 +155,9 @@
 		4EF16F9519D255030076AFCB /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4EF16F9A19D2550D0076AFCB /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4EF16F9E19D2552E0076AFCB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
+		73240AB71C338685007CA329 /* AZERTY.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AZERTY.json; sourceTree = "<group>"; };
+		73240AB81C338685007CA329 /* QWERTY.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = QWERTY.json; sourceTree = "<group>"; };
+		73240ABB1C338A63007CA329 /* KeyboardLayoutSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardLayoutSelection.swift; sourceTree = "<group>"; };
 		736C09071C15022E00B71DF7 /* SuggestionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionView.swift; sourceTree = "<group>"; };
 		73A3F1981BDD8B66005436D1 /* FrenchAZERTY.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FrenchAZERTY.json; sourceTree = "<group>"; };
 		73A3F19A1BDDA917005436D1 /* EnglishQWERTY.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EnglishQWERTY.json; sourceTree = "<group>"; };
@@ -227,6 +233,7 @@
 				4E52A6D91A06C198006A08CE /* DefaultSettings.xib */,
 				4EEFD78A19E0DF15004D4974 /* Shapes.swift */,
 				736C09071C15022E00B71DF7 /* SuggestionView.swift */,
+				73240ABB1C338A63007CA329 /* KeyboardLayoutSelection.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -379,6 +386,8 @@
 		73A3F1971BDD8B44005436D1 /* KeyboardDefinitions */ = {
 			isa = PBXGroup;
 			children = (
+				73240AB71C338685007CA329 /* AZERTY.json */,
+				73240AB81C338685007CA329 /* QWERTY.json */,
 				73A3F19A1BDDA917005436D1 /* EnglishQWERTY.json */,
 				73A3F1981BDD8B66005436D1 /* FrenchAZERTY.json */,
 			);
@@ -587,6 +596,8 @@
 			files = (
 				4EF16F9619D255030076AFCB /* Images.xcassets in Resources */,
 				4EF16F9F19D2552E0076AFCB /* Main.storyboard in Resources */,
+				73240AB91C338685007CA329 /* AZERTY.json in Resources */,
+				73240ABA1C338685007CA329 /* QWERTY.json in Resources */,
 				4EF16F9119D254E00076AFCB /* Background.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -645,6 +656,7 @@
 				4E52A6D21A06A61F006A08CE /* ImageKey.swift in Sources */,
 				4E52A6D41A06A626006A08CE /* LightDarkView.swift in Sources */,
 				82FD1A931B0B3D3800A6D23D /* KeyboardLayout.swift in Sources */,
+				73240ABC1C338A63007CA329 /* KeyboardLayoutSelection.swift in Sources */,
 				4EC2A47019DF811E00F789E1 /* ForwardingView.swift in Sources */,
 				82FD1A801B0B2C2E00A6D23D /* CatboardBanner.swift in Sources */,
 				4E60A13A1979FA5C00854CC8 /* KeyboardKeyBackground.swift in Sources */,

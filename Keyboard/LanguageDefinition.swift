@@ -112,54 +112,61 @@ private var _Singleton: LanguageDefinitions? = nil
 
 // Define the set of languages currently supported
 public class LanguageDefinitions {
-    public var definitions : [LanguageDefinition]
+    public var definitions : [LanguageDefinition] = []
+    public var langCodeToDefinition: [String : LanguageDefinition] = [:]
 
 
-    class private func extractLanguageDefinitions(allDefinitions: NSDictionary) -> [LanguageDefinition]
+    private func extractLanguageDefinitions(allDefinitions: NSDictionary)
     {
-        guard let languages = allDefinitions["languages"] as? NSArray else {
-            NSLog("Could not find 'pages' array in root")
-            return [LanguageDefinition.EnglishLanguageDefinition()]
-        }
+        if let languages = allDefinitions["languages"] as? NSArray {
 
-        var definitions : [LanguageDefinition] = []
+            for language in languages {
 
-        for language in languages {
+                if let languageProperties = language["language"] as? NSDictionary {
 
-            if let languageProperties = language["language"] as? NSDictionary {
 
-                
-                if let englishName = languageProperties["englishName"] as? String,
-                    let nativeName = languageProperties["nativeName"] as? String,
-                    let defaultKbd = languageProperties["defaultKbd"] as? String,
-                    let requiredChars = languageProperties["requiredCharacters"] as? [String],
-                    let langCode = languageProperties["langCode"] as? String {
+                    if let englishName = languageProperties["englishName"] as? String,
+                        let nativeName = languageProperties["nativeName"] as? String,
+                        let defaultKbd = languageProperties["defaultKbd"] as? String,
+                        let requiredChars = languageProperties["requiredCharacters"] as? [String],
+                        let langCode = languageProperties["langCode"] as? String {
 
-                        definitions.append(
-                            LanguageDefinition(
+                            let definition = LanguageDefinition(
                                 langCode: langCode,
                                 englishName: englishName,
                                 nativeName: nativeName,
                                 requiredChars: requiredChars,
-                                defaultKbd: defaultKbd))
+                                defaultKbd: defaultKbd)
+
+                            self.definitions.append(definition)
+                            self.langCodeToDefinition[definition.LangCode] = definition
+                    }
                 }
+
+                
             }
-
-
         }
+        else {
+            makeDefaultLangDefinitions()
+        }
+    }
 
-        return definitions.count == 0 ? [LanguageDefinition.EnglishLanguageDefinition()] : definitions
+    // If we can't process the langauge definition file for some reason make sure we at least define English
+    private func makeDefaultLangDefinitions()
+    {
+        definitions = [LanguageDefinition.EnglishLanguageDefinition()]
+        langCodeToDefinition["EN"] = definitions[0]
     }
 
     init(jsonFileName : String)
     {
-        if let languageDefinitions = loadJSON("LanguageDefinitions")
-        {
-            definitions = LanguageDefinitions.extractLanguageDefinitions(languageDefinitions)
+        if let languageDefinitions = loadJSON("LanguageDefinitions") {
 
+            self.extractLanguageDefinitions(languageDefinitions)
         }
         else {
-            definitions = [ LanguageDefinition.EnglishLanguageDefinition() ]
+
+            makeDefaultLangDefinitions()
         }
     }
 
@@ -172,6 +179,15 @@ public class LanguageDefinitions {
         }
 
         return names
+    }
+
+    func LangCodes() -> [String]
+    {
+        return langCodeToDefinition.keys.sort()
+    }
+
+    func DescriptiveNameForLangCode(langCode: String) -> String {
+        return self.langCodeToDefinition[langCode]?.DescriptiveName ?? "UNKNOWN"
     }
 
     func KeyboardFileForLanguageCode(langCode: String) -> String? {

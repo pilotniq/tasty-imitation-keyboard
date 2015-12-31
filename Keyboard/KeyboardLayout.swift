@@ -159,75 +159,43 @@ class LayoutConstants: NSObject {
 
 class GlobalColors: NSObject {
     class var lightModeRegularKey: UIColor { get { return UIColor.whiteColor() }}
+
     class var darkModeRegularKey: UIColor { get { return UIColor.whiteColor().colorWithAlphaComponent(CGFloat(0.3)) }}
-    class var darkModeSolidColorRegularKey: UIColor { get { return UIColor(red: CGFloat(83)/CGFloat(255), green: CGFloat(83)/CGFloat(255), blue: CGFloat(83)/CGFloat(255), alpha: 1) }}
-    class var lightModeSpecialKey: UIColor { get { return GlobalColors.lightModeSolidColorSpecialKey }}
-    class var lightModeSolidColorSpecialKey: UIColor { get { return UIColor(red: CGFloat(177)/CGFloat(255), green: CGFloat(177)/CGFloat(255), blue: CGFloat(177)/CGFloat(255), alpha: 1) }}
+
+    class var lightModeSpecialKey: UIColor { get { return UIColor(red: CGFloat(177)/CGFloat(255), green: CGFloat(177)/CGFloat(255), blue: CGFloat(177)/CGFloat(255), alpha: 1) }}
+
     class var darkModeSpecialKey: UIColor { get { return UIColor.grayColor().colorWithAlphaComponent(CGFloat(0.3)) }}
-    class var darkModeSolidColorSpecialKey: UIColor { get { return UIColor(red: CGFloat(45)/CGFloat(255), green: CGFloat(45)/CGFloat(255), blue: CGFloat(45)/CGFloat(255), alpha: 1) }}
+
     class var darkModeShiftKeyDown: UIColor { get { return UIColor(red: CGFloat(214)/CGFloat(255), green: CGFloat(220)/CGFloat(255), blue: CGFloat(208)/CGFloat(255), alpha: 1) }}
+
     class var lightModePopup: UIColor { get { return GlobalColors.lightModeRegularKey }}
+
     class var darkModePopup: UIColor { get { return UIColor.grayColor() }}
-    class var darkModeSolidColorPopup: UIColor { get { return GlobalColors.darkModeSolidColorRegularKey }}
-    
+
     class var lightModeUnderColor: UIColor { get { return UIColor(hue: (220/360.0), saturation: 0.04, brightness: 0.56, alpha: 1) }}
+
     class var darkModeUnderColor: UIColor { get { return UIColor(red: CGFloat(38.6)/CGFloat(255), green: CGFloat(18)/CGFloat(255), blue: CGFloat(39.3)/CGFloat(255), alpha: 0.4) }}
+
     class var lightModeTextColor: UIColor { get { return UIColor.blackColor() }}
+
     class var darkModeTextColor: UIColor { get { return UIColor.whiteColor() }}
+
     class var lightModeBorderColor: UIColor { get { return UIColor(hue: (214/360.0), saturation: 0.04, brightness: 0.65, alpha: 1.0) }}
+
     class var darkModeBorderColor: UIColor { get { return UIColor.clearColor() }}
     
-    class func regularKey(darkMode: Bool, solidColorMode: Bool) -> UIColor {
-        if darkMode {
-            if solidColorMode {
-                return self.darkModeSolidColorRegularKey
-            }
-            else {
-                return self.darkModeRegularKey
-            }
-        }
-        else {
-            return self.lightModeRegularKey
-        }
+    class func regularKey(darkMode: Bool) -> UIColor {
+        return darkMode ? self.darkModeRegularKey : self.lightModeRegularKey
     }
     
-    class func popup(darkMode: Bool, solidColorMode: Bool) -> UIColor {
-        if darkMode {
-            if solidColorMode {
-                return self.darkModeSolidColorPopup
-            }
-            else {
-                return self.darkModePopup
-            }
-        }
-        else {
-            return self.lightModePopup
-        }
+    class func popup(darkMode: Bool) -> UIColor {
+        return darkMode ? self.darkModePopup : self.lightModePopup
     }
     
-    class func specialKey(darkMode: Bool, solidColorMode: Bool) -> UIColor {
-        if darkMode {
-            if solidColorMode {
-                return self.darkModeSolidColorSpecialKey
-            }
-            else {
-                return self.darkModeSpecialKey
-            }
-        }
-        else {
-            if solidColorMode {
-                return self.lightModeSolidColorSpecialKey
-            }
-            else {
-                return self.lightModeSpecialKey
-            }
-        }
+    class func specialKey(darkMode: Bool) -> UIColor {
+        return darkMode ? self.darkModeSpecialKey : self.lightModeSpecialKey
     }
 }
-
-//"darkShadowColor": UIColor(hue: (220/360.0), saturation: 0.04, brightness: 0.56, alpha: 1),
-//"blueColor": UIColor(hue: (211/360.0), saturation: 1.0, brightness: 1.0, alpha: 1),
-//"blueShadowColor": UIColor(hue: (216/360.0), saturation: 0.05, brightness: 0.43, alpha: 1),
 
 extension CGRect: Hashable {
     public var hashValue: Int {
@@ -249,7 +217,6 @@ extension CGSize: Hashable {
 class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     
     var layoutConstants: LayoutConstants.Type
-    var globalColors: GlobalColors.Type
     
     unowned var model: Keyboard
     unowned var superview: UIView
@@ -273,10 +240,9 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         }
     }
 
-    required init(model: Keyboard, superview: UIView, layoutConstants: LayoutConstants.Type, globalColors: GlobalColors.Type, darkMode: Bool, solidColorMode: Bool)
+    required init(model: Keyboard, superview: UIView, layoutConstants: LayoutConstants.Type, darkMode: Bool, solidColorMode: Bool)
     {
         self.layoutConstants = layoutConstants
-        self.globalColors = globalColors
         
         self.initialized = false
         self.model = model
@@ -390,7 +356,7 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             for (_, key) in self.modelToView {
                 key.shape = nil
                 
-                if let imageKey = key as? ImageKey { // TODO:
+                if let imageKey = key as? ImageKey {
                     imageKey.image = nil
                 }
             }
@@ -476,7 +442,7 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     
     func setAppearanceForKey(key: KeyboardKey, model: Key, darkMode: Bool, solidColorMode: Bool) {
         if model.type == Key.KeyType.Other {
-            self.setAppearanceForOtherKey(key, model: model, darkMode: darkMode, solidColorMode: solidColorMode)
+            self.setAppearanceForOtherKey(key, model: model, darkMode: darkMode)
         }
         
         switch model.type {
@@ -484,66 +450,66 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         Key.KeyType.Character,
         Key.KeyType.SpecialCharacter,
         Key.KeyType.Period:
-            key.color = self.self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)
+            key.color = GlobalColors.regularKey(darkMode)
             if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
-                key.downColor = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+                key.downColor = GlobalColors.specialKey(darkMode)
             }
             else {
                 key.downColor = nil
             }
-            key.textColor = (darkMode ? self.globalColors.darkModeTextColor : self.globalColors.lightModeTextColor)
+            key.textColor = (darkMode ? GlobalColors.darkModeTextColor : GlobalColors.lightModeTextColor)
             key.downTextColor = nil
         case
         Key.KeyType.Space:
-            key.color = self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)
-            key.downColor = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+            key.color = GlobalColors.regularKey(darkMode)
+            key.downColor = GlobalColors.specialKey(darkMode)
             
-            key.textColor = (darkMode ? self.globalColors.darkModeTextColor : self.globalColors.lightModeTextColor)
+            key.textColor = (darkMode ? GlobalColors.darkModeTextColor : GlobalColors.lightModeTextColor)
             key.downTextColor = nil
         case
         Key.KeyType.Shift:
-           key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+           key.color = GlobalColors.specialKey(darkMode)
            
-            key.downColor = (darkMode ? self.globalColors.darkModeShiftKeyDown : self.globalColors.lightModeRegularKey)
-            key.textColor = self.globalColors.darkModeTextColor
-            key.downTextColor = self.globalColors.lightModeTextColor
+            key.downColor = (darkMode ? GlobalColors.darkModeShiftKeyDown : GlobalColors.lightModeRegularKey)
+            key.textColor = GlobalColors.darkModeTextColor
+            key.downTextColor = GlobalColors.lightModeTextColor
         case
         Key.KeyType.Backspace:
-            key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+            key.color = GlobalColors.specialKey(darkMode)
             
             // TODO: actually a bit different
-            key.downColor = self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)
-            key.textColor = self.globalColors.darkModeTextColor
-            key.downTextColor = (darkMode ? nil : self.globalColors.lightModeTextColor)
+            key.downColor = GlobalColors.regularKey(darkMode)
+            key.textColor = GlobalColors.darkModeTextColor
+            key.downTextColor = (darkMode ? nil : GlobalColors.lightModeTextColor)
         case
         Key.KeyType.ModeChange:
-            key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+            key.color = GlobalColors.specialKey(darkMode)
             
             key.downColor = nil
-            key.textColor = (darkMode ? self.globalColors.darkModeTextColor : self.globalColors.lightModeTextColor)
+            key.textColor = (darkMode ? GlobalColors.darkModeTextColor : GlobalColors.lightModeTextColor)
             key.downTextColor = nil
         case
         Key.KeyType.Return,
         Key.KeyType.KeyboardChange,
         Key.KeyType.Settings:
-            key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+            key.color = GlobalColors.specialKey(darkMode)
             
             //key.color = BluishColor
             
             // TODO: actually a bit different
-            key.downColor = self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)
-            key.textColor = (darkMode ? self.globalColors.darkModeTextColor : self.globalColors.lightModeTextColor)
+            key.downColor = GlobalColors.regularKey(darkMode)
+            key.textColor = (darkMode ? GlobalColors.darkModeTextColor : GlobalColors.lightModeTextColor)
             key.downTextColor = nil
         default:
             break
         }
         
-        key.popupColor = self.globalColors.popup(darkMode, solidColorMode: solidColorMode)
-        key.underColor = (self.darkMode ? self.globalColors.darkModeUnderColor : self.globalColors.lightModeUnderColor)
-        key.borderColor = (self.darkMode ? self.globalColors.darkModeBorderColor : self.globalColors.lightModeBorderColor)
+        key.popupColor = GlobalColors.popup(darkMode)
+        key.underColor = (self.darkMode ? GlobalColors.darkModeUnderColor : GlobalColors.lightModeUnderColor)
+        key.borderColor = (self.darkMode ? GlobalColors.darkModeBorderColor : GlobalColors.lightModeBorderColor)
     }
     
-    func setAppearanceForOtherKey(key: KeyboardKey, model: Key, darkMode: Bool, solidColorMode: Bool) { /* override this to handle special keys */ }
+    func setAppearanceForOtherKey(key: KeyboardKey, model: Key, darkMode: Bool) { /* override this to handle special keys */ }
     
     // TODO: avoid array copies
     // TODO: sizes stored not rounded?

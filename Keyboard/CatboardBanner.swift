@@ -20,10 +20,10 @@ class CatboardBanner: SuggestionView {
 	
 	var touchToView: [UITouch:UIView]
 
-    required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool) {
+    required init(darkMode: Bool, solidColorMode: Bool) {
 		self.touchToView = [:]
 		
-        super.init(globalColors: globalColors, darkMode: darkMode, solidColorMode: solidColorMode)
+        super.init(darkMode: darkMode, solidColorMode: solidColorMode)
 		
         self.makeButtons()
     }

@@ -204,7 +204,7 @@ class KeyboardViewController: UIInputViewController {
 
         preKeyboardType = proxy.keyboardType!
 
-        self.layout = self.dynamicType.layoutClass.init(model: self.keyboard, superview: self.forwardingView, layoutConstants: self.dynamicType.layoutConstants, globalColors: self.dynamicType.globalColors, darkMode: self.darkMode(), solidColorMode: self.solidColorMode())
+        self.layout = self.dynamicType.layoutClass.init(model: self.keyboard, superview: self.forwardingView, layoutConstants: self.dynamicType.layoutConstants, darkMode: self.darkMode(), solidColorMode: self.solidColorMode())
 
         self.layout?.initialize()
         self.setMode(0)
@@ -823,8 +823,7 @@ class KeyboardViewController: UIInputViewController {
     @IBAction func toggleSettings() {
         // lazy load settings
         if self.settingsView == nil {
-            if let aSettings = self.createSettings() {
-                aSettings.darkMode = self.darkMode()
+            if let aSettings = self.createSettings(self.darkMode()) {
 
                 self.view.addSubview(aSettings)
                 self.settingsView = aSettings
@@ -935,7 +934,6 @@ class KeyboardViewController: UIInputViewController {
     
     class var layoutClass: KeyboardLayout.Type { get { return KeyboardLayout.self }}
     class var layoutConstants: LayoutConstants.Type { get { return LayoutConstants.self }}
-    class var globalColors: GlobalColors.Type { get { return GlobalColors.self }}
     
     func keyPressed(key: Key) {
             self.textDocumentProxy.insertText(key.outputForCase(self.shiftState.uppercase()))
@@ -944,13 +942,13 @@ class KeyboardViewController: UIInputViewController {
     // a banner that sits in the empty space on top of the keyboard
     func createBanner() -> SuggestionView {
         // note that dark mode is not yet valid here, so we just put false for clarity
-        return SuggestionView(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode())
+        return SuggestionView(darkMode: false, solidColorMode: self.solidColorMode())
     }
     
     // a settings view that replaces the keyboard when the settings button is pressed
-    func createSettings() -> LightDarkView? {
-        // note that dark mode is not yet valid here, so we just put false for clarity
-        let settingsView = DefaultSettings(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode(), languageDefinitions: self.languageDefinitions)
+    func createSettings(darkMode : Bool) -> LightDarkView? {
+        let settingsView = DefaultSettings(darkMode: darkMode, solidColorMode: self.solidColorMode(), languageDefinitions: self.languageDefinitions)
+
         settingsView.backButton?.addTarget(self, action: Selector("toggleSettings"), forControlEvents: UIControlEvents.TouchUpInside)
         return settingsView
     }
