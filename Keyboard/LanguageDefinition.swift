@@ -101,10 +101,39 @@ public class LanguageDefinition {
                 "U", "V", "W", "X",
                 "Y", "Z"
             ],
-            defaultKbd: "EnglishQWERTY")
+            defaultKbd: "QWERTY")
     }
 
 
+}
+
+
+// Make the look up key for checking in user defaults which layout to use for language
+func languageKeyboardLayout(langCode: String) -> String
+{
+    return langCode + "_layout"
+}
+
+func getKeyboardLayoutNameForLanguageCode(langCode: String) -> String
+{
+    let lookUpKey = languageKeyboardLayout(langCode)
+    return NSUserDefaults.standardUserDefaults().stringForKey(lookUpKey) ?? "QWERTY"
+}
+
+func setKeyboardLayoutNameForLanguageCode(langCode: String, layout: String)
+{
+    let lookUpKey = languageKeyboardLayout(langCode)
+    return NSUserDefaults.standardUserDefaults().setObject(layout, forKey: lookUpKey)
+}
+
+func setDefaultKeyboardLayoutNameForLanguageCode(langCode: String, layout: String)
+{
+    let lookUpKey = languageKeyboardLayout(langCode)
+
+    let currentValue = NSUserDefaults.standardUserDefaults().stringForKey(lookUpKey)
+    if currentValue == nil {
+        setKeyboardLayoutNameForLanguageCode(langCode, layout: layout)
+    }
 }
 
 // class var not yet supported so make it global
@@ -140,6 +169,8 @@ public class LanguageDefinitions {
 
                             self.definitions.append(definition)
                             self.langCodeToDefinition[definition.LangCode] = definition
+
+                            setDefaultKeyboardLayoutNameForLanguageCode(definition.LangCode, layout: definition.DefaultKbdName)
                     }
                 }
 

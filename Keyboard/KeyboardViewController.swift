@@ -47,8 +47,7 @@ class KeyboardViewController: UIInputViewController {
     var heightConstraint: NSLayoutConstraint?
     
     var bannerView: SuggestionView?
-    var settingsView: LightDarkView?
-    
+
     var currentMode: Int {
         didSet {
             if oldValue != currentMode {
@@ -342,7 +341,7 @@ class KeyboardViewController: UIInputViewController {
             return true
 
         } else if selection.characters.count == 2 {
-// switch language and keyboard
+            // switch language AND keyboard
             ChangeKeyboardLanguage(selection)
             return true
         }
@@ -361,13 +360,7 @@ class KeyboardViewController: UIInputViewController {
                 NSUserDefaults.standardUserDefaults().setValue(languageCode, forKey: kActiveLanguageCode)
                 NSUserDefaults.standardUserDefaults().setValue(newKeyboardFileName, forKey: kActiveKeyboardName)
 
-                //self.tearDownSubViews()
-
-                //self.InitializeLayout()
-
-
                 self.RebootKeyboard()
-
             }
         }
     }
@@ -396,9 +389,6 @@ class KeyboardViewController: UIInputViewController {
 
         self.kludge?.removeFromSuperview()
         self.kludge = nil
-
-        self.settingsView?.removeFromSuperview()
-        self.settingsView = nil
 
         self.button.removeFromSuperview()
         self.viewLongPopUp.removeFromSuperview()
@@ -626,7 +616,6 @@ class KeyboardViewController: UIInputViewController {
         self.layout?.updateKeyAppearance()
         
         self.bannerView?.darkMode = appearanceIsDark
-        self.settingsView?.darkMode = appearanceIsDark
     }
     
     func highlightKey(sender: KeyboardKey) {
@@ -820,38 +809,14 @@ class KeyboardViewController: UIInputViewController {
         self.advanceToNextInputMode()
     }
 
+    var nav: CustomNavigationController? = nil
+
     @IBAction func toggleSettings() {
-        // lazy load settings
-        if self.settingsView == nil {
-            if let aSettings = self.createSettings(self.darkMode()) {
+        nav = CustomNavigationController()
+        self.presentViewController(nav!, animated: false, completion: nil)
 
-                self.view.addSubview(aSettings)
-                self.settingsView = aSettings
-                
-                aSettings.translatesAutoresizingMaskIntoConstraints = false
-                
-                let widthConstraint = NSLayoutConstraint(item: aSettings, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: self.view, attribute: NSLayoutAttribute.Width, multiplier: 1, constant: 0)
-                let heightConstraint = NSLayoutConstraint(item: aSettings, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: self.view, attribute: NSLayoutAttribute.Height, multiplier: 1, constant: 0)
-                let centerXConstraint = NSLayoutConstraint(item: aSettings, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant: 0)
-                let centerYConstraint = NSLayoutConstraint(item: aSettings, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: self.view, attribute: NSLayoutAttribute.CenterY, multiplier: 1, constant: 0)
-                
-                self.view.addConstraint(widthConstraint)
-                self.view.addConstraint(heightConstraint)
-                self.view.addConstraint(centerXConstraint)
-                self.view.addConstraint(centerYConstraint)
-            }
-        }
-        
-        if let settings = self.settingsView {
-            let hidden = settings.hidden
-
-            self.bannerView?.hidden = hidden
-            
-            settings.hidden = !hidden
-            
-            self.forwardingView.hidden = hidden
-            self.forwardingView.userInteractionEnabled = !hidden
-        }
+        let vc = LanguageSettingsViewController(languageDefinitions: self.languageDefinitions, navController: nav)
+        self.nav?.pushViewController(vc, animated: true)
     }
     
     func setCapsIfNeeded() -> Bool {
@@ -945,14 +910,6 @@ class KeyboardViewController: UIInputViewController {
         return SuggestionView(darkMode: false, solidColorMode: self.solidColorMode())
     }
     
-    // a settings view that replaces the keyboard when the settings button is pressed
-    func createSettings(darkMode : Bool) -> LightDarkView? {
-        let settingsView = DefaultSettings(darkMode: darkMode, solidColorMode: self.solidColorMode(), languageDefinitions: self.languageDefinitions)
-
-        settingsView.backButton?.addTarget(self, action: Selector("toggleSettings"), forControlEvents: UIControlEvents.TouchUpInside)
-        return settingsView
-    }
-	
 	// MARK: Added methods for extra features
 	func initializePopUp()
 	{
