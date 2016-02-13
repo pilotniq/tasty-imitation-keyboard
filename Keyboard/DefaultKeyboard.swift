@@ -10,7 +10,9 @@ import Foundation
 
 func languageSpecificKeyboard() -> Keyboard?
 {
-    if let keyboardFileName = NSUserDefaults.standardUserDefaults().stringForKey(kActiveKeyboardName) {
+    let langCode = CurrentLanguageCode()
+
+    let keyboardFileName = getKeyboardLayoutNameForLanguageCode(langCode)
 
         if let path = NSBundle.mainBundle().pathForResource(keyboardFileName, ofType: "json")
         {
@@ -111,7 +113,7 @@ func languageSpecificKeyboard() -> Keyboard?
                 }
             }
         }
-    }
+
     
     return nil
 }
@@ -186,6 +188,8 @@ func FailSafeKeyboard() -> Keyboard {
     defaultKeyboard.addKey(Key(.Shift), row: 2, page: 0)
 
     AddCharacters(defaultKeyboard, characters: ["Z", "X", "C", "V", "B", "N", "M"], row: 2, page: 0)
+
+    defaultKeyboard.addKey(Key(.Backspace), row: 2, page: 0)
     
     addDefaultBottomRowKeys(defaultKeyboard, modeChange: Key.ModeChangeNumbersKey(), pageNumber: 0)
     addNumericPage(defaultKeyboard)

@@ -103,8 +103,12 @@ public class LanguageDefinition {
             ],
             defaultKbd: "QWERTY")
     }
+}
 
-
+// Get and validate the current language to use
+// If what we think is the current language has been disabled in settings, we need to pick another language
+func CurrentLanguageCode() -> String {
+    return NSUserDefaults.standardUserDefaults().stringForKey(kActiveLanguageCode) ?? EnabledLanguageCodes()[0]
 }
 
 
@@ -117,7 +121,7 @@ func languageKeyboardLayout(langCode: String) -> String
 func getKeyboardLayoutNameForLanguageCode(langCode: String) -> String
 {
     let lookUpKey = languageKeyboardLayout(langCode)
-    return NSUserDefaults.standardUserDefaults().stringForKey(lookUpKey) ?? "QWERTY"
+    return NSUserDefaults.standardUserDefaults().stringForKey(lookUpKey) ?? LanguageDefinitions.Singleton().KeyboardFileForLanguageCode(langCode) ?? "QWERTY"
 }
 
 func setKeyboardLayoutNameForLanguageCode(langCode: String, layout: String)
@@ -135,6 +139,44 @@ func setDefaultKeyboardLayoutNameForLanguageCode(langCode: String, layout: Strin
         setKeyboardLayoutNameForLanguageCode(langCode, layout: layout)
     }
 }
+
+func langCodeEnabledKey (langCode: String) -> String
+{
+    return langCode + "_Enabled"
+}
+
+func getLanguageCodeEnabled(langCode: String) -> Bool
+{
+    return NSUserDefaults.standardUserDefaults().boolForKey(langCodeEnabledKey(langCode))
+}
+
+func setLanguageCodeEnabled(langCode: String, value: Bool)
+{
+    return NSUserDefaults.standardUserDefaults().setObject(value, forKey: langCodeEnabledKey(langCode))
+}
+
+func EnabledLanguageCodes() -> [String]
+{
+    var enabledCodes: [String] = []
+
+    let defs = LanguageDefinitions.Singleton().definitions
+
+    for definition in defs {
+        let key = definition.LangCode
+
+        if getLanguageCodeEnabled(key) {
+            enabledCodes.append(key)
+        }
+    }
+
+    // Make sure at least one language is always enabled
+    if enabledCodes.count == 0 {
+        enabledCodes.append("EN")
+    }
+
+    return enabledCodes
+}
+
 
 // class var not yet supported so make it global
 private var _Singleton: LanguageDefinitions? = nil

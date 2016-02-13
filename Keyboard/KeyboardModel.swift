@@ -152,32 +152,10 @@ class Key: Hashable {
         }
     }
 
-    func EnabledLanguageCodes() -> [String]
-    {
-        var enabledCodes: [String] = []
-
-        let defs = LanguageDefinitions.Singleton().definitions
-
-        for definition in defs {
-            let n = definition.DescriptiveName
-
-            if NSUserDefaults.standardUserDefaults().boolForKey(n) {
-                enabledCodes.append(definition.LangCode)
-            }
-        }
-
-        // Make sure at least one language is always enabled
-        if enabledCodes.count == 0 {
-            enabledCodes.append("EN")
-        }
-
-        return enabledCodes
-    }
-
     func getLongPressesForShiftState(shiftState: ShiftState) -> [String]
     {
         if self.type == .KeyboardChange {
-            let enabledLangs = self.EnabledLanguageCodes()
+            let enabledLangs = EnabledLanguageCodes()
 
             var values : [String] = [SpecialUnicodeSymbols.NextKeyboardSymbol, SpecialUnicodeSymbols.SmilingFace]
 

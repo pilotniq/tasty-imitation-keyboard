@@ -9,6 +9,7 @@
 import UIKit
 
 let darkMode = false
+let kUnknownLookupKey = "UNKNOWN"
 
 class LanguageSettingsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -103,7 +104,23 @@ class LanguageSettingsViewController: UIViewController, UITableViewDataSource, U
         return self.settingsList[section].1.count
     }
 
-     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    func tableView(tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+
+        switch indexPath.section {
+        case 0:
+            return 40
+        case 1:
+            return 75
+        default:
+            return 60
+        }
+    }
+
+    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 35
     }
 
@@ -123,7 +140,7 @@ class LanguageSettingsViewController: UIViewController, UITableViewDataSource, U
 
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label = UILabel()
-        label.text = self.settingsList[section].0
+        label.text = self.settingsList[section].0.uppercaseString
 
         formatHeader(label)
 
@@ -162,14 +179,16 @@ class LanguageSettingsViewController: UIViewController, UITableViewDataSource, U
 
     }
 
-    func switchToKeyboardSelectionViewController(recognizer: UITapGestureRecognizer) {
-        // TODO figure out which language they clicked on
-        let langCode = "EN"
+    func switchToKeyboardSelectionViewController(recognizer: UITapGestureRecognizer, langCode: String) {
+
         let vc = KeyboardSelectionViewController(keyboardDefinitions: ["QWERTY", "AZERTY", "QWERTZ"], langCode: langCode)
 
         self._navController?.pushViewController(vc, animated: true)
     }
 
+    override func viewDidAppear(animated: Bool) {
+        self.tableView.reloadData()
+    }
 
     func updateAppearance() {
         //super.updateAppearance()
@@ -208,10 +227,12 @@ class DefaultSettingsTableViewCell: UITableViewCell {
 
     var sw: UISwitch
     var label: UILabel
+    var settingLookupKey: String
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         self.sw = UISwitch()
         self.label = UILabel(frame: CGRectZero)
+        self.settingLookupKey = kUnknownLookupKey
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -225,11 +246,18 @@ class DefaultSettingsTableViewCell: UITableViewCell {
 
     func initializeValues(setting: String, label: String, colorScheme: ColorScheme)
     {
+        self.settingLookupKey = setting
         self.sw.on = NSUserDefaults.standardUserDefaults().boolForKey(setting)
+        self.sw.addTarget(self, action: Selector("toggleSetting:"), forControlEvents: UIControlEvents.ValueChanged)
+
         self.label.text = label
 
         self.applyColorScheme(colorScheme)
         self.addConstraints()
+    }
+
+    func toggleSetting(sender: UISwitch) {
+        NSUserDefaults.standardUserDefaults().setBool(sender.on, forKey: self.settingLookupKey)
     }
 
     func applyColorScheme(colorScheme: ColorScheme)
@@ -244,7 +272,7 @@ class DefaultSettingsTableViewCell: UITableViewCell {
         self.addSubview(self.label)
 
         let views = ["label": self.label, "sw" : self.sw]
-        let metrics = ["pad" : 8.0, "widePad" : 16.0]
+        let metrics = ["pad" : 3.0]
 
         var allConstraints = [NSLayoutConstraint]()
 
@@ -309,7 +337,7 @@ class OptionWithDescription : DefaultSettingsTableViewCell
         self.addSubview(self.longLabel)
 
         let views = ["label": self.label, "longLabel": self.longLabel, "sw" : self.sw]
-        let metrics = ["pad" : 8.0, "widePad" : 16.0]
+        let metrics = ["pad" : 3.0, "widePad" : 16.0]
 
         var allConstraints = [NSLayoutConstraint]()
 
@@ -350,22 +378,27 @@ class LanguageSettingsCell : DefaultSettingsTableViewCell
     var kbdChanger: UITextView
     var kbdName: UITextView
     var parentViewController: LanguageSettingsViewController? = nil
+    var langCode : String = "EN"
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-
         self.kbdName = MakeUITextView()
         self.kbdChanger = MakeUITextView()
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+
     }
 
     func initializeValues(descriptiveName: String, langCode: String, colorScheme: ColorScheme, parentViewController: LanguageSettingsViewController)
     {
+        self.langCode = langCode
+
         self.parentViewController = parentViewController
 
-        self.sw.on = NSUserDefaults.standardUserDefaults().boolForKey(descriptiveName)
+        self.sw.on = getLanguageCodeEnabled(langCode)
+        self.sw.addTarget(self, action: Selector("toggleSetting:"), forControlEvents: UIControlEvents.ValueChanged)
+
         self.label.text = descriptiveName
-        self.kbdName.text = LanguageDefinitions.Singleton().KeyboardFileForLanguageCode(langCode)
+        self.kbdName.text = getKeyboardLayoutNameForLanguageCode(self.langCode)
 
         self.kbdChanger.text = "Change..."
         self.kbdChanger.userInteractionEnabled = true
@@ -381,9 +414,12 @@ class LanguageSettingsCell : DefaultSettingsTableViewCell
 
     @objc func goclick(recognizer: UITapGestureRecognizer)
     {
-        self.parentViewController?.switchToKeyboardSelectionViewController(recognizer)
+        self.parentViewController?.switchToKeyboardSelectionViewController(recognizer, langCode: self.langCode)
     }
 
+    override func toggleSetting(sender: UISwitch) {
+        setLanguageCodeEnabled(self.langCode, value: sender.on)
+    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -404,12 +440,12 @@ class LanguageSettingsCell : DefaultSettingsTableViewCell
         self.addSubview(self.kbdChanger)
 
         let views = ["label": self.label, "kbdName": self.kbdName, "sw" : self.sw, "kbdChanger": self.kbdChanger]
-        let metrics = ["pad" : 8.0, "widePad" : 16.0]
+        let metrics = ["pad" : 3.0, "verticalpad": 1.0]
 
         var allConstraints = [NSLayoutConstraint]()
 
         let topRowConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
-            "H:|-pad-[label(>=150)]-[sw]-pad-|",
+            "H:|-pad-[label(>=100)]-[sw]-pad-|",
             options: [],
             metrics: metrics,
             views:views)
@@ -424,14 +460,14 @@ class LanguageSettingsCell : DefaultSettingsTableViewCell
         allConstraints += secondRowConstraints
 
         let verticalConstraints2 = NSLayoutConstraint.constraintsWithVisualFormat(
-            "V:|-pad-[label]-pad-[kbdChanger]-pad-|",
+            "V:|-pad-[label]-verticalpad-[kbdChanger]-pad-|",
             options: [],
             metrics: metrics,
             views:views)
         allConstraints += verticalConstraints2
 
         let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
-            "V:|-pad-[label]-pad-[kbdName]-pad-|",
+            "V:|-pad-[label]-verticalpad-[kbdName]-pad-|",
             options: [],
             metrics: metrics,
             views:views)

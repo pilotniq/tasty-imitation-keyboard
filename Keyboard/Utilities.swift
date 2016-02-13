@@ -144,10 +144,6 @@ func distanceBetween(rect: CGRect, point: CGPoint) -> CGFloat {
     return CGFloat(sqrt(a + b));
 }
 
-func CurrentLanguageCode() -> String {
-    return NSUserDefaults.standardUserDefaults().stringForKey(kActiveLanguageCode) ?? vEnglishLanguageCode
-}
-
 func CasedString(str : String, shiftState : ShiftState) -> String
 {
     if shiftState == .Enabled

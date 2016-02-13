@@ -32,12 +32,12 @@
 		4EF16F9819D255030076AFCB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF16F9519D255030076AFCB /* ViewController.swift */; };
 		4EF16F9B19D2550D0076AFCB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF16F9A19D2550D0076AFCB /* AppDelegate.swift */; };
 		4EF16F9F19D2552E0076AFCB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4EF16F9D19D2552E0076AFCB /* Main.storyboard */; };
-		73240AB91C338685007CA329 /* AZERTY.json in Resources */ = {isa = PBXBuildFile; fileRef = 73240AB71C338685007CA329 /* AZERTY.json */; };
-		73240ABA1C338685007CA329 /* QWERTY.json in Resources */ = {isa = PBXBuildFile; fileRef = 73240AB81C338685007CA329 /* QWERTY.json */; };
 		73240ABC1C338A63007CA329 /* KeyboardLayoutSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73240ABB1C338A63007CA329 /* KeyboardLayoutSelection.swift */; };
 		73240B451C387502007CA329 /* LanguageSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73240B431C387502007CA329 /* LanguageSettingsViewController.swift */; };
 		73240B491C3889AE007CA329 /* KeyboardSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73240B471C3889AE007CA329 /* KeyboardSelectionViewController.swift */; };
 		73240B701C39DFCD007CA329 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73240B6F1C39DFCD007CA329 /* CustomNavigationController.swift */; };
+		73240B741C55A418007CA329 /* AZERTY.json in Resources */ = {isa = PBXBuildFile; fileRef = 73240B731C55A418007CA329 /* AZERTY.json */; };
+		736877CA1C6FD90B00234D95 /* QWERTY.json in Resources */ = {isa = PBXBuildFile; fileRef = 736877C91C6FD90B00234D95 /* QWERTY.json */; };
 		736C09081C15022E00B71DF7 /* SuggestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736C09071C15022E00B71DF7 /* SuggestionView.swift */; };
 		736D00A71BEEEA04004E7C6B /* LanguageDefinitions.json in Resources */ = {isa = PBXBuildFile; fileRef = 73F0D3B41BEEB5E60032A0D7 /* LanguageDefinitions.json */; };
 		736D00A81BEEEDB8004E7C6B /* LanguageDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F0D3B71BEEB98E0032A0D7 /* LanguageDefinition.swift */; };
@@ -135,8 +135,6 @@
 		4E60A13B1979FA8E00854CC8 /* KeyboardConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardConnector.swift; sourceTree = "<group>"; };
 		4E60A13D1979FB2E00854CC8 /* DirectionEnum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectionEnum.swift; sourceTree = "<group>"; };
 		4E6AEE4B19D246D700931E8F /* Catboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Catboard.swift; sourceTree = "<group>"; };
-		4E7CDF921A079E3E0015BB90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4E7CDF931A079E3E0015BB90 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		4E807D9319461D9000D875D1 /* HostingApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HostingApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E807DB919461DC700D875D1 /* Keyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Keyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E807DBC19461DC700D875D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -154,12 +152,12 @@
 		4EF16F9519D255030076AFCB /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4EF16F9A19D2550D0076AFCB /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4EF16F9E19D2552E0076AFCB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
-		73240AB71C338685007CA329 /* AZERTY.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AZERTY.json; sourceTree = "<group>"; };
-		73240AB81C338685007CA329 /* QWERTY.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = QWERTY.json; sourceTree = "<group>"; };
 		73240ABB1C338A63007CA329 /* KeyboardLayoutSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardLayoutSelection.swift; sourceTree = "<group>"; };
 		73240B431C387502007CA329 /* LanguageSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageSettingsViewController.swift; sourceTree = "<group>"; };
 		73240B471C3889AE007CA329 /* KeyboardSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardSelectionViewController.swift; sourceTree = "<group>"; };
 		73240B6F1C39DFCD007CA329 /* CustomNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomNavigationController.swift; sourceTree = "<group>"; };
+		73240B731C55A418007CA329 /* AZERTY.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AZERTY.json; sourceTree = "<group>"; };
+		736877C91C6FD90B00234D95 /* QWERTY.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = QWERTY.json; sourceTree = "<group>"; };
 		736C09071C15022E00B71DF7 /* SuggestionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionView.swift; sourceTree = "<group>"; };
 		73D535131BE9CB1A00D61F2E /* KeyboardFrameworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeyboardFrameworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		73D535151BE9CB1A00D61F2E /* KeyboardFrameworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardFrameworkTests.swift; sourceTree = "<group>"; };
@@ -232,9 +230,6 @@
 				4E52A6D71A06C16C006A08CE /* DefaultSettings.swift */,
 				4EEFD78A19E0DF15004D4974 /* Shapes.swift */,
 				736C09071C15022E00B71DF7 /* SuggestionView.swift */,
-				73240ABB1C338A63007CA329 /* KeyboardLayoutSelection.swift */,
-				73240B431C387502007CA329 /* LanguageSettingsViewController.swift */,
-				73240B471C3889AE007CA329 /* KeyboardSelectionViewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -258,6 +253,9 @@
 				4E3B5A931A0654A8003366F6 /* KeyboardInputTraits.swift */,
 				4EC2A46C19DF811E00F789E1 /* ForwardingView.swift */,
 				73240B6F1C39DFCD007CA329 /* CustomNavigationController.swift */,
+				73240B431C387502007CA329 /* LanguageSettingsViewController.swift */,
+				73240B471C3889AE007CA329 /* KeyboardSelectionViewController.swift */,
+				73240ABB1C338A63007CA329 /* KeyboardLayoutSelection.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -271,23 +269,6 @@
 			name = Demo;
 			sourceTree = "<group>";
 		};
-		4E7CDF901A079E3E0015BB90 /* KeyboardSound */ = {
-			isa = PBXGroup;
-			children = (
-				4E7CDF931A079E3E0015BB90 /* KeyboardViewController.swift */,
-				4E7CDF911A079E3E0015BB90 /* Supporting Files */,
-			);
-			path = KeyboardSound;
-			sourceTree = "<group>";
-		};
-		4E7CDF911A079E3E0015BB90 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				4E7CDF921A079E3E0015BB90 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		4E807D8A19461D9000D875D1 = {
 			isa = PBXGroup;
 			children = (
@@ -296,7 +277,6 @@
 				4E807D9519461D9000D875D1 /* HostingApp */,
 				4E807DBA19461DC700D875D1 /* Keyboard */,
 				4E8EF38219F95D75009CBF5D /* KeyboardFramework */,
-				4E7CDF901A079E3E0015BB90 /* KeyboardSound */,
 				73D535141BE9CB1A00D61F2E /* KeyboardFrameworkTests */,
 				4E807D9419461D9000D875D1 /* Products */,
 			);
@@ -340,7 +320,6 @@
 			children = (
 				82FD1A8C1B0B31F900A6D23D /* Keyboard-Bridging-Header.h */,
 				82FD1A811B0B319100A6D23D /* CYRKeyboardButton */,
-				82FD1A8B1B0B31B400A6D23D /* Library */,
 				4E6AEE5219D2488B00931E8F /* Controller */,
 				4E6AEE5019D2486900931E8F /* Model */,
 				4E6AEE4F19D2484B00931E8F /* Views */,
@@ -388,8 +367,8 @@
 		73A3F1971BDD8B44005436D1 /* KeyboardDefinitions */ = {
 			isa = PBXGroup;
 			children = (
-				73240AB71C338685007CA329 /* AZERTY.json */,
-				73240AB81C338685007CA329 /* QWERTY.json */,
+				736877C91C6FD90B00234D95 /* QWERTY.json */,
+				73240B731C55A418007CA329 /* AZERTY.json */,
 			);
 			name = KeyboardDefinitions;
 			sourceTree = "<group>";
@@ -422,13 +401,6 @@
 				82FD1A851B0B319100A6D23D /* CYRKeyboardButtonView.m */,
 			);
 			path = CYRKeyboardButton;
-			sourceTree = "<group>";
-		};
-		82FD1A8B1B0B31B400A6D23D /* Library */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Library;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -554,6 +526,7 @@
 					};
 					4E807DB819461DC700D875D1 = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = 5BCN39A966;
 					};
 					4E8EF38019F95D74009CBF5D = {
 						CreatedOnToolsVersion = 6.1;
@@ -596,8 +569,6 @@
 			files = (
 				4EF16F9619D255030076AFCB /* Images.xcassets in Resources */,
 				4EF16F9F19D2552E0076AFCB /* Main.storyboard in Resources */,
-				73240AB91C338685007CA329 /* AZERTY.json in Resources */,
-				73240ABA1C338685007CA329 /* QWERTY.json in Resources */,
 				4EF16F9119D254E00076AFCB /* Background.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -607,7 +578,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				73F0D3B51BEEB5E60032A0D7 /* LanguageDefinitions.json in Resources */,
+				73240B741C55A418007CA329 /* AZERTY.json in Resources */,
 				4E52A6D61A06BADA006A08CE /* Media.xcassets in Resources */,
+				736877CA1C6FD90B00234D95 /* QWERTY.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -867,6 +840,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Keyboard/Info.plist;
@@ -874,6 +849,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-DDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "Archagon.HostingApp.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Keyboard;
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Keyboard/Keyboard-Bridging-Header.h";
 				"TEST_HOST[sdk=*]" = "";
@@ -884,12 +860,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Keyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Archagon.HostingApp.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Keyboard;
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Keyboard/Keyboard-Bridging-Header.h";
 			};

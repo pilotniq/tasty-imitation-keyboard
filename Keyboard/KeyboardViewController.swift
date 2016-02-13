@@ -30,10 +30,9 @@ let kPeriodShortcut = "kPeriodShortcut"
 let kKeyboardClicks = "kKeyboardClicks"
 let kSmallLowercase = "kSmallLowercase"
 let kActiveLanguageCode = "kActiveLanguageCode"
-let kActiveKeyboardName = "kActiveKeyboardName"
 
 let vEnglishLanguageCode = "EN"
-let vQwertyKeyboardFileName = "EnglishQWERTY"
+let vQwertyKeyboardFileName = "QWERTY"
 
 class KeyboardViewController: UIInputViewController {
     
@@ -120,6 +119,7 @@ class KeyboardViewController: UIInputViewController {
 
     private func InitializeLayout()
     {
+        //sleep(30)
         self.forwardingView = ForwardingView(frame: CGRectZero, viewController: self)
         self.view.addSubview(self.forwardingView)
 
@@ -142,9 +142,8 @@ class KeyboardViewController: UIInputViewController {
             kPeriodShortcut: true,
             kKeyboardClicks: false,
             kSmallLowercase: false,
-            kActiveLanguageCode: vEnglishLanguageCode,
-            kActiveKeyboardName: vQwertyKeyboardFileName
-        ])
+            kActiveLanguageCode: vEnglishLanguageCode
+            ])
 
         self.shiftState = .Disabled
         self.currentMode = 0
@@ -349,20 +348,11 @@ class KeyboardViewController: UIInputViewController {
         return false
     }
 
-    // For now, change language and set the default keyboard for that language.
-    // TODO: Allow for specification of kbd independent of keyboard e.g. choose QWERTY or AZERTY layout for French.
     func ChangeKeyboardLanguage(languageCode: String)
     {
-        if languageCode != CurrentLanguageCode() {
+        NSUserDefaults.standardUserDefaults().setValue(languageCode, forKey: kActiveLanguageCode)
 
-            if let newKeyboardFileName = LanguageDefinitions.Singleton().KeyboardFileForLanguageCode(languageCode) {
-
-                NSUserDefaults.standardUserDefaults().setValue(languageCode, forKey: kActiveLanguageCode)
-                NSUserDefaults.standardUserDefaults().setValue(newKeyboardFileName, forKey: kActiveKeyboardName)
-
-                self.RebootKeyboard()
-            }
-        }
+        self.RebootKeyboard()
     }
 
     private func RebootKeyboard()
@@ -809,10 +799,12 @@ class KeyboardViewController: UIInputViewController {
         self.advanceToNextInputMode()
     }
 
+    // Nice tutorial on navigation controllers and view controllers:
+    // http://makeapppie.com/2014/09/15/swift-swift-programmatic-navigation-view-controllers-in-swift/
     var nav: CustomNavigationController? = nil
 
     @IBAction func toggleSettings() {
-        nav = CustomNavigationController()
+        self.nav = CustomNavigationController(parent: self)
         self.presentViewController(nav!, animated: false, completion: nil)
 
         let vc = LanguageSettingsViewController(languageDefinitions: self.languageDefinitions, navController: nav)

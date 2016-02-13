@@ -15,9 +15,6 @@ class KeyboardSelectionViewController: UIViewController, UITableViewDataSource, 
     private var _keyboardDefinitions : [String] = []
     private var _langCode = "EN"
 
-        // TODO diff the keyboard against the current default for the language
-    private var _currentLayout = "QWERTY"
-
     required init()
     {
         super.init(nibName: nil, bundle: nil)
@@ -27,7 +24,7 @@ class KeyboardSelectionViewController: UIViewController, UITableViewDataSource, 
     {
         self.init()
 
-        self._currentLayout = getKeyboardLayoutNameForLanguageCode(langCode)
+        self._langCode = langCode
 
         self._keyboardDefinitions = keyboardDefinitions
 
@@ -108,14 +105,14 @@ class KeyboardSelectionViewController: UIViewController, UITableViewDataSource, 
         let colorScheme = ColorScheme.ColorSchemeChooser(darkMode)
 
 
-        let cell = CheckedTableViewCell(layout: keyboardName, isDefault: keyboardName == self._currentLayout, colorScheme: colorScheme)
+        let cell = CheckedTableViewCell(layout: keyboardName, isDefault: keyboardName == getKeyboardLayoutNameForLanguageCode(self._langCode), colorScheme: colorScheme)
 
         return cell
     }
 
+    // Tapping anywhere within the row that shows a keyboard layout is sufficient to change to that layout
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self._currentLayout = self._keyboardDefinitions[indexPath.row]
-        setKeyboardLayoutNameForLanguageCode(self._langCode, layout: self._currentLayout)
+        setKeyboardLayoutNameForLanguageCode(self._langCode, layout: self._keyboardDefinitions[indexPath.row])
 
         self.tableView.reloadData()
     }

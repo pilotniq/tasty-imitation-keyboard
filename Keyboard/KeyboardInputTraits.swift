@@ -1,14 +1,11 @@
 //
 //  KeyboardInputTraits.swift
-//  RussianPhoneticKeyboard
 //
 //  Created by Alexei Baboulevitch on 11/1/14.
 //  Copyright (c) 2014 Alexei Baboulevitch. All rights reserved.
 //
 
 import Foundation
-import QuartzCore
-import UIKit
 
 //        optional var autocorrectionType: UITextAutocorrectionType { get set } // default is UITextAutocorrectionTypeDefault
 //        @availability(iOS, introduced=5.0)
