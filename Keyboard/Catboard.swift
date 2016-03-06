@@ -32,7 +32,7 @@ class Catboard: KeyboardViewController {
         let keyOutput = key.outputForCase(self.shiftState.uppercase())
         
         if !NSUserDefaults.standardUserDefaults().boolForKey(kCatTypeEnabled) {
-            textDocumentProxy.insertText(keyOutput)
+            InsertText(keyOutput)
             return
         }
         
@@ -40,7 +40,7 @@ class Catboard: KeyboardViewController {
             let context = textDocumentProxy.documentContextBeforeInput
             if context != nil {
                 if context!.characters.count < 2 {
-                    textDocumentProxy.insertText(keyOutput)
+                    InsertText(keyOutput)
                     return
                 }
                 
@@ -48,26 +48,26 @@ class Catboard: KeyboardViewController {
                 
                 index = index.predecessor()
                 if context?.characters[index] != " " {
-                    textDocumentProxy.insertText(keyOutput)
+                    InsertText(keyOutput)
                     return
                 }
                 
                 index = index.predecessor()
                 if context?.characters[index] == " " {
-                    textDocumentProxy.insertText(keyOutput)
+                    InsertText(keyOutput)
                     return
                 }
                 
-                textDocumentProxy.insertText(keyOutput)
+                InsertText(keyOutput)
                 return
             }
             else {
-                textDocumentProxy.insertText(keyOutput)
+                InsertText(keyOutput)
                 return
             }
         }
         else {
-            textDocumentProxy.insertText(keyOutput)
+            InsertText(keyOutput)
             return
         }
         

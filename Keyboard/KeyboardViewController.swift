@@ -35,11 +35,10 @@ let vEnglishLanguageCode = "EN"
 let vQwertyKeyboardFileName = "QWERTY"
 
 class KeyboardViewController: UIInputViewController {
-    
+
     let backspaceDelay: NSTimeInterval = 0.5
     let backspaceRepeat: NSTimeInterval = 0.07
 
-    var languageDefinitions: LanguageDefinitions!
     var keyboard: Keyboard!
     var forwardingView: ForwardingView!
     var layout: KeyboardLayout?
@@ -94,8 +93,6 @@ class KeyboardViewController: UIInputViewController {
         }
     }
 	
-	var sug_word : String = ""
-	
 	var viewLongPopUp:CYRKeyboardButtonView = CYRKeyboardButtonView()
 	var button = CYRKeyboardButton()
 	
@@ -119,7 +116,6 @@ class KeyboardViewController: UIInputViewController {
 
     private func InitializeLayout()
     {
-        //sleep(30)
         self.forwardingView = ForwardingView(frame: CGRectZero, viewController: self)
         self.view.addSubview(self.forwardingView)
 
@@ -152,18 +148,24 @@ class KeyboardViewController: UIInputViewController {
 
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 
-        self.languageDefinitions = LanguageDefinitions(jsonFileName: "LanguageDefinitions")
-
 		InitializeLayout()
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("defaultsChanged:"), name: NSUserDefaultsDidChangeNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("hideExpandView:"), name: "hideExpandViewNotification", object: nil)
     }
-    
+
+    override func viewWillDisappear(animated: Bool) {
+        CurrentWordStore().persistWords()
+    }
+
     required init(coder: NSCoder) {
         fatalError("NSCoding not supported")
     }
-    
+
+    override func dismissKeyboard() {
+        CurrentWordStore().persistWords()
+    }
+
     deinit {
         backspaceDelayTimer?.invalidate()
         backspaceRepeatTimer?.invalidate()
@@ -357,6 +359,8 @@ class KeyboardViewController: UIInputViewController {
 
     private func RebootKeyboard()
     {
+        self.currentWord = ""
+
         self.forwardingView.resetTrackedViews()
         self.shiftStartingState = nil
         self.shiftWasMultitapped = false
@@ -395,7 +399,7 @@ class KeyboardViewController: UIInputViewController {
 
                 if !HandleKeyboardSelection(title) {
 
-                    self.textDocumentProxy.insertText(CasedString(title, shiftState: self.shiftState))
+                    InsertText(CasedString(title, shiftState: self.shiftState))
                 }
 
                 self.setCapsIfNeeded()
@@ -563,10 +567,6 @@ class KeyboardViewController: UIInputViewController {
 		
 		keyboard_type = textDocumentProxy.keyboardType!
 		
-        if proxy.documentContextBeforeInput == nil {
-			sug_word = " "
-		}
-		
 		dispatch_async(dispatch_get_main_queue(), {
 			if proxy.keyboardType! != self.preKeyboardType
 			{
@@ -579,6 +579,7 @@ class KeyboardViewController: UIInputViewController {
     func contextChanged() {
         self.setCapsIfNeeded()
         self.autoPeriodState = .NoSpace
+        self.currentWord = ""
     }
 	
     func setHeight(height: CGFloat) {
@@ -680,8 +681,8 @@ class KeyboardViewController: UIInputViewController {
             if charactersAreInCorrectState {
                 self.textDocumentProxy.deleteBackward()
                 self.textDocumentProxy.deleteBackward()
-                self.textDocumentProxy.insertText(".")
-                self.textDocumentProxy.insertText(" ")
+                InsertText(".")
+                InsertText(" ")
             }
             
             self.autoPeriodState = .NoSpace
@@ -704,6 +705,10 @@ class KeyboardViewController: UIInputViewController {
         self.cancelBackspaceTimers()
         
         self.textDocumentProxy.deleteBackward()
+        if self.currentWord.characters.count > 0 {
+
+            self.currentWord.removeAtIndex(self.currentWord.endIndex.predecessor())
+        }
         
         self.setCapsIfNeeded()
         
@@ -792,6 +797,8 @@ class KeyboardViewController: UIInputViewController {
     }
     
     func advanceTapped() {
+        self.CurrentWordStore().persistWords()
+
         self.forwardingView.resetTrackedViews()
         self.shiftStartingState = nil
         self.shiftWasMultitapped = false
@@ -807,7 +814,7 @@ class KeyboardViewController: UIInputViewController {
         self.nav = CustomNavigationController(parent: self)
         self.presentViewController(nav!, animated: false, completion: nil)
 
-        let vc = LanguageSettingsViewController(languageDefinitions: self.languageDefinitions, navController: nav)
+        let vc = LanguageSettingsViewController(languageDefinitions: LanguageDefinitions.Singleton(), navController: nav)
         self.nav?.pushViewController(vc, animated: true)
     }
     
@@ -891,9 +898,43 @@ class KeyboardViewController: UIInputViewController {
     
     class var layoutClass: KeyboardLayout.Type { get { return KeyboardLayout.self }}
     class var layoutConstants: LayoutConstants.Type { get { return LayoutConstants.self }}
+
+    var wordStore : WordStore? = nil
+    func CurrentWordStore() -> WordStore {
+        let currentLang = CurrentLanguageCode()
+
+        if wordStore == nil {
+            wordStore = WordStore(langCode: currentLang)
+        }
+        else if wordStore?.LangCode != currentLang {
+            wordStore?.persistWords()
+            wordStore = WordStore(langCode: currentLang)
+        }
+
+        return wordStore!
+    }
+
+    var currentWord: String = ""
+
+    func InsertText(insertChar: String)
+    {
+        self.textDocumentProxy.insertText(insertChar)
+
+
+        if let wordInternalCharOfLanguage = CurrentLanguageDefinition()?.RequiredChars.contains(insertChar) where wordInternalCharOfLanguage == true {
+            self.currentWord += insertChar
+        }
+        else if self.currentWord != "" {
+            CurrentWordStore().recordWord(currentWord)
+            self.currentWord = ""
+        }
+
+        self.bannerView?.LabelSuggestionButtons(CurrentWordStore().getSuggestions(3, prefix: self.currentWord))
+
+    }
     
     func keyPressed(key: Key) {
-            self.textDocumentProxy.insertText(key.outputForCase(self.shiftState.uppercase()))
+        InsertText(key.outputForCase(self.shiftState.uppercase()))
     }
     
     // a banner that sits in the empty space on top of the keyboard
@@ -955,26 +996,31 @@ class KeyboardViewController: UIInputViewController {
                 return
             }
 
+            // Tapping on the suggestion replaces the word we've been inserting into the text buffer
+            for _ in 0..<currentWord.characters.count {
+                self.textDocumentProxy.deleteBackward()
+            }
+
+            var insertionWord = ""
+
             if self.shiftState == .Enabled
             {
-                self.textDocumentProxy.insertText(title.capitalizedString + " ")
+                insertionWord = title.capitalizedString
+
             }
             else if self.shiftState == .Locked
             {
-                self.textDocumentProxy.insertText(title.uppercaseString + " ")
+                insertionWord = title.uppercaseString
             }
-            else
-            {
-                let tokens = self.sug_word.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) as [String]
+            else {
+                insertionWord = title
+            }
 
-                if let lastWord = tokens.last where isInitCaps(lastWord) {
-                    self.textDocumentProxy.insertText(title.capitalizedString + " ")
-                }
-                else {
-                    self.textDocumentProxy.insertText(title + " ")
-                }
-                
-            }
+            InsertText(insertionWord + " ")
+
+            // Update the last used datetime for this word
+            // REVIEW insert the case-corrected insertionWord? Or just the value shown on the suggestion key?
+            self.CurrentWordStore().recordWord(title)
         }
     }
 

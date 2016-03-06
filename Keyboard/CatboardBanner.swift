@@ -25,7 +25,7 @@ class CatboardBanner: SuggestionView {
 		
         super.init(darkMode: darkMode, solidColorMode: solidColorMode)
 		
-        self.makeButtons()
+        self.makeButtons(["The", "What", "I"])
     }
 
     required init(coder aDecoder: NSCoder) {
@@ -46,12 +46,12 @@ class CatboardBanner: SuggestionView {
         self.updateAppearance()
     }
 
-    func suggestionButton(suggestedWord : String) -> UIButton {
+    func suggestionButton() -> UIButton {
         let btn = UIButton(type: .Custom)
         btn.exclusiveTouch = true
         btn.titleLabel!.minimumScaleFactor = 0.6
         btn.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-        btn.setTitle(suggestedWord, forState: UIControlState.Normal)
+        btn.setTitle("", forState: UIControlState.Normal)
         btn.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         btn.titleLabel?.font = UIFont.systemFontOfSize(18)
         btn.translatesAutoresizingMaskIntoConstraints = false
@@ -60,10 +60,13 @@ class CatboardBanner: SuggestionView {
         return btn
     }
     
-    func makeButtons() {
-		self.btn1 = suggestionButton("The")
-        self.btn2 = suggestionButton("I")
-        self.btn3 = suggestionButton("What")
+    private func makeButtons(labels: [String]) {
+
+        self.btn1 = suggestionButton()
+        self.btn2 = suggestionButton()
+        self.btn3 = suggestionButton()
+
+        self.LabelSuggestionButtons(labels)
 
         self.addSubview(self.btn1)
         self.addSubview(self.btn2)
@@ -71,7 +74,7 @@ class CatboardBanner: SuggestionView {
 
 		addConstraintsToButtons()
     }
-    
+
 	override func drawRect(rect: CGRect) {}
 	
 	override func hitTest(point: CGPoint, withEvent event: UIEvent!) -> UIView? {

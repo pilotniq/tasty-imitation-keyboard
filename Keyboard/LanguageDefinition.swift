@@ -26,7 +26,7 @@ public class LanguageDefinition {
     private let _nativeName : String
 
     // Chars that a keyboard must contain for you to be able to type this language
-    private let _requiredChars : [String]
+    private let _requiredChars : Set<String>
 
     // The name of the JSON keyboard definition file for the default keyboard for this language
     private let _defaultKbd : String
@@ -37,7 +37,7 @@ public class LanguageDefinition {
         self._langCode = langCode
         self._englishName = englishName
         self._nativeName = nativeName
-        self._requiredChars = requiredChars
+        self._requiredChars = Set<String>(requiredChars)
         self._defaultKbd = defaultKbd
 
     }
@@ -60,7 +60,7 @@ public class LanguageDefinition {
         }
     }
 
-    var RequiredChars : [String] {
+    var RequiredChars : Set<String> {
         get {
             return self._requiredChars
         }
@@ -109,6 +109,10 @@ public class LanguageDefinition {
 // If what we think is the current language has been disabled in settings, we need to pick another language
 func CurrentLanguageCode() -> String {
     return NSUserDefaults.standardUserDefaults().stringForKey(kActiveLanguageCode) ?? EnabledLanguageCodes()[0]
+}
+
+func CurrentLanguageDefinition() -> LanguageDefinition? {
+    return LanguageDefinitions.Singleton().langCodeToDefinition[CurrentLanguageCode()]
 }
 
 

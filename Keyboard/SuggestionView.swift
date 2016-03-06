@@ -36,5 +36,12 @@ class SuggestionView: LightDarkView  {
         button.backgroundColor = bluishGray
         button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
     }
-    
+
+    func LabelSuggestionButtons(labels: [String])
+    {
+        self.btn1.setTitle(labels.count > 0 ? labels[0] : "", forState: .Normal)
+        self.btn2.setTitle(labels.count > 1 ? labels[1] : "", forState: .Normal)
+        self.btn3.setTitle(labels.count > 2 ? labels[2] : "", forState: .Normal)
+    }
+
 }
