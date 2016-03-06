@@ -359,7 +359,7 @@ class KeyboardViewController: UIInputViewController {
 
     private func RebootKeyboard()
     {
-        self.currentWord = ""
+        CurrentWordStore().ResetContext()
 
         self.forwardingView.resetTrackedViews()
         self.shiftStartingState = nil
@@ -579,7 +579,7 @@ class KeyboardViewController: UIInputViewController {
     func contextChanged() {
         self.setCapsIfNeeded()
         self.autoPeriodState = .NoSpace
-        self.currentWord = ""
+        CurrentWordStore().ResetContext()
     }
 	
     func setHeight(height: CGFloat) {
@@ -705,11 +705,8 @@ class KeyboardViewController: UIInputViewController {
         self.cancelBackspaceTimers()
         
         self.textDocumentProxy.deleteBackward()
-        if self.currentWord.characters.count > 0 {
+        CurrentWordStore().DeleteBackward()
 
-            self.currentWord.removeAtIndex(self.currentWord.endIndex.predecessor())
-        }
-        
         self.setCapsIfNeeded()
         
         // trigger for subsequent deletes
@@ -914,22 +911,13 @@ class KeyboardViewController: UIInputViewController {
         return wordStore!
     }
 
-    var currentWord: String = ""
-
     func InsertText(insertChar: String)
     {
         self.textDocumentProxy.insertText(insertChar)
 
+        CurrentWordStore().recordChar(insertChar)
 
-        if let wordInternalCharOfLanguage = CurrentLanguageDefinition()?.RequiredChars.contains(insertChar) where wordInternalCharOfLanguage == true {
-            self.currentWord += insertChar
-        }
-        else if self.currentWord != "" {
-            CurrentWordStore().recordWord(currentWord)
-            self.currentWord = ""
-        }
-
-        self.bannerView?.LabelSuggestionButtons(CurrentWordStore().getSuggestions(3, prefix: self.currentWord))
+        self.bannerView?.LabelSuggestionButtons(CurrentWordStore().getSuggestions(3, prefix: CurrentWordStore().CurrentWord))
 
     }
     
@@ -997,7 +985,7 @@ class KeyboardViewController: UIInputViewController {
             }
 
             // Tapping on the suggestion replaces the word we've been inserting into the text buffer
-            for _ in 0..<currentWord.characters.count {
+            for _ in 0 ..< CurrentWordStore().CurrentWord.characters.count {
                 self.textDocumentProxy.deleteBackward()
             }
 

@@ -18,6 +18,7 @@ class WordStore
 {
     private let langCode : String
     private var words : [String : NSDate] = [:]
+    private var currentWord = ""
 
     private func WordStoreKey() -> String {
         return "WordStore_" + self.langCode
@@ -88,6 +89,35 @@ class WordStore
             return self.langCode
         }
     }
+
+    var CurrentWord : String {
+        get {
+            return self.currentWord
+        }
+    }
+
+    func recordChar(ch : String) {
+        if let wordInternalCharOfLanguage = CurrentLanguageDefinition()?.RequiredChars.contains(ch) where wordInternalCharOfLanguage == true {
+            self.currentWord += ch
+        }
+        else if self.currentWord != "" {
+            self.recordWord(currentWord)
+            self.currentWord = ""
+        }
+    }
+
+    func ResetContext() {
+        self.currentWord = ""
+    }
+
+    func DeleteBackward() {
+        
+        if self.currentWord.characters.count > 0 {
+
+            self.currentWord.removeAtIndex(self.currentWord.endIndex.predecessor())
+        }
+    }
+
 
 
 }
