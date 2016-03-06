@@ -155,7 +155,7 @@ class KeyboardViewController: UIInputViewController {
     }
 
     override func viewWillDisappear(animated: Bool) {
-        CurrentWordStore().persistWords()
+        WordStore.CurrentWordStore().persistWords()
     }
 
     required init(coder: NSCoder) {
@@ -163,7 +163,7 @@ class KeyboardViewController: UIInputViewController {
     }
 
     override func dismissKeyboard() {
-        CurrentWordStore().persistWords()
+        WordStore.CurrentWordStore().persistWords()
     }
 
     deinit {
@@ -359,7 +359,7 @@ class KeyboardViewController: UIInputViewController {
 
     private func RebootKeyboard()
     {
-        CurrentWordStore().ResetContext()
+        WordStore.CurrentWordStore().ResetContext()
 
         self.forwardingView.resetTrackedViews()
         self.shiftStartingState = nil
@@ -579,7 +579,7 @@ class KeyboardViewController: UIInputViewController {
     func contextChanged() {
         self.setCapsIfNeeded()
         self.autoPeriodState = .NoSpace
-        CurrentWordStore().ResetContext()
+        WordStore.CurrentWordStore().ResetContext()
     }
 	
     func setHeight(height: CGFloat) {
@@ -705,7 +705,7 @@ class KeyboardViewController: UIInputViewController {
         self.cancelBackspaceTimers()
         
         self.textDocumentProxy.deleteBackward()
-        CurrentWordStore().DeleteBackward()
+        WordStore.CurrentWordStore().DeleteBackward()
 
         self.setCapsIfNeeded()
         
@@ -794,7 +794,7 @@ class KeyboardViewController: UIInputViewController {
     }
     
     func advanceTapped() {
-        self.CurrentWordStore().persistWords()
+        WordStore.CurrentWordStore().persistWords()
 
         self.forwardingView.resetTrackedViews()
         self.shiftStartingState = nil
@@ -896,29 +896,13 @@ class KeyboardViewController: UIInputViewController {
     class var layoutClass: KeyboardLayout.Type { get { return KeyboardLayout.self }}
     class var layoutConstants: LayoutConstants.Type { get { return LayoutConstants.self }}
 
-    var wordStore : WordStore? = nil
-    func CurrentWordStore() -> WordStore {
-        let currentLang = CurrentLanguageCode()
-
-        if wordStore == nil {
-            wordStore = WordStore(langCode: currentLang)
-        }
-        else if wordStore?.LangCode != currentLang {
-            wordStore?.persistWords()
-            wordStore = WordStore(langCode: currentLang)
-        }
-
-        return wordStore!
-    }
-
     func InsertText(insertChar: String)
     {
         self.textDocumentProxy.insertText(insertChar)
 
-        CurrentWordStore().recordChar(insertChar)
+        WordStore.CurrentWordStore().recordChar(insertChar)
 
-        self.bannerView?.LabelSuggestionButtons(CurrentWordStore().getSuggestions(3, prefix: CurrentWordStore().CurrentWord))
-
+        self.bannerView?.LabelSuggestionButtons(WordStore.CurrentWordStore().getSuggestions(3))
     }
     
     func keyPressed(key: Key) {
@@ -985,30 +969,20 @@ class KeyboardViewController: UIInputViewController {
             }
 
             // Tapping on the suggestion replaces the word we've been inserting into the text buffer
-            for _ in 0 ..< CurrentWordStore().CurrentWord.characters.count {
+            for _ in 0 ..< WordStore.CurrentWordStore().CurrentWord.characters.count {
                 self.textDocumentProxy.deleteBackward()
             }
 
-            var insertionWord = ""
-
-            if self.shiftState == .Enabled
-            {
-                insertionWord = title.capitalizedString
-
-            }
-            else if self.shiftState == .Locked
-            {
-                insertionWord = title.uppercaseString
-            }
-            else {
-                insertionWord = title
-            }
+            let insertionWord =
+                self.shiftState == .Enabled ? title.capitalizedString
+                    : self.shiftState == .Locked ? title.uppercaseString
+                    : title
 
             InsertText(insertionWord + " ")
 
             // Update the last used datetime for this word
             // REVIEW insert the case-corrected insertionWord? Or just the value shown on the suggestion key?
-            self.CurrentWordStore().recordWord(title)
+            WordStore.CurrentWordStore().recordWord(title)
         }
     }
 

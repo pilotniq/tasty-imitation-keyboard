@@ -14,6 +14,9 @@ let MaxPersistedWords = 1000
 // Instead, add a slop factor that we will allow it to grow in memory beyond the max size
 let MaxGrowth = 100
 
+// Swift doesn't yet support class vars so create this at file scope
+var wordStore : WordStore? = nil
+
 class WordStore
 {
     private let langCode : String
@@ -38,9 +41,9 @@ class WordStore
 
     // For now the only suggestions are completions.
     // TODO: Also suggest corrections
-    func getSuggestions(max: Int, prefix: String) -> [String]
+    func getSuggestions(max: Int) -> [String]
     {
-        let completions = self.words.keys.filter({ $0.hasPrefix(prefix) })
+        let completions = self.words.keys.filter({ $0.hasPrefix(self.currentWord) })
             .sort({ self.words[$0]!.compare(self.words[$1]!) == NSComparisonResult.OrderedDescending })
             .prefix(max)
 
@@ -52,9 +55,14 @@ class WordStore
     {
         self.words[word] = NSDate()
 
+        // If the user types "t", sees a completion "that" then selects the completion we were seeing
+        // ghosts -- "t" would get added to the MRU list as well when the space was inserted.
+        self.ResetContext()
+
         if self.words.count > MaxPersistedWords + MaxGrowth {
             trimWords(MaxPersistedWords)
         }
+
     }
 
     func trimWords(maxWords : Int)
@@ -118,6 +126,18 @@ class WordStore
         }
     }
 
+    class func CurrentWordStore() -> WordStore {
+        let currentLang = CurrentLanguageCode()
 
+        if wordStore == nil {
+            wordStore = WordStore(langCode: currentLang)
+        }
+        else if wordStore?.LangCode != currentLang {
+            wordStore?.persistWords()
+            wordStore = WordStore(langCode: currentLang)
+        }
+
+        return wordStore!
+    }
 
 }
