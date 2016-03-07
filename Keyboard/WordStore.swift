@@ -17,6 +17,10 @@ let MaxGrowth = 100
 // Swift doesn't yet support class vars so create this at file scope
 var wordStore : WordStore? = nil
 
+// Letters, combining marks etc.
+// Note that if a language uses the number 7 (e.g Squamish) as a letter then it would have to be listed as a word-internal punc
+let AllLetters = NSCharacterSet.letterCharacterSet()
+
 class WordStore
 {
     private let langCode : String
@@ -105,10 +109,18 @@ class WordStore
     }
 
     func recordChar(ch : String) {
-        if let wordInternalCharOfLanguage = CurrentLanguageDefinition()?.RequiredChars.contains(ch) where wordInternalCharOfLanguage == true {
-            self.currentWord += ch
+        if ch == "" {
+            return
         }
-        else if self.currentWord != "" {
+
+        if let wordInternalCharOfLanguage = CurrentLanguageDefinition()?.InternalPunc.contains(ch) where wordInternalCharOfLanguage == true {
+
+            self.currentWord += ch
+        } else if AllLetters.longCharacterIsMember(ch.unicodeScalars.first!.value) {
+
+            self.currentWord += ch
+        } else {
+
             self.recordWord(currentWord)
             self.currentWord = ""
         }

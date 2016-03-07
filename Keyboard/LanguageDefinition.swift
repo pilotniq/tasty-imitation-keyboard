@@ -31,15 +31,19 @@ public class LanguageDefinition {
     // The name of the JSON keyboard definition file for the default keyboard for this language
     private let _defaultKbd : String
 
+    // Special symbols that this language uses within what we will consider to be words e.g. apostrophe for English means
+    // that we will consider "dog's" to be a single word. Similarly the middle dot in Catalan etc.
+    private let _internalPunc : Set<String>
+
     init(langCode: String,
-        englishName: String, nativeName: String, requiredChars: [String], defaultKbd: String)
+        englishName: String, nativeName: String, requiredChars: [String], defaultKbd: String, internalPunc: [String])
     {
         self._langCode = langCode
         self._englishName = englishName
         self._nativeName = nativeName
         self._requiredChars = Set<String>(requiredChars)
         self._defaultKbd = defaultKbd
-
+        self._internalPunc = Set<String>(internalPunc)
     }
 
     var LangCode : String {
@@ -78,6 +82,12 @@ public class LanguageDefinition {
         }
     }
 
+    var InternalPunc : Set<String> {
+        get {
+            return self._internalPunc
+        }
+    }
+
     // Default English language definition to be used in case of an emergency
     // e.g. failing to load language definitions from the JSON language definition file.
     class private func EnglishLanguageDefinition() -> LanguageDefinition {
@@ -101,7 +111,8 @@ public class LanguageDefinition {
                 "U", "V", "W", "X",
                 "Y", "Z"
             ],
-            defaultKbd: "QWERTY")
+            defaultKbd: "QWERTY",
+            internalPunc: ["-", "'"])
     }
 }
 
@@ -203,6 +214,7 @@ public class LanguageDefinitions {
                     if let englishName = languageProperties["englishName"] as? String,
                         let nativeName = languageProperties["nativeName"] as? String,
                         let defaultKbd = languageProperties["defaultKbd"] as? String,
+                        let internalPunc = languageProperties["internalPunc"] as? [String],
                         let requiredChars = languageProperties["requiredCharacters"] as? [String],
                         let langCode = languageProperties["langCode"] as? String {
 
@@ -211,7 +223,8 @@ public class LanguageDefinitions {
                                 englishName: englishName,
                                 nativeName: nativeName,
                                 requiredChars: requiredChars,
-                                defaultKbd: defaultKbd)
+                                defaultKbd: defaultKbd,
+                                internalPunc: internalPunc)
 
                             self.definitions.append(definition)
                             self.langCodeToDefinition[definition.LangCode] = definition
