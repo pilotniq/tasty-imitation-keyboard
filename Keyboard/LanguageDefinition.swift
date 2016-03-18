@@ -25,9 +25,6 @@ public class LanguageDefinition {
     // Name of the language in that language's native script
     private let _nativeName : String
 
-    // Chars that a keyboard must contain for you to be able to type this language
-    private let _requiredChars : Set<String>
-
     // The name of the JSON keyboard definition file for the default keyboard for this language
     private let _defaultKbd : String
 
@@ -36,12 +33,11 @@ public class LanguageDefinition {
     private let _internalPunc : Set<String>
 
     init(langCode: String,
-        englishName: String, nativeName: String, requiredChars: [String], defaultKbd: String, internalPunc: [String])
+        englishName: String, nativeName: String, defaultKbd: String, internalPunc: [String])
     {
         self._langCode = langCode
         self._englishName = englishName
         self._nativeName = nativeName
-        self._requiredChars = Set<String>(requiredChars)
         self._defaultKbd = defaultKbd
         self._internalPunc = Set<String>(internalPunc)
     }
@@ -61,12 +57,6 @@ public class LanguageDefinition {
     var NativeName : String {
         get {
             return self._nativeName
-        }
-    }
-
-    var RequiredChars : Set<String> {
-        get {
-            return self._requiredChars
         }
     }
 
@@ -95,22 +85,6 @@ public class LanguageDefinition {
             langCode: "EN",
             englishName: "English",
             nativeName: "English",
-            requiredChars: [
-                "a", "b", "c", "d",
-                "e", "f", "g", "h",
-                "i", "j", "k", "l",
-                "m", "n", "o", "p",
-                "q", "r", "s", "t",
-                "u", "v", "w", "x",
-                "y", "z", "'",
-                "A", "B", "C", "D",
-                "E", "F", "G", "H",
-                "I", "J", "K", "L",
-                "M", "N", "O", "P",
-                "Q", "R", "S", "T",
-                "U", "V", "W", "X",
-                "Y", "Z"
-            ],
             defaultKbd: "QWERTY",
             internalPunc: ["-", "'"])
     }
@@ -215,14 +189,12 @@ public class LanguageDefinitions {
                         let nativeName = languageProperties["nativeName"] as? String,
                         let defaultKbd = languageProperties["defaultKbd"] as? String,
                         let internalPunc = languageProperties["internalPunc"] as? [String],
-                        let requiredChars = languageProperties["requiredCharacters"] as? [String],
                         let langCode = languageProperties["langCode"] as? String {
 
                             let definition = LanguageDefinition(
                                 langCode: langCode,
                                 englishName: englishName,
                                 nativeName: nativeName,
-                                requiredChars: requiredChars,
                                 defaultKbd: defaultKbd,
                                 internalPunc: internalPunc)
 
