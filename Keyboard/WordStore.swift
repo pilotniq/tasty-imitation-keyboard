@@ -43,11 +43,19 @@ class WordStore
 
     }
 
-    // For now the only suggestions are completions.
-    // TODO: Also suggest corrections
+    // Corrections algorithm allows for:
+    // (a) Case variants
+    // (b) accent variants
+    // (c) completions including completions where the prefix has case or accent variants
+    //
+    // Possibly TODO:
+    // Skip over word-internal punctuation in the suggestion e.g. typing "ive" could match to "I've" (with word-internal apostrophe).
     func getSuggestions(max: Int) -> [String]
     {
-        let completions = self.words.keys.filter({ $0.hasPrefix(self.currentWord) })
+        let completions = self.words.keys.filter({
+            $0.rangeOfString(self.currentWord,
+                options: [NSStringCompareOptions.AnchoredSearch, NSStringCompareOptions.CaseInsensitiveSearch, NSStringCompareOptions.DiacriticInsensitiveSearch]) != nil
+        })
             .sort({ self.words[$0]!.compare(self.words[$1]!) == NSComparisonResult.OrderedDescending })
             .prefix(max)
 
