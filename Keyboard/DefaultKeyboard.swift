@@ -153,8 +153,8 @@ func addDefaultBottomRowKeys(defaultKeyboard: Keyboard, modeChange: Key, pageNum
 {
     defaultKeyboard.addKey(modeChange, row: 3, page: pageNumber)
     defaultKeyboard.addKey(Key.NextKbdKey(), row: 3, page: pageNumber)
-    defaultKeyboard.addKey(Key(.Settings), row: 3, page: pageNumber)
     defaultKeyboard.addKey(Key.SpaceKey(), row: 3, page: pageNumber)
+    defaultKeyboard.addKey(Key.PeriodKey(), row: 3, page: pageNumber)
     defaultKeyboard.addKey(Key.ReturnKey(), row: 3, page: pageNumber)
 }
 
@@ -221,7 +221,6 @@ func addEmailBottomRowKeys(defaultKeyboard: Keyboard)
 {
     defaultKeyboard.addKey(Key.ModeChangeNumbersKey(), row: 3, page: 0)
     defaultKeyboard.addKey(Key.NextKbdKey(), row: 3, page: 0)
-    defaultKeyboard.addKey(Key(.Settings), row: 3, page: 0)
     defaultKeyboard.addKey(Key.SpaceKey(), row: 3, page: 0)
     
     defaultKeyboard.addKey(Key.AtKey(), row: 3, page: 0)
@@ -249,7 +248,6 @@ func addURLBottomRowKeys(defaultKeyboard: Keyboard)
 {
     defaultKeyboard.addKey(Key.ModeChangeNumbersKey(), row: 3, page: 0)
     defaultKeyboard.addKey(Key.NextKbdKey(), row: 3, page: 0)
-    defaultKeyboard.addKey(Key(.Settings), row: 3, page: 0)
     defaultKeyboard.addKey(Key.SpaceKey(), row: 3, page: 0)
     
     defaultKeyboard.addKey(Key.SlashKey(), row: 3, page: 0)

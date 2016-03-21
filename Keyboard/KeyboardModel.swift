@@ -82,12 +82,6 @@ class SpecialUnicodeSymbols {
         }
     }
 
-    class var SmilingFace : String {
-        get {
-            return "\u{263A}" // WHITE SMILING FACE
-        }
-    }
-
     class var GearSymbol : String {
         get {
             return "\u{2699}" // ⚙ GEAR
@@ -157,7 +151,7 @@ class Key: Hashable {
         if self.type == .KeyboardChange {
             let enabledLangs = EnabledLanguageCodes()
 
-            var values : [String] = [SpecialUnicodeSymbols.NextKeyboardSymbol, SpecialUnicodeSymbols.SmilingFace]
+            var values : [String] = [SpecialUnicodeSymbols.NextKeyboardSymbol, SpecialUnicodeSymbols.GearSymbol]
 
             // Allow switching between languages if more than one language is enabled
             if enabledLangs.count > 1 {
@@ -257,12 +251,12 @@ class Key: Hashable {
     
     class func PeriodKey() -> Key
     {
-        let longPressValues = [".com",".edu",".net",".org"]
+        let longPressValues = ["'", "-", ",", "/"]
         let dotModel = Key(type: .Character, label: ".", longPress: longPressValues, shiftLabel: ".", shiftLongPress: longPressValues)
-        
+
         return dotModel
     }
-    
+
     class func SpaceKey() -> Key
     {
         let space = Key(.Space)

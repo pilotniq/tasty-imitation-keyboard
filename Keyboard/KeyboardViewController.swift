@@ -336,13 +336,13 @@ class KeyboardViewController: UIInputViewController {
             self.advanceTapped()
             return true
 
-        } else if selection == SpecialUnicodeSymbols.SmilingFace {
+        } else if selection == SpecialUnicodeSymbols.GearSymbol {
 
-            self.textDocumentProxy.insertText("EMOJI GOES HERE")
+            self.toggleSettings()
             return true
 
         } else if selection.characters.count == 2 {
-            // switch language AND keyboard
+            // switch language AND keyboard layout
             ChangeKeyboardLanguage(selection)
             return true
         }
@@ -468,9 +468,6 @@ class KeyboardViewController: UIInputViewController {
 
                         case Key.KeyType.ModeChange:
                             keyView.addTarget(self, action: Selector("modeChangeTapped:"), forControlEvents: .TouchDown)
-
-                        case Key.KeyType.Settings:
-                            keyView.addTarget(self, action: Selector("toggleSettings"), forControlEvents: .TouchUpInside)
 
                         default:
                             break
