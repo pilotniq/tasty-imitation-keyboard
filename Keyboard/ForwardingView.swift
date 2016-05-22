@@ -23,7 +23,7 @@ class ForwardingView: UIView, UIGestureRecognizerDelegate {
 	
     private func MakeLongPressGesturesRecognizer()
     {
-        let gesture = UILongPressGestureRecognizer(target: self, action: "handleLongGesture:")
+        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(ForwardingView.handleLongGesture(_:)))
         
         gesture.minimumPressDuration = 0.5
         gesture.delegate = self

@@ -20,7 +20,7 @@ class CustomNavigationController : UINavigationController {
     var parent: KeyboardViewController?
 
     override func pushViewController(viewController: UIViewController, animated: Bool) {
-        countViews++
+        countViews += 1
 
         super.pushViewController(viewController, animated: animated)
     }
@@ -37,7 +37,7 @@ class CustomNavigationController : UINavigationController {
             return nil
         }
         else {
-            countViews--
+            countViews -= 1
             return super.popViewControllerAnimated(animated)
         }
     }

@@ -248,7 +248,7 @@ class DefaultSettingsTableViewCell: UITableViewCell {
     {
         self.settingLookupKey = setting
         self.sw.on = NSUserDefaults.standardUserDefaults().boolForKey(setting)
-        self.sw.addTarget(self, action: Selector("toggleSetting:"), forControlEvents: UIControlEvents.ValueChanged)
+        self.sw.addTarget(self, action: #selector(LanguageSettingsViewController.toggleSetting(_:)), forControlEvents: UIControlEvents.ValueChanged)
 
         self.label.text = label
 
@@ -395,7 +395,7 @@ class LanguageSettingsCell : DefaultSettingsTableViewCell
         self.parentViewController = parentViewController
 
         self.sw.on = getLanguageCodeEnabled(langCode)
-        self.sw.addTarget(self, action: Selector("toggleSetting:"), forControlEvents: UIControlEvents.ValueChanged)
+        self.sw.addTarget(self, action: #selector(LanguageSettingsViewController.toggleSetting(_:)), forControlEvents: UIControlEvents.ValueChanged)
 
         self.label.text = descriptiveName
         self.kbdName.text = getKeyboardLayoutNameForLanguageCode(self.langCode)
@@ -403,7 +403,7 @@ class LanguageSettingsCell : DefaultSettingsTableViewCell
         self.kbdChanger.text = "Change..."
         self.kbdChanger.userInteractionEnabled = true
 
-        let recognizer = UITapGestureRecognizer(target: self, action: "goclick:")
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(LanguageSettingsCell.goclick(_:)))
         recognizer.delegate = self
 
         self.kbdChanger.addGestureRecognizer(recognizer)
