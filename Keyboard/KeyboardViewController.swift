@@ -414,16 +414,15 @@ class KeyboardViewController: UIInputViewController {
 		viewLongPopUp.hidden = true
 
 	}
-	
+
+    // TODO? Add special casing for default height and width for iPad? Previous code resulted in landscape view on iPad2 that was bigger than entire screen
 	func heightForOrientation(orientation: UIInterfaceOrientation, withTopBanner: Bool) -> CGFloat {
-		let isPad = UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
-		
-		//TODO: hardcoded stuff
+        
 		let actualScreenWidth = (UIScreen.mainScreen().nativeBounds.size.width /
 			UIScreen.mainScreen().nativeScale)
 		
-		let canonicalPortraitHeight = (isPad ? CGFloat(264) : CGFloat(orientation.isPortrait && actualScreenWidth >= 400 ? 226 : 216))
-		let canonicalLandscapeHeight = (isPad ? CGFloat(352) : CGFloat(162))
+		let canonicalPortraitHeight = CGFloat(orientation.isPortrait && actualScreenWidth >= 400 ? 226 : 216)
+		let canonicalLandscapeHeight = CGFloat(162)
 		
 		let topBannerHeight = (withTopBanner && textDocumentProxy.keyboardType != UIKeyboardType.NumberPad && textDocumentProxy.keyboardType != UIKeyboardType.DecimalPad)
             ? metric("topBanner") : 0
