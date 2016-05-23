@@ -9,64 +9,6 @@
 import Foundation
 import UIKit
 
-// from https://gist.github.com/berkus/8a9e104f8aac5d025eb5
-//func memoize<T: Hashable, U>( body: ( (T)->U, T ) -> U ) -> (T) -> U {
-//    var memo = Dictionary<T, U>()
-//    var result: ((T)->U)!
-//    
-//    result = { x in
-//        if let q = memo[x] { return q }
-//        let r = body(result, x)
-//        memo[x] = r
-//        return r
-//    }
-//    
-//    return result
-//}
-
-//func memoize<S:Hashable, T:Hashable, U>(fn : (S, T) -> U) -> (S, T) -> U {
-//    var cache = Dictionary<FunctionParams<S,T>, U>()
-//    func memoized(val1 : S, val2: T) -> U {
-//        let key = FunctionParams(x: val1, y: val2)
-//        if cache.indexForKey(key) == nil {
-//            cache[key] = fn(val1, val2)
-//        }
-//        return cache[key]!
-//    }
-//    return memoized
-//}
-
-func memoize<T:Hashable, U>(fn : T -> U) -> T -> U {
-    var cache = [T:U]()
-    return {
-        (val : T) -> U in
-        var value = cache[val]
-        if value != nil {
-            return value!
-        } else {
-            let newValue = fn(val)
-            cache[val] = newValue
-            return newValue
-        }
-    }
-}
-
-//let fibonacci = memoize {
-//    fibonacci, n in
-//    n < 2 ? Double(n) : fibonacci(n-1) + fibonacci(n-2)
-//}
-
-//func memoize<T:Hashable, U>(fn : T -> U) -> (T -> U) {
-//    var cache = Dictionary<T, U>()
-//    func memoized(val : T) -> U {
-//        if !cache.indexForKey(val) {
-//            cache[val] = fn(val)
-//        }
-//        return cache[val]!
-//    }
-//    return memoized
-//}
-
 var profile: ((id: String) -> Double?) = {
     var counterForName = Dictionary<String, Double>()
     var isOpen = Dictionary<String, Double>()
@@ -90,3 +32,130 @@ var profile: ((id: String) -> Double?) = {
         return counterForName[id]
     }
 }()
+
+// Remove trailing and leading white space.
+// Treat nil as equivalent to the empty string.
+func TrimWhiteSpace(x : String?) -> String {
+    return x == nil ? "" : x!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+}
+
+func characterIsPunctuation(character: Character) -> Bool {
+    return character == "." || character == "!" || character == "?"
+}
+
+func characterIsNewline(character: Character) -> Bool {
+    return character == "\n" || character == "\r"
+}
+
+func characterIsWhitespace(character: Character) -> Bool {
+    // there are others, but who cares
+    return character == " " || character == "\n" || character == "\r" || character == "\t"
+}
+
+func stringIsWhitespace(str: String?) -> Bool {
+    return TrimWhiteSpace(str) == ""
+}
+
+func isInitCaps(string: String) -> Bool
+{
+    return string.characters.count > 0
+        && ("A"..."Z").contains(string[string.startIndex])
+}
+
+// HACKHACK I need a locally defined class that I can get a reference to self for as a param to NSBundle()
+class foo
+{
+
+}
+
+// In the deployed app, JSON resources etc live in the main bundle but when running a unit test we're not running as the main bundle
+func getBundle() -> NSBundle {
+
+#if UNIT_TESTS
+    return NSBundle(forClass: foo.self)
+#else
+    return NSBundle.mainBundle()
+#endif
+
+}
+
+func loadJSON(fileName: String?) -> NSDictionary?
+{
+    if let path = getBundle().pathForResource(fileName, ofType: "json")
+    {
+        if !NSFileManager().fileExistsAtPath(path) {
+            NSLog("File does not exist at \(path)")
+            return nil
+        }
+
+        if let jsonData = NSData(contentsOfFile: path)
+        {
+            do {
+                let JSON = try NSJSONSerialization.JSONObjectWithData(jsonData, options:NSJSONReadingOptions(rawValue: 0))
+
+                return JSON as? NSDictionary
+            }
+            catch let JSONError as NSError {
+                NSLog("JSONError exception\n\(JSONError)")
+                return nil
+            }
+            catch {
+                NSLog("Some other error occurred")
+                return nil
+            }
+        }
+    }
+    
+    return nil
+
+}
+
+func isOpenAccessGranted() -> Bool {
+    #if FULLACCESS
+        return (UIPasteboard.generalPasteboard().isKindOfClass(UIPasteboard))
+    #else
+        return true
+    #endif
+}
+
+// http://stackoverflow.com/questions/3552108/finding-closest-object-to-cgpoint b/c I'm lazy
+func distanceBetween(rect: CGRect, point: CGPoint) -> CGFloat {
+    if CGRectContainsPoint(rect, point) {
+        return 0
+    }
+
+    var closest = rect.origin
+
+    if (rect.origin.x + rect.size.width < point.x) {
+        closest.x += rect.size.width
+    }
+    else if (point.x > rect.origin.x) {
+        closest.x = point.x
+    }
+    if (rect.origin.y + rect.size.height < point.y) {
+        closest.y += rect.size.height
+    }
+    else if (point.y > rect.origin.y) {
+        closest.y = point.y
+    }
+
+    let a = pow(Double(closest.y - point.y), 2)
+    let b = pow(Double(closest.x - point.x), 2)
+    return CGFloat(sqrt(a + b));
+}
+
+func CasedString(str : String, shiftState : ShiftState) -> String
+{
+    if shiftState == .Enabled
+    {
+        return str.capitalizedString
+    }
+    else if shiftState == .Locked
+    {
+        return str.uppercaseString
+    }
+    else
+    {
+        return str
+    }
+}

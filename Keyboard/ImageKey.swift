@@ -12,11 +12,11 @@ class ImageKey: KeyboardKey {
     
     var image: UIImageView? {
         willSet {
-            var anImage = image
+            let anImage = image
             anImage?.removeFromSuperview()
         }
         didSet {
-            if var imageView = image {
+            if let imageView = image {
                 self.addSubview(imageView)
                 imageView.contentMode = UIViewContentMode.ScaleAspectFit
                 self.redrawImage()
@@ -31,12 +31,7 @@ class ImageKey: KeyboardKey {
         let switchColors = self.highlighted || self.selected
         
         if switchColors {
-            if let downTextColor = self.downTextColor {
-                self.image?.tintColor = downTextColor
-            }
-            else {
-                self.image?.tintColor = self.textColor
-            }
+            self.image?.tintColor = self.downTextColor ?? self.textColor
         }
         else {
             self.image?.tintColor = self.textColor

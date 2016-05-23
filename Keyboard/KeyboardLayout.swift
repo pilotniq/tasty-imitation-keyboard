@@ -23,9 +23,9 @@ class LayoutConstants: NSObject {
     class var topEdgeLandscape: CGFloat { get { return 6 }}
     
     // keyboard area shrinks in size in landscape on 6 and 6+
-    class var keyboardShrunkSizeArray: [CGFloat] { get { return [522, 524] }}
+    class var keyboardShrunkSizeArray: [CGFloat] { get { return [660, 524] }}
     class var keyboardShrunkSizeWidthThreshholds: [CGFloat] { get { return [700] }}
-    class var keyboardShrunkSizeBaseWidthThreshhold: CGFloat { get { return 600 }}
+    class var keyboardShrunkSizeBaseWidthThreshhold: CGFloat { get { return 740 }}
     
     // row gaps are weird on 6 in portrait
     class var rowGapPortraitArray: [CGFloat] { get { return [15, 11, 10] }}
@@ -39,7 +39,7 @@ class LayoutConstants: NSObject {
     class var keyGapPortraitSmall: CGFloat { get { return 5 }}
     class var keyGapPortraitNormalThreshhold: CGFloat { get { return 350 }}
     class var keyGapPortraitUncompressThreshhold: CGFloat { get { return 350 }}
-    class var keyGapLandscapeNormal: CGFloat { get { return 6 }}
+    class var keyGapLandscapeNormal: CGFloat { get { return 10 }}
     class var keyGapLandscapeSmall: CGFloat { get { return 5 }}
     // TODO: 5.5 row gap on 5L
     // TODO: wider row gap on 6L
@@ -63,7 +63,8 @@ class LayoutConstants: NSObject {
     class var lastRowLandscapeFirstTwoButtonAreaWidthToKeyboardAreaWidth: CGFloat { get { return 0.19 }}
     class var lastRowPortraitLastButtonAreaWidthToKeyboardAreaWidth: CGFloat { get { return 0.24 }}
     class var lastRowLandscapeLastButtonAreaWidthToKeyboardAreaWidth: CGFloat { get { return 0.19 }}
-    class var micButtonPortraitWidthRatioToOtherSpecialButtons: CGFloat { get { return 0.765 }}
+    class var micButtonPortraitWidthRatioToOtherSpecialButtons
+        : CGFloat { get { return 0.765 }}
     
     // TODO: not exactly precise
     class var popupGap: CGFloat { get { return 8 }}
@@ -147,7 +148,7 @@ class LayoutConstants: NSObject {
         return elements[self.findThreshholdIndex(threshholds, measurement: measurement)]
     }
     class func findThreshholdIndex(threshholds: [CGFloat], measurement: CGFloat) -> Int {
-        for (i, threshhold) in enumerate(reverse(threshholds)) {
+        for (i, threshhold) in threshholds.reverse().enumerate() {
             if measurement >= threshhold {
                 let actualIndex = threshholds.count - i
                 return actualIndex
@@ -159,75 +160,43 @@ class LayoutConstants: NSObject {
 
 class GlobalColors: NSObject {
     class var lightModeRegularKey: UIColor { get { return UIColor.whiteColor() }}
+
     class var darkModeRegularKey: UIColor { get { return UIColor.whiteColor().colorWithAlphaComponent(CGFloat(0.3)) }}
-    class var darkModeSolidColorRegularKey: UIColor { get { return UIColor(red: CGFloat(83)/CGFloat(255), green: CGFloat(83)/CGFloat(255), blue: CGFloat(83)/CGFloat(255), alpha: 1) }}
-    class var lightModeSpecialKey: UIColor { get { return GlobalColors.lightModeSolidColorSpecialKey }}
-    class var lightModeSolidColorSpecialKey: UIColor { get { return UIColor(red: CGFloat(167)/CGFloat(255), green: CGFloat(176)/CGFloat(255), blue: CGFloat(187)/CGFloat(255), alpha: 1) }}
+
+    class var lightModeSpecialKey: UIColor { get { return UIColor(red: CGFloat(177)/CGFloat(255), green: CGFloat(177)/CGFloat(255), blue: CGFloat(177)/CGFloat(255), alpha: 1) }}
+
     class var darkModeSpecialKey: UIColor { get { return UIColor.grayColor().colorWithAlphaComponent(CGFloat(0.3)) }}
-    class var darkModeSolidColorSpecialKey: UIColor { get { return UIColor(red: CGFloat(45)/CGFloat(255), green: CGFloat(45)/CGFloat(255), blue: CGFloat(45)/CGFloat(255), alpha: 1) }}
+
     class var darkModeShiftKeyDown: UIColor { get { return UIColor(red: CGFloat(214)/CGFloat(255), green: CGFloat(220)/CGFloat(255), blue: CGFloat(208)/CGFloat(255), alpha: 1) }}
+
     class var lightModePopup: UIColor { get { return GlobalColors.lightModeRegularKey }}
+
     class var darkModePopup: UIColor { get { return UIColor.grayColor() }}
-    class var darkModeSolidColorPopup: UIColor { get { return GlobalColors.darkModeSolidColorRegularKey }}
-    
+
     class var lightModeUnderColor: UIColor { get { return UIColor(hue: (220/360.0), saturation: 0.04, brightness: 0.56, alpha: 1) }}
+
     class var darkModeUnderColor: UIColor { get { return UIColor(red: CGFloat(38.6)/CGFloat(255), green: CGFloat(18)/CGFloat(255), blue: CGFloat(39.3)/CGFloat(255), alpha: 0.4) }}
+
     class var lightModeTextColor: UIColor { get { return UIColor.blackColor() }}
+
     class var darkModeTextColor: UIColor { get { return UIColor.whiteColor() }}
+
     class var lightModeBorderColor: UIColor { get { return UIColor(hue: (214/360.0), saturation: 0.04, brightness: 0.65, alpha: 1.0) }}
+
     class var darkModeBorderColor: UIColor { get { return UIColor.clearColor() }}
     
-    class func regularKey(darkMode: Bool, solidColorMode: Bool) -> UIColor {
-        if darkMode {
-            if solidColorMode {
-                return self.darkModeSolidColorRegularKey
-            }
-            else {
-                return self.darkModeRegularKey
-            }
-        }
-        else {
-            return self.lightModeRegularKey
-        }
+    class func regularKey(darkMode: Bool) -> UIColor {
+        return darkMode ? self.darkModeRegularKey : self.lightModeRegularKey
     }
     
-    class func popup(darkMode: Bool, solidColorMode: Bool) -> UIColor {
-        if darkMode {
-            if solidColorMode {
-                return self.darkModeSolidColorPopup
-            }
-            else {
-                return self.darkModePopup
-            }
-        }
-        else {
-            return self.lightModePopup
-        }
+    class func popup(darkMode: Bool) -> UIColor {
+        return darkMode ? self.darkModePopup : self.lightModePopup
     }
     
-    class func specialKey(darkMode: Bool, solidColorMode: Bool) -> UIColor {
-        if darkMode {
-            if solidColorMode {
-                return self.darkModeSolidColorSpecialKey
-            }
-            else {
-                return self.darkModeSpecialKey
-            }
-        }
-        else {
-            if solidColorMode {
-                return self.lightModeSolidColorSpecialKey
-            }
-            else {
-                return self.lightModeSpecialKey
-            }
-        }
+    class func specialKey(darkMode: Bool) -> UIColor {
+        return darkMode ? self.darkModeSpecialKey : self.lightModeSpecialKey
     }
 }
-
-//"darkShadowColor": UIColor(hue: (220/360.0), saturation: 0.04, brightness: 0.56, alpha: 1),
-//"blueColor": UIColor(hue: (211/360.0), saturation: 1.0, brightness: 1.0, alpha: 1),
-//"blueShadowColor": UIColor(hue: (216/360.0), saturation: 0.05, brightness: 0.43, alpha: 1),
 
 extension CGRect: Hashable {
     public var hashValue: Int {
@@ -248,10 +217,7 @@ extension CGSize: Hashable {
 // handles the layout for the keyboard, including key spacing and arrangement
 class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     
-    class var shouldPoolKeys: Bool { get { return true }}
-    
     var layoutConstants: LayoutConstants.Type
-    var globalColors: GlobalColors.Type
     
     unowned var model: Keyboard
     unowned var superview: UIView
@@ -266,10 +232,18 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     var darkMode: Bool
     var solidColorMode: Bool
     var initialized: Bool
-    
-    required init(model: Keyboard, superview: UIView, layoutConstants: LayoutConstants.Type, globalColors: GlobalColors.Type, darkMode: Bool, solidColorMode: Bool) {
+
+    // optimization: ensures quick mode and shift transitions
+    func rasterizeKeys(rasterize: Bool)
+    {
+        for view in self.keyPool {
+            view.shouldRasterize = rasterize
+        }
+    }
+
+    required init(model: Keyboard, superview: UIView, layoutConstants: LayoutConstants.Type, darkMode: Bool, solidColorMode: Bool)
+    {
         self.layoutConstants = layoutConstants
-        self.globalColors = globalColors
         
         self.initialized = false
         self.model = model
@@ -280,7 +254,8 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     }
     
     // TODO: remove this method
-    func initialize() {
+    func initialize()
+    {
         assert(!self.initialized, "already initialized")
         self.initialized = true
     }
@@ -301,25 +276,16 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         
-        // pre-allocate all keys if no cache
-        if !self.dynamicType.shouldPoolKeys {
-            if self.keyPool.isEmpty {
-                for p in 0..<self.model.pages.count {
-                    self.positionKeys(p)
-                }
-                self.updateKeyAppearance()
-                self.updateKeyCaps(true, uppercase: uppercase, characterUppercase: characterUppercase, shiftState: shiftState)
-            }
-        }
-        
         self.positionKeys(pageNum)
         
         // reset state
-        for (p, page) in enumerate(self.model.pages) {
-            for (_, row) in enumerate(page.rows) {
-                for (_, key) in enumerate(row) {
+        for (p, page) in self.model.pages.enumerate() {
+            for row in page.rows {
+                for key in row {
                     if let keyView = self.modelToView[key] {
                         keyView.hidePopup()
+                        
+                        //keyView.hideLongPress()
                         keyView.highlighted = false
                         keyView.hidden = (p != pageNum)
                     }
@@ -327,11 +293,9 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             }
         }
         
-        if self.dynamicType.shouldPoolKeys {
-            self.updateKeyAppearance()
-            self.updateKeyCaps(true, uppercase: uppercase, characterUppercase: characterUppercase, shiftState: shiftState)
-        }
-        
+        self.updateKeyAppearance()
+        self.updateKeyCaps(true, uppercase: uppercase, characterUppercase: characterUppercase, shiftState: shiftState)
+
         CATransaction.commit()
     }
     
@@ -345,45 +309,33 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             self.viewToModel[view] = model
         }
         
-        if var keyMap = self.generateKeyFrames(self.model, bounds: self.superview.bounds, page: pageNum) {
-            if self.dynamicType.shouldPoolKeys {
-                self.modelToView.removeAll(keepCapacity: true)
-                self.viewToModel.removeAll(keepCapacity: true)
-                
-                self.resetKeyPool()
-                
-                var foundCachedKeys = [Key]()
-                
-                // pass 1: reuse any keys that match the required size
-                for (key, frame) in keyMap {
-                    if var keyView = self.pooledKey(key: key, model: self.model, frame: frame) {
-                        foundCachedKeys.append(key)
-                        setupKey(keyView, key, frame)
-                    }
-                }
-                
-                foundCachedKeys.map {
-                    keyMap.removeValueForKey($0)
-                }
-                
-                // pass 2: fill in the blanks
-                for (key, frame) in keyMap {
-                    var keyView = self.generateKey()
+        if let keyMap = self.generateKeyFrames(self.model, bounds: self.superview.bounds, page: pageNum) {
+            self.modelToView.removeAll(keepCapacity: true)
+            self.viewToModel.removeAll(keepCapacity: true)
+
+            self.resetKeyPool()
+
+            var foundCachedKeys = [Key]()
+
+            // pass 1: reuse any keys that match the required size
+            for (key, frame) in keyMap {
+                if let keyView = self.pooledKey(key: key, model: self.model, frame: frame) {
+                    foundCachedKeys.append(key)
                     setupKey(keyView, key, frame)
                 }
             }
-            else {
-                for (key, frame) in keyMap {
-                    if var keyView = self.pooledKey(key: key, model: self.model, frame: frame) {
-                        setupKey(keyView, key, frame)
-                    }
-                }
+
+
+            // pass 2: fill in the blanks
+            for (key, frame) in keyMap {
+                let keyView = self.generateKey()
+                setupKey(keyView, key, frame)
             }
         }
-        
+
         CATransaction.commit()
     }
-    
+
     func updateKeyAppearance() {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
@@ -405,7 +357,7 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             for (_, key) in self.modelToView {
                 key.shape = nil
                 
-                if let imageKey = key as? ImageKey { // TODO:
+                if let imageKey = key as? ImageKey {
                     imageKey.image = nil
                 }
             }
@@ -431,64 +383,35 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             default:
                 key.label.font = key.label.font.fontWithSize(22)
             }
-            
-            // label inset
-            switch model.type {
-            case
-            Key.KeyType.ModeChange:
-                key.labelInset = 3
-            default:
-                key.labelInset = 0
-            }
-            
+
+            key.labelInset = model.type == Key.KeyType.ModeChange ? 3 : 0
+
             // shapes
-            switch model.type {
-            case Key.KeyType.Shift:
-                if key.shape == nil {
-                    let shiftShape = self.getShape(ShiftShape)
-                    key.shape = shiftShape
+            if key.shape == nil {
+                switch model.type {
+                case Key.KeyType.Shift:
+                    key.shape = self.getShape(ShiftShape)
+
+                case Key.KeyType.Backspace:
+                    key.shape = self.getShape(BackspaceShape)
+
+                case Key.KeyType.KeyboardChange:
+                    key.shape = self.getShape(GlobeShape)
+
+                default:
+                    break
                 }
-            case Key.KeyType.Backspace:
-                if key.shape == nil {
-                    let backspaceShape = self.getShape(BackspaceShape)
-                    key.shape = backspaceShape
-                }
-            case Key.KeyType.KeyboardChange:
-                if key.shape == nil {
-                    let globeShape = self.getShape(GlobeShape)
-                    key.shape = globeShape
-                }
-            default:
-                break
             }
             
-            // images
-            if model.type == Key.KeyType.Settings {
-                if let imageKey = key as? ImageKey {
-                    if imageKey.image == nil {
-                        var gearImage = UIImage(named: "gear")
-                        var settingsImageView = UIImageView(image: gearImage)
-                        imageKey.image = settingsImageView
-                    }
-                }
-            }
         }
         
         if model.type == Key.KeyType.Shift {
             if key.shape == nil {
-                let shiftShape = self.getShape(ShiftShape)
-                key.shape = shiftShape
+                key.shape = self.getShape(ShiftShape)
             }
-            
-            switch shiftState {
-            case .Disabled:
-                key.highlighted = false
-            case .Enabled:
-                key.highlighted = true
-            case .Locked:
-                key.highlighted = true
-            }
-            
+
+            key.highlighted = shiftState != .Disabled
+
             (key.shape as? ShiftShape)?.withLock = (shiftState == .Locked)
         }
         
@@ -510,7 +433,7 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     
     func setAppearanceForKey(key: KeyboardKey, model: Key, darkMode: Bool, solidColorMode: Bool) {
         if model.type == Key.KeyType.Other {
-            self.setAppearanceForOtherKey(key, model: model, darkMode: darkMode, solidColorMode: solidColorMode)
+            self.setAppearanceForOtherKey(key, model: model, darkMode: darkMode)
         }
         
         switch model.type {
@@ -518,59 +441,65 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         Key.KeyType.Character,
         Key.KeyType.SpecialCharacter,
         Key.KeyType.Period:
-            key.color = self.self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)
+            key.color = GlobalColors.regularKey(darkMode)
             if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
-                key.downColor = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+                key.downColor = GlobalColors.specialKey(darkMode)
             }
             else {
                 key.downColor = nil
             }
-            key.textColor = (darkMode ? self.globalColors.darkModeTextColor : self.globalColors.lightModeTextColor)
+            key.textColor = (darkMode ? GlobalColors.darkModeTextColor : GlobalColors.lightModeTextColor)
             key.downTextColor = nil
         case
         Key.KeyType.Space:
-            key.color = self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)
-            key.downColor = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
-            key.textColor = (darkMode ? self.globalColors.darkModeTextColor : self.globalColors.lightModeTextColor)
+            key.color = GlobalColors.regularKey(darkMode)
+            key.downColor = GlobalColors.specialKey(darkMode)
+            
+            key.textColor = (darkMode ? GlobalColors.darkModeTextColor : GlobalColors.lightModeTextColor)
             key.downTextColor = nil
         case
         Key.KeyType.Shift:
-            key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
-            key.downColor = (darkMode ? self.globalColors.darkModeShiftKeyDown : self.globalColors.lightModeRegularKey)
-            key.textColor = self.globalColors.darkModeTextColor
-            key.downTextColor = self.globalColors.lightModeTextColor
+           key.color = GlobalColors.specialKey(darkMode)
+           
+            key.downColor = (darkMode ? GlobalColors.darkModeShiftKeyDown : GlobalColors.lightModeRegularKey)
+            key.textColor = GlobalColors.darkModeTextColor
+            key.downTextColor = GlobalColors.lightModeTextColor
         case
         Key.KeyType.Backspace:
-            key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+            key.color = GlobalColors.specialKey(darkMode)
+            
             // TODO: actually a bit different
-            key.downColor = self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)
-            key.textColor = self.globalColors.darkModeTextColor
-            key.downTextColor = (darkMode ? nil : self.globalColors.lightModeTextColor)
+            key.downColor = GlobalColors.regularKey(darkMode)
+            key.textColor = GlobalColors.darkModeTextColor
+            key.downTextColor = (darkMode ? nil : GlobalColors.lightModeTextColor)
         case
         Key.KeyType.ModeChange:
-            key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+            key.color = GlobalColors.specialKey(darkMode)
+            
             key.downColor = nil
-            key.textColor = (darkMode ? self.globalColors.darkModeTextColor : self.globalColors.lightModeTextColor)
+            key.textColor = (darkMode ? GlobalColors.darkModeTextColor : GlobalColors.lightModeTextColor)
             key.downTextColor = nil
         case
         Key.KeyType.Return,
-        Key.KeyType.KeyboardChange,
-        Key.KeyType.Settings:
-            key.color = self.globalColors.specialKey(darkMode, solidColorMode: solidColorMode)
+        Key.KeyType.KeyboardChange:
+            key.color = GlobalColors.specialKey(darkMode)
+            
+            //key.color = BluishColor
+            
             // TODO: actually a bit different
-            key.downColor = self.globalColors.regularKey(darkMode, solidColorMode: solidColorMode)
-            key.textColor = (darkMode ? self.globalColors.darkModeTextColor : self.globalColors.lightModeTextColor)
+            key.downColor = GlobalColors.regularKey(darkMode)
+            key.textColor = (darkMode ? GlobalColors.darkModeTextColor : GlobalColors.lightModeTextColor)
             key.downTextColor = nil
         default:
             break
         }
         
-        key.popupColor = self.globalColors.popup(darkMode, solidColorMode: solidColorMode)
-        key.underColor = (self.darkMode ? self.globalColors.darkModeUnderColor : self.globalColors.lightModeUnderColor)
-        key.borderColor = (self.darkMode ? self.globalColors.darkModeBorderColor : self.globalColors.lightModeBorderColor)
+        key.popupColor = GlobalColors.popup(darkMode)
+        key.underColor = (self.darkMode ? GlobalColors.darkModeUnderColor : GlobalColors.lightModeUnderColor)
+        key.borderColor = (self.darkMode ? GlobalColors.darkModeBorderColor : GlobalColors.lightModeBorderColor)
     }
     
-    func setAppearanceForOtherKey(key: KeyboardKey, model: Key, darkMode: Bool, solidColorMode: Bool) { /* override this to handle special keys */ }
+    func setAppearanceForOtherKey(key: KeyboardKey, model: Key, darkMode: Bool) { /* override this to handle special keys */ }
     
     // TODO: avoid array copies
     // TODO: sizes stored not rounded?
@@ -578,71 +507,31 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     ///////////////////////////
     // KEY POOLING FUNCTIONS //
     ///////////////////////////
-    
+
+
     // if pool is disabled, always returns a unique key view for the corresponding key model
     func pooledKey(key aKey: Key, model: Keyboard, frame: CGRect) -> KeyboardKey? {
-        if !self.dynamicType.shouldPoolKeys {
-            var p: Int!
-            var r: Int!
-            var k: Int!
-            
-            // TODO: O(N^2) in terms of total # of keys since pooledKey is called for each key, but probably doesn't matter
-            var foundKey: Bool = false
-            for (pp, page) in enumerate(model.pages) {
-                for (rr, row) in enumerate(page.rows) {
-                    for (kk, key) in enumerate(row) {
-                        if key == aKey {
-                            p = pp
-                            r = rr
-                            k = kk
-                            foundKey = true
-                        }
-                        if foundKey {
-                            break
-                        }
-                    }
-                    if foundKey {
-                        break
-                    }
-                }
-                if foundKey {
-                    break
-                }
-            }
-            
-            let id = "p\(p)r\(r)k\(k)"
-            if let key = self.nonPooledMap[id] {
-                return key
-            }
-            else {
-                let key = generateKey()
-                self.nonPooledMap[id] = key
-                return key
-            }
-        }
-        else {
-            if var keyArray = self.sizeToKeyMap[frame.size] {
-                if let key = keyArray.last {
-                    if keyArray.count == 1 {
-                        self.sizeToKeyMap.removeValueForKey(frame.size)
-                    }
-                    else {
-                        keyArray.removeLast()
-                        self.sizeToKeyMap[frame.size] = keyArray
-                    }
-                    return key
+        if var keyArray = self.sizeToKeyMap[frame.size] {
+            if let key = keyArray.last {
+                if keyArray.count == 1 {
+                    self.sizeToKeyMap.removeValueForKey(frame.size)
                 }
                 else {
-                    return nil
+                    keyArray.removeLast()
+                    self.sizeToKeyMap[frame.size] = keyArray
                 }
-                
+                return key
             }
             else {
                 return nil
             }
+
+        }
+        else {
+            return nil
         }
     }
-    
+
     func createNewKey() -> KeyboardKey {
         return ImageKey(vibrancy: nil)
     }
@@ -650,7 +539,7 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
     // if pool is disabled, always generates a new key
     func generateKey() -> KeyboardKey {
         let createAndSetupNewKey = { () -> KeyboardKey in
-            var keyView = self.createNewKey()
+            let keyView = self.createNewKey()
             
             keyView.enabled = true
             keyView.delegate = self
@@ -662,74 +551,60 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             return keyView
         }
         
-        if self.dynamicType.shouldPoolKeys {
-            if !self.sizeToKeyMap.isEmpty {
-                var (size, keyArray) = self.sizeToKeyMap[self.sizeToKeyMap.startIndex]
-                
-                if let key = keyArray.last {
-                    if keyArray.count == 1 {
-                        self.sizeToKeyMap.removeValueForKey(size)
-                    }
-                    else {
-                        keyArray.removeLast()
-                        self.sizeToKeyMap[size] = keyArray
-                    }
-                    
-                    return key
+
+        if !self.sizeToKeyMap.isEmpty {
+            var (size, keyArray) = self.sizeToKeyMap[self.sizeToKeyMap.startIndex]
+
+            if let key = keyArray.last {
+                if keyArray.count == 1 {
+                    self.sizeToKeyMap.removeValueForKey(size)
                 }
                 else {
-                    return createAndSetupNewKey()
+                    keyArray.removeLast()
+                    self.sizeToKeyMap[size] = keyArray
                 }
-            }
-            else {
-                return createAndSetupNewKey()
+
+                return key
             }
         }
-        else {
-            return createAndSetupNewKey()
-        }
+
+        return createAndSetupNewKey()
     }
-    
+
     // if pool is disabled, doesn't do anything
     func resetKeyPool() {
-        if self.dynamicType.shouldPoolKeys {
-            self.sizeToKeyMap.removeAll(keepCapacity: true)
-            
-            for key in self.keyPool {
-                if var keyArray = self.sizeToKeyMap[key.frame.size] {
-                    keyArray.append(key)
-                    self.sizeToKeyMap[key.frame.size] = keyArray
-                }
-                else {
-                    var keyArray = [KeyboardKey]()
-                    keyArray.append(key)
-                    self.sizeToKeyMap[key.frame.size] = keyArray
-                }
-                key.hidden = true
+
+        self.sizeToKeyMap.removeAll(keepCapacity: true)
+
+        for key in self.keyPool {
+            if var keyArray = self.sizeToKeyMap[key.frame.size] {
+                keyArray.append(key)
+                self.sizeToKeyMap[key.frame.size] = keyArray
             }
+            else {
+                var keyArray = [KeyboardKey]()
+                keyArray.append(key)
+                self.sizeToKeyMap[key.frame.size] = keyArray
+            }
+            key.hidden = true
         }
     }
-    
+
     // TODO: no support for more than one of the same shape
     // if pool disabled, always returns new shape
     func getShape(shapeClass: Shape.Type) -> Shape {
         let className = NSStringFromClass(shapeClass)
-        
-        if self.dynamicType.shouldPoolKeys {
-            if let shape = self.shapePool[className] {
-                return shape
-            }
-            else {
-                var shape = shapeClass(frame: CGRectZero)
-                self.shapePool[className] = shape
-                return shape
-            }
+
+        if let shape = self.shapePool[className] {
+            return shape
         }
         else {
-            return shapeClass(frame: CGRectZero)
+            let shape = shapeClass.init(frame: CGRectZero)
+            self.shapePool[className] = shape
+            return shape
         }
     }
-    
+
     //////////////////////
     // LAYOUT FUNCTIONS //
     //////////////////////
@@ -763,14 +638,11 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         let rowGap: CGFloat = (isLandscape ? self.layoutConstants.rowGapLandscape : self.layoutConstants.rowGapPortrait(bounds.width))
         let lastRowGap: CGFloat = (isLandscape ? rowGap : self.layoutConstants.rowGapPortraitLastRow(bounds.width))
         
-        let flexibleEndRowM = (isLandscape ? self.layoutConstants.flexibleEndRowTotalWidthToKeyWidthMLandscape : self.layoutConstants.flexibleEndRowTotalWidthToKeyWidthMPortrait)
-        let flexibleEndRowC = (isLandscape ? self.layoutConstants.flexibleEndRowTotalWidthToKeyWidthCLandscape : self.layoutConstants.flexibleEndRowTotalWidthToKeyWidthCPortrait)
-        
         let lastRowLeftSideRatio = (isLandscape ? self.layoutConstants.lastRowLandscapeFirstTwoButtonAreaWidthToKeyboardAreaWidth : self.layoutConstants.lastRowPortraitFirstTwoButtonAreaWidthToKeyboardAreaWidth)
         let lastRowRightSideRatio = (isLandscape ? self.layoutConstants.lastRowLandscapeLastButtonAreaWidthToKeyboardAreaWidth : self.layoutConstants.lastRowPortraitLastButtonAreaWidthToKeyboardAreaWidth)
         let lastRowKeyGap = (isLandscape ? self.layoutConstants.lastRowKeyGapLandscape(bounds.width) : self.layoutConstants.lastRowKeyGapPortrait)
         
-        for (p, page) in enumerate(model.pages) {
+        for (p, page) in model.pages.enumerate() {
             if p != pageToLayout {
                 continue
             }
@@ -779,7 +651,7 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             
             let mostKeysInRow: Int = {
                 var currentMax: Int = 0
-                for (i, row) in enumerate(page.rows) {
+                for row in page.rows {
                     currentMax = max(currentMax, row.count)
                 }
                 return currentMax
@@ -791,24 +663,24 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
             
             let keyHeight: CGFloat = {
                 let totalGaps = bottomEdge + topEdge + rowGapTotal
-                var returnHeight = (bounds.height - totalGaps) / CGFloat(numRows)
+                let returnHeight = (bounds.height - totalGaps) / CGFloat(numRows)
                 return self.rounded(returnHeight)
                 }()
             
             let letterKeyWidth: CGFloat = {
                 let totalGaps = (sideEdges * CGFloat(2)) + (keyGap * CGFloat(mostKeysInRow - 1))
-                var returnWidth = (bounds.width - totalGaps) / CGFloat(mostKeysInRow)
+                let returnWidth = (bounds.width - totalGaps) / CGFloat(mostKeysInRow)
                 return self.rounded(returnWidth)
                 }()
             
             let processRow = { (row: [Key], frames: [CGRect], inout map: [Key:CGRect]) -> Void in
                 assert(row.count == frames.count, "row and frames don't match")
-                for (k, key) in enumerate(row) {
+                for (k, key) in row.enumerate() {
                     map[key] = frames[k]
                 }
             }
             
-            for (r, row) in enumerate(page.rows) {
+            for (r, row) in page.rows.enumerate() {
                 let rowGapCurrentTotal = (r == page.rows.count - 1 ? rowGapTotal : CGFloat(r) * rowGap)
                 let frame = CGRectMake(rounded(sideEdges), rounded(topEdge + (CGFloat(r) * keyHeight) + rowGapCurrentTotal), rounded(bounds.width - CGFloat(2) * sideEdges), rounded(keyHeight))
                 
@@ -824,7 +696,7 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
                     frames = self.layoutCharacterWithSidesRow(row, frame: frame, isLandscape: isLandscape, keyWidth: letterKeyWidth, keyGap: keyGap)
                 }
                     
-                    // bottom row with things like space, return, etc.
+                // bottom row with things like space, return, etc.
                 else {
                     frames = self.layoutSpecialKeysRow(row, keyWidth: letterKeyWidth, gapWidth: lastRowKeyGap, leftSideRatio: lastRowLeftSideRatio, rightSideRatio: lastRowRightSideRatio, micButtonRatio: self.layoutConstants.micButtonPortraitWidthRatioToOtherSpecialButtons, isLandscape: isLandscape, frame: frame)
                 }
@@ -860,7 +732,7 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         
         var currentOrigin = frame.origin.x + sideSpace
         
-        for (k, key) in enumerate(row) {
+        for _ in row {
             let roundedOrigin = rounded(currentOrigin)
             
             // avoiding rounding errors
@@ -907,7 +779,7 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         let specialCharacterGap = sideSpace - specialCharacterWidth
         
         var currentOrigin = frame.origin.x
-        for (k, key) in enumerate(row) {
+        for (k, _) in row.enumerate() {
             if k == 0 {
                 frames.append(CGRectMake(rounded(currentOrigin), frame.origin.y, specialCharacterWidth, frame.height))
                 currentOrigin += (specialCharacterWidth + specialCharacterGap)
@@ -930,68 +802,40 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
 
         return frames
     }
-    
+
     func layoutSpecialKeysRow(row: [Key], keyWidth: CGFloat, gapWidth: CGFloat, leftSideRatio: CGFloat, rightSideRatio: CGFloat, micButtonRatio: CGFloat, isLandscape: Bool, frame: CGRect) -> [CGRect] {
         var frames = [CGRect]()
         
-        var keysBeforeSpace = 0
-        var keysAfterSpace = 0
-        var reachedSpace = false
-        for (k, key) in enumerate(row) {
-            if key.type == Key.KeyType.Space {
-                reachedSpace = true
-            }
-            else {
-                if !reachedSpace {
-                    keysBeforeSpace += 1
-                }
-                else {
-                    keysAfterSpace += 1
-                }
-            }
-        }
-        
-        assert(keysBeforeSpace <= 3, "invalid number of keys before space (only max 3 currently supported)")
-        assert(keysAfterSpace == 1, "invalid number of keys after space (only default 1 currently supported)")
-        
-        let hasButtonInMicButtonPosition = (keysBeforeSpace == 3)
-        
-        var leftSideAreaWidth = frame.width * leftSideRatio
+        let spaceIndex = row.indexOf({ $0.type == Key.KeyType.Space }) ?? 2
+
+        // We found the space key using zero based indexing. So the position of the space key is equal to the number of keys to left of space
+        // if we were to count from one
+        let keysBeforeSpace = CGFloat(spaceIndex)
+        let keysAfterSpace = CGFloat(row.count - spaceIndex - 1)
+
+        let leftSideAreaWidth = frame.width * leftSideRatio
         let rightSideAreaWidth = frame.width * rightSideRatio
-        var leftButtonWidth = (leftSideAreaWidth - (gapWidth * CGFloat(2 - 1))) / CGFloat(2)
-        leftButtonWidth = rounded(leftButtonWidth)
-        var rightButtonWidth = (rightSideAreaWidth - (gapWidth * CGFloat(keysAfterSpace - 1))) / CGFloat(keysAfterSpace)
-        rightButtonWidth = rounded(rightButtonWidth)
-        
-        let micButtonWidth = (isLandscape ? leftButtonWidth : leftButtonWidth * micButtonRatio)
-        
-        // special case for mic button
-        if hasButtonInMicButtonPosition {
-            leftSideAreaWidth = leftSideAreaWidth + gapWidth + micButtonWidth
-        }
-        
-        var spaceWidth = frame.width - leftSideAreaWidth - rightSideAreaWidth - gapWidth * CGFloat(2)
-        spaceWidth = rounded(spaceWidth)
-        
+        let leftButtonWidth = rounded((leftSideAreaWidth - (gapWidth * keysBeforeSpace)) / keysBeforeSpace)
+        let rightButtonWidth = rounded((rightSideAreaWidth - (gapWidth * keysAfterSpace)) / keysAfterSpace)
+
+        let spaceWidth = rounded(frame.width - leftSideAreaWidth - rightSideAreaWidth)
+
         var currentOrigin = frame.origin.x
         var beforeSpace: Bool = true
-        for (k, key) in enumerate(row) {
+        for key in row {
             if key.type == Key.KeyType.Space {
+				
                 frames.append(CGRectMake(rounded(currentOrigin), frame.origin.y, spaceWidth, frame.height))
                 currentOrigin += (spaceWidth + gapWidth)
                 beforeSpace = false
             }
             else if beforeSpace {
-                if hasButtonInMicButtonPosition && k == 2 { //mic button position
-                    frames.append(CGRectMake(rounded(currentOrigin), frame.origin.y, micButtonWidth, frame.height))
-                    currentOrigin += (micButtonWidth + gapWidth)
-                }
-                else {
-                    frames.append(CGRectMake(rounded(currentOrigin), frame.origin.y, leftButtonWidth, frame.height))
-                    currentOrigin += (leftButtonWidth + gapWidth)
-                }
+
+                frames.append(CGRectMake(rounded(currentOrigin), frame.origin.y, leftButtonWidth, frame.height))
+                currentOrigin += (leftButtonWidth + gapWidth)
             }
             else {
+
                 frames.append(CGRectMake(rounded(currentOrigin), frame.origin.y, rightButtonWidth, frame.height))
                 currentOrigin += (rightButtonWidth + gapWidth)
             }
@@ -1010,7 +854,6 @@ class KeyboardLayout: NSObject, KeyboardKeyProtocol {
         
         let popupWidth = key.bounds.width + self.layoutConstants.popupWidthIncrement
         let popupHeight = totalHeight - self.layoutConstants.popupGap - key.bounds.height
-        let popupCenterY = 0
         
         return CGRectMake((key.bounds.width - popupWidth) / CGFloat(2), -popupHeight - self.layoutConstants.popupGap, popupWidth, popupHeight)
     }

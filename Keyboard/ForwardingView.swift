@@ -7,10 +7,29 @@
 //
 
 import UIKit
+let LongPressActivated = 888
 
-class ForwardingView: UIView {
+class ForwardingView: UIView, UIGestureRecognizerDelegate {
     
     var touchToView: [UITouch:UIView]
+	
+	var isLongPressEnable = false
+	var isLongPressKeyPress = false
+	
+	var currentMode: Int = 0
+	var keyboard_type: UIKeyboardType?
+
+    var viewController: KeyboardViewController?  = nil
+	
+    private func MakeLongPressGesturesRecognizer()
+    {
+        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(ForwardingView.handleLongGesture(_:)))
+        
+        gesture.minimumPressDuration = 0.5
+        gesture.delegate = self
+        gesture.cancelsTouchesInView = false
+        self.addGestureRecognizer(gesture)
+    }
     
     override init(frame: CGRect) {
         self.touchToView = [:]
@@ -21,6 +40,14 @@ class ForwardingView: UIView {
         self.multipleTouchEnabled = true
         self.userInteractionEnabled = true
         self.opaque = false
+		
+        self.MakeLongPressGesturesRecognizer()
+    }
+
+    convenience init(frame: CGRect, viewController: KeyboardViewController) {
+        self.init(frame: frame)
+
+        self.viewController = viewController
     }
     
     required init(coder: NSCoder) {
@@ -38,7 +65,7 @@ class ForwardingView: UIView {
             return nil
         }
         else {
-            return (CGRectContainsPoint(self.bounds, point) ? self : nil)
+            return CGRectContainsPoint(self.bounds, point) ? self : nil
         }
     }
     
@@ -46,81 +73,125 @@ class ForwardingView: UIView {
         if let control = view as? UIControl {
             let targets = control.allTargets()
             for target in targets {
-                if var actions = control.actionsForTarget(target, forControlEvent: controlEvent) {
+                if let actions = control.actionsForTarget(target, forControlEvent: controlEvent) {
                     for action in actions {
-                        if let selectorString = action as? String {
-                            let selector = Selector(selectorString)
-                            control.sendAction(selector, to: target, forEvent: nil)
-                        }
+                        let selector = Selector(action)
+                        control.sendAction(selector, to: target, forEvent: nil)
+                        
                     }
                 }
             }
         }
     }
-    
+
+	@IBAction func handleLongGesture(longPress: UIGestureRecognizer)
+	{
+		if (longPress.state == UIGestureRecognizerState.Ended)
+		{
+			
+			let position = longPress.locationInView(self)
+			let view = findNearestView(position)
+			
+			if view is KeyboardKey
+			{
+				NSNotificationCenter.defaultCenter().postNotificationName("hideExpandViewNotification", object: nil)
+			}
+			
+			isLongPressEnable = false
+			
+			isLongPressKeyPress = true
+			
+			if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
+			{
+                (view as? KeyboardKey)?.highlighted = false
+			}
+			
+		}
+        else if (longPress.state == UIGestureRecognizerState.Began)
+        {
+            
+            isLongPressEnable = true
+            
+            let position = longPress.locationInView(self)
+            let view = findNearestView(position)
+            
+            if let v = view as? KeyboardKey {
+                if self.isLongPressEnableKey(v)
+                {
+                    view!.tag = LongPressActivated
+
+                    self.handleControl(view, controlEvent: .TouchDownRepeat)
+                }
+            }
+        }
+	}
+
+	
+	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool
+	{
+		if gestureRecognizer is UILongPressGestureRecognizer
+		{
+			if (gestureRecognizer.state == UIGestureRecognizerState.Possible)
+			{
+				let position = touch.locationInView(self)
+                return self.isLongPressEnableKey(findNearestView(position) as? KeyboardKey)
+			}
+			else if (gestureRecognizer.state == UIGestureRecognizerState.Ended)
+			{
+				let position = gestureRecognizer.locationInView(self)
+                return self.isLongPressEnableKey(findNearestView(position) as? KeyboardKey)
+			}
+		}
+		else
+		{
+			return true
+		}
+		return false
+	}
+	
+	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool
+	{
+		return true
+	}
+	
     // TODO: there's a bit of "stickiness" to Apple's implementation
     func findNearestView(position: CGPoint) -> UIView? {
+
         if !self.bounds.contains(position) {
             return nil
         }
-        
+
         var closest: (UIView, CGFloat)? = nil
         
-        for anyView in self.subviews {
-            if let view = anyView as? UIView {
-                if view.hidden {
-                    continue
-                }
-                
-                view.alpha = 1
-                
-                let distance = distanceBetween(view.frame, point: position)
-                
-                if closest != nil {
-                    if distance < closest!.1 {
-                        closest = (view, distance)
-                    }
-                }
-                else {
+        for view in self.subviews {
+            
+            if view.hidden {
+                continue
+            }
+
+            let distance = distanceBetween(view.frame, point: position)
+            
+            if closest != nil {
+                if distance < closest!.1 {
                     closest = (view, distance)
                 }
             }
-        }
-        
-        if closest != nil {
-            return closest!.0
-        }
-        else {
-            return nil
-        }
-    }
-    
-    // http://stackoverflow.com/questions/3552108/finding-closest-object-to-cgpoint b/c I'm lazy
-    func distanceBetween(rect: CGRect, point: CGPoint) -> CGFloat {
-        if CGRectContainsPoint(rect, point) {
-            return 0
+            else {
+                closest = (view, distance)
+            }
+            
         }
 
-        var closest = rect.origin
-        
-        if (rect.origin.x + rect.size.width < point.x) {
-            closest.x += rect.size.width
-        }
-        else if (point.x > rect.origin.x) {
-            closest.x = point.x
-        }
-        if (rect.origin.y + rect.size.height < point.y) {
-            closest.y += rect.size.height
-        }
-        else if (point.y > rect.origin.y) {
-            closest.y = point.y
-        }
-        
-        let a = pow(Double(closest.y - point.y), 2)
-        let b = pow(Double(closest.x - point.x), 2)
-        return CGFloat(sqrt(a + b));
+        return closest?.0
     }
-    
+
+    func removeSubviews()
+    {
+        for view in self.subviews {
+            view.removeFromSuperview()
+        }
+    }
+
     // reset tracked views without cancelling current touch
     func resetTrackedViews() {
         for view in self.touchToView.values {
@@ -128,7 +199,14 @@ class ForwardingView: UIView {
         }
         self.touchToView.removeAll(keepCapacity: true)
     }
-    
+	
+	func resetPopUpViews() {
+		for view in self.touchToView.values {
+			
+			(view as? KeyboardKey)?.hidePopup()
+		}
+	}
+	
     func ownView(newTouch: UITouch, viewToOwn: UIView?) -> Bool {
         var foundView = false
         
@@ -151,65 +229,121 @@ class ForwardingView: UIView {
         return foundView
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-        for obj in touches {
-            if let touch = obj as? UITouch {
-                let position = touch.locationInView(self)
-                var view = findNearestView(position)
-                
-                var viewChangedOwnership = self.ownView(touch, viewToOwn: view)
-                
-                if !viewChangedOwnership {
+	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+
+		for touch in touches {
+			let position = touch.locationInView(self)
+			let view = findNearestView(position)
+			
+			let viewChangedOwnership = self.ownView(touch, viewToOwn: view)
+			
+			if(isLongPressEnable == true)
+			{
+				if view != nil && !viewChangedOwnership
+				{
                     self.handleControl(view, controlEvent: .TouchDown)
-                    
-                    if touch.tapCount > 1 {
-                        // two events, I think this is the correct behavior but I have not tested with an actual UIControl
-                        self.handleControl(view, controlEvent: .TouchDownRepeat)
-                    }
-                }
-            }
-        }
-    }
-    
-    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
-        for obj in touches {
-            if let touch = obj as? UITouch {
-                let position = touch.locationInView(self)
-                
-                var oldView = self.touchToView[touch]
-                var newView = findNearestView(position)
-                
-                if oldView != newView {
-                    self.handleControl(oldView, controlEvent: .TouchDragExit)
-                    
-                    var viewChangedOwnership = self.ownView(touch, viewToOwn: newView)
-                    
-                    if !viewChangedOwnership {
-                        self.handleControl(newView, controlEvent: .TouchDragEnter)
-                    }
-                    else {
-                        self.handleControl(newView, controlEvent: .TouchDragInside)
-                    }
-                }
+				}
+				
+				NSNotificationCenter.defaultCenter().postNotificationName("hideExpandViewNotification", object: nil)
+				isLongPressEnable = false
+				
+				if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
+				{
+                    (view as? KeyboardKey)?.highlighted = false
+				}
+				
+			}
+			else
+			{
+				if !viewChangedOwnership {
+					self.handleControl(view, controlEvent: .TouchDown)
+					
+					if touch.tapCount > 1 {
+						// two events, I think this is the correct behavior but I have not tested with an actual UIControl
+						self.handleControl(view, controlEvent: .TouchDownRepeat)
+					}
+				}
                 else {
-                    self.handleControl(oldView, controlEvent: .TouchDragInside)
+                    NSLog("Oops")
+
                 }
-            }
-        }
-    }
+			}
+			
+		}
+	}
+	
+	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		for touch in touches
+		{
+			let position = touch.locationInView(self)
+			
+			if isLongPressEnable
+			{
+                if let expandedButtonView = self.getCYRView() {
+
+                    expandedButtonView.updateSelectedInputIndexForPoint(position)
+				}
+			}
+			else
+			{
+				let oldView = self.touchToView[touch]
+				let newView = findNearestView(position)
+				
+				if oldView != newView
+				{
+					self.handleControl(oldView, controlEvent: .TouchDragExit)
+					
+					let viewChangedOwnership = self.ownView(touch, viewToOwn: newView)
+					
+					if !viewChangedOwnership
+					{
+						self.handleControl(newView, controlEvent: .TouchDragEnter)
+					}
+					else
+					{
+						self.handleControl(newView, controlEvent: .TouchDragInside)
+					}
+				}
+				else
+				{
+					self.handleControl(oldView, controlEvent: .TouchDragInside)
+				}
+			}
+		}
+	}
     
-    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
-        for obj in touches {
-            if let touch = obj as? UITouch {
-                var view = self.touchToView[touch]
+    override func touchesEnded(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+        if let allTouches = touches {
+            for touch in allTouches {
+                let view = self.touchToView[touch]
                 
                 let touchPosition = touch.locationInView(self)
                 
-                if self.bounds.contains(touchPosition) {
-                    self.handleControl(view, controlEvent: .TouchUpInside)
+                if(isLongPressKeyPress == true)
+                {
+                    if let expandedButtonView : CYRKeyboardButtonView = self.getCYRView() {
+                        if expandedButtonView.selectedInputIndex != NSNotFound {
+
+                            if let inputOption = self.getCYRButton().inputOptions[expandedButtonView.selectedInputIndex] as? String {
+
+                                self.resetPopUpViews()
+
+                                NSNotificationCenter.defaultCenter().postNotificationName("hideExpandViewNotification", object: nil, userInfo: ["text":inputOption])
+                            }
+                        }
+                    }
+                    
+                    isLongPressKeyPress = false
+                    
+                    if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
+                    {
+                        (view as? KeyboardKey)?.highlighted = false
+                    }
+                    
                 }
-                else {
-                    self.handleControl(view, controlEvent: .TouchCancel)
+                else
+                {
+                    self.handleControl(view, controlEvent: self.bounds.contains(touchPosition) ? .TouchUpInside : .TouchCancel)
                 }
                 
                 self.touchToView[touch] = nil
@@ -217,10 +351,11 @@ class ForwardingView: UIView {
         }
     }
 
-    override func touchesCancelled(touches: Set<NSObject>, withEvent event: UIEvent!) {
-        for obj in touches {
-            if let touch = obj as? UITouch {
-                var view = self.touchToView[touch]
+    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+        if let allTouches = touches {
+            for touch in allTouches {
+                
+                let view = self.touchToView[touch]
                 
                 self.handleControl(view, controlEvent: .TouchCancel)
                 
@@ -228,4 +363,49 @@ class ForwardingView: UIView {
             }
         }
     }
+
+    func isLongPressEnableKey(key: KeyboardKey?) -> Bool {
+
+        // REVIEW We need to determine whether the key that got pressed has a list of long presses for the current state
+        // but the only way to get that is to go through a portal to the view controller. This seems unnecessarily convoluted.
+
+        if self.viewController != nil && self.viewController!.longPressEnabledKey(key) {
+            // Assume for now that decimal pad and number pad keys can't do long press.
+            if self.currentMode == 0
+            {
+                return keyboard_type != UIKeyboardType.DecimalPad && keyboard_type != UIKeyboardType.NumberPad
+            }
+        }
+
+        return false
+
+    }
+
+	
+	func getCYRView() -> CYRKeyboardButtonView!
+	{
+        for anyView in self.superview!.subviews {
+
+            if anyView is CYRKeyboardButtonView {
+
+                return anyView as! CYRKeyboardButtonView
+            }
+        }
+
+		return nil
+	}
+	
+	func getCYRButton() -> CYRKeyboardButton!
+	{
+        for anyView in self.superview!.subviews {
+
+            if anyView is CYRKeyboardButton {
+
+                return anyView as! CYRKeyboardButton
+            }
+        }
+
+		return nil
+	}
+	
 }

@@ -1,14 +1,11 @@
 //
 //  KeyboardInputTraits.swift
-//  RussianPhoneticKeyboard
 //
 //  Created by Alexei Baboulevitch on 11/1/14.
 //  Copyright (c) 2014 Alexei Baboulevitch. All rights reserved.
 //
 
 import Foundation
-import QuartzCore
-import UIKit
 
 //        optional var autocorrectionType: UITextAutocorrectionType { get set } // default is UITextAutocorrectionTypeDefault
 //        @availability(iOS, introduced=5.0)
@@ -24,18 +21,17 @@ extension KeyboardViewController {
     func addInputTraitsObservers() {
         // note that KVO doesn't work on textDocumentProxy, so we have to poll
         traitPollingTimer?.invalidate()
-        traitPollingTimer = UIScreen.mainScreen().displayLinkWithTarget(self, selector: Selector("pollTraits"))
+        traitPollingTimer = UIScreen.mainScreen().displayLinkWithTarget(self, selector: #selector(KeyboardViewController.pollTraits))
         traitPollingTimer?.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
     }
     
     func pollTraits() {
-        if let proxy = (self.textDocumentProxy as? UITextInputTraits) {
-            if let layout = self.layout {
-                let appearanceIsDark = (proxy.keyboardAppearance == UIKeyboardAppearance.Dark)
-                if appearanceIsDark != layout.darkMode {
-                    self.updateAppearances(appearanceIsDark)
-                }
+        if let layout = self.layout {
+            let appearanceIsDark = (textDocumentProxy.keyboardAppearance == UIKeyboardAppearance.Dark)
+            if appearanceIsDark != layout.darkMode {
+                self.updateAppearances(appearanceIsDark)
             }
         }
+        
     }
 }

@@ -1,0 +1,44 @@
+{
+    "languages": [
+                  {
+                    "language": {
+                    "langCode": "EN",
+                    "englishName": "English",
+                    "nativeName": "English",
+                    "defaultKbd": "QWERTY",
+                    "internalPunc": [
+                                     "-",
+                                     "'"
+                                     ]
+                    }
+                  },
+
+                  {
+                    "language": {
+                    "langCode": "FR",
+                    "englishName": "French",
+                    "nativeName": "Français",
+                    "defaultKbd": "AZERTY",
+                  "internalPunc": [
+                                   "-",
+                                   "'"
+                                   ]
+                    }
+                  },
+
+
+                  {
+                    "language": {
+                    "langCode": "IT",
+                    "englishName": "Italian",
+                    "nativeName": "Italiano",
+                    "defaultKbd": "QWERTY",
+                  "internalPunc": [
+                                   "-",
+                                   "'"
+                                   ]
+                    }
+                  }
+
+        ]
+}
