@@ -468,6 +468,10 @@ class KeyboardViewController: UIInputViewController {
                         if key.isCharacter {
                             if UIDevice.currentDevice().userInterfaceIdiom != UIUserInterfaceIdiom.Pad {
                                 keyView.addTarget(self, action: #selector(KeyboardViewController.showPopup(_:)), forControlEvents: [.TouchDown, .TouchDragInside, .TouchDragEnter])
+
+
+
+                                keyView.addTarget(keyView, action: #selector(KeyboardKey.hidePopup), forControlEvents: [.TouchDragExit, .TouchCancel])
                                 keyView.addTarget(self, action: #selector(KeyboardViewController.hidePopupDelay(_:)), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchDragOutside])
                             }
 							
