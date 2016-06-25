@@ -445,7 +445,12 @@ class KeyboardViewController: UIInputViewController {
                         switch key.type {
 
                         case Key.KeyType.KeyboardChange:
+                            // Long press on keyboard change shows popup with options to change layout or move to next
+                            // installed keyboard
                             keyView.addTarget(self, action: #selector(KeyboardViewController.keyCharLongPressed(_:)), forControlEvents: .TouchDownRepeat)
+
+                            // Single tap on keyboard change key just advances to next installed keyboard
+                            keyView.addTarget(self, action: #selector(KeyboardViewController.advanceTapped), forControlEvents: .TouchUpInside)
 
                         case Key.KeyType.Backspace:
                             let cancelEvents: UIControlEvents = [UIControlEvents.TouchUpInside, UIControlEvents.TouchUpInside, UIControlEvents.TouchDragExit, UIControlEvents.TouchUpOutside, UIControlEvents.TouchCancel, UIControlEvents.TouchDragOutside]
