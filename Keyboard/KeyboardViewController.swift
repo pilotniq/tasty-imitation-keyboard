@@ -415,21 +415,24 @@ class KeyboardViewController: UIInputViewController {
 
 	}
 
-    // TODO? Add special casing for default height and width for iPad? Previous code resulted in landscape view on iPad2 that was bigger than entire screen
-	func heightForOrientation(orientation: UIInterfaceOrientation, withTopBanner: Bool) -> CGFloat {
-        
-		let actualScreenWidth = (UIScreen.mainScreen().nativeBounds.size.width /
-			UIScreen.mainScreen().nativeScale)
-		
-		let canonicalPortraitHeight = CGFloat(orientation.isPortrait && actualScreenWidth >= 400 ? 226 : 216)
-		let canonicalLandscapeHeight = CGFloat(162)
-		
-		let topBannerHeight = (withTopBanner && textDocumentProxy.keyboardType != UIKeyboardType.NumberPad && textDocumentProxy.keyboardType != UIKeyboardType.DecimalPad)
+    func heightForOrientation(orientation: UIInterfaceOrientation, withTopBanner: Bool) -> CGFloat {
+
+        let actualScreenWidth = (UIScreen.mainScreen().nativeBounds.size.width /
+            UIScreen.mainScreen().nativeScale)
+
+        let actualScreenHeight = (UIScreen.mainScreen().nativeBounds.size.height / UIScreen.mainScreen().nativeScale)
+
+        let canonicalPortraitHeight = CGFloat(orientation.isPortrait && actualScreenWidth >= 400 ? 226 : 216)
+
+        let canonicalLandscapeHeight = CGFloat(orientation.isLandscape && actualScreenHeight >= 800 ? 330 : 162)
+
+
+        let topBannerHeight = (withTopBanner && textDocumentProxy.keyboardType != UIKeyboardType.NumberPad && textDocumentProxy.keyboardType != UIKeyboardType.DecimalPad)
             ? metric("topBanner") : 0
 
         return CGFloat(orientation.isPortrait ? canonicalPortraitHeight + topBannerHeight : canonicalLandscapeHeight + topBannerHeight)
-
-	}
+        
+    }
 
     func setupKeys() {
         if self.layout == nil {
