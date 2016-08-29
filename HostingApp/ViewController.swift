@@ -15,10 +15,10 @@ class HostingAppViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(HostingAppViewController.keyboardWillShow), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(HostingAppViewController.keyboardDidHide), name: UIKeyboardDidHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(HostingAppViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(HostingAppViewController.keyboardDidHide), name: NSNotification.Name.UIKeyboardDidHide, object: nil)
         //NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillChangeFrame:"), name: UIKeyboardWillChangeFrameNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(HostingAppViewController.keyboardDidChangeFrame(_:)), name: UIKeyboardDidChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(HostingAppViewController.keyboardDidChangeFrame(_:)), name: NSNotification.Name.UIKeyboardDidChangeFrame, object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -33,9 +33,9 @@ class HostingAppViewController: UIViewController {
         }
     }
     
-    var startTime: NSTimeInterval?
-    var firstHeightTime: NSTimeInterval?
-    var secondHeightTime: NSTimeInterval?
+    var startTime: TimeInterval?
+    var firstHeightTime: TimeInterval?
+    var secondHeightTime: TimeInterval?
     var referenceHeight: CGFloat = 216
     
     func keyboardWillShow() {
@@ -52,10 +52,16 @@ class HostingAppViewController: UIViewController {
         self.stats?.text = "(Waiting for keyboard...)"
     }
     
-    func keyboardDidChangeFrame(notification: NSNotification) {
-        let frameEnd: CGRect! = notification.userInfo?[UIKeyboardFrameEndUserInfoKey]?.CGRectValue
-        
-        if frameEnd.height == referenceHeight {
+    func keyboardDidChangeFrame(_ notification: Notification) {
+      
+//      let frameEnd: CGRect = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as CGRectValue).cg
+//        let frameEnd: CGRect! = (notification as NSNotification).userInfo?[UIKeyboardFrameEndUserInfoKey]?.cgRectValue
+      
+      if let userInfo = notification.userInfo
+      {
+        if let frameEnd = (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue
+        {
+          if frameEnd.height == referenceHeight {
             if firstHeightTime == nil {
                 firstHeightTime = CACurrentMediaTime()
                 
@@ -82,5 +88,6 @@ class HostingAppViewController: UIViewController {
             }
         }
     }
+      }
 }
-
+}

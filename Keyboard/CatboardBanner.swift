@@ -42,25 +42,25 @@ class CatboardBanner: SuggestionView {
     }
     
     func respondToSwitch() {
-        NSUserDefaults.standardUserDefaults().setBool(self.catSwitch.on, forKey: kCatTypeEnabled)
+        UserDefaults.standard.set(self.catSwitch.isOn, forKey: kCatTypeEnabled)
         self.updateAppearance()
     }
 
     func suggestionButton() -> UIButton {
-        let btn = UIButton(type: .Custom)
-        btn.exclusiveTouch = true
+        let btn = UIButton(type: .custom)
+        btn.isExclusiveTouch = true
         btn.titleLabel!.minimumScaleFactor = 0.6
         btn.backgroundColor = UIColor(red:0.68, green:0.71, blue:0.74, alpha:1)
-        btn.setTitle("", forState: UIControlState.Normal)
-        btn.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        btn.titleLabel?.font = UIFont.systemFontOfSize(18)
+        btn.setTitle("", for: UIControlState())
+        btn.setTitleColor(UIColor.white, for: UIControlState())
+        btn.titleLabel?.font = UIFont.systemFont(ofSize: 18)
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.titleLabel!.adjustsFontSizeToFitWidth = true
 
         return btn
     }
     
-    private func makeButtons(labels: [String]) {
+    fileprivate func makeButtons(_ labels: [String]) {
 
         self.btn1 = suggestionButton()
         self.btn2 = suggestionButton()
@@ -75,16 +75,16 @@ class CatboardBanner: SuggestionView {
 		addConstraintsToButtons()
     }
 
-	override func drawRect(rect: CGRect) {}
+	override func draw(_ rect: CGRect) {}
 	
-	override func hitTest(point: CGPoint, withEvent event: UIEvent!) -> UIView? {
+	override func hitTest(_ point: CGPoint, with event: UIEvent!) -> UIView? {
 		
-        if self.hidden || self.alpha == 0 || !self.userInteractionEnabled {
+        if self.isHidden || self.alpha == 0 || !self.isUserInteractionEnabled {
             return nil
         }
         else
         {
-            return (CGRectContainsPoint(self.bounds, point) ? self : nil)
+            return (self.bounds.contains(point) ? self : nil)
 
         }
 
@@ -95,17 +95,17 @@ class CatboardBanner: SuggestionView {
 	{
         var buttons = [btn1,btn2,btn3]
 
-        for (index, button) in buttons.enumerate() {
+        for (index, button) in buttons.enumerated() {
 
-            let topConstraint = NSLayoutConstraint(item: button, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1.0, constant: 0)
+            let topConstraint = NSLayoutConstraint(item: button, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1.0, constant: 0)
 
-            let bottomConstraint = NSLayoutConstraint(item: button, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1.0, constant: 0)
+            let bottomConstraint = NSLayoutConstraint(item: button, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0)
 
             var rightConstraint : NSLayoutConstraint!
 
             if index == 2
             {
-                rightConstraint = NSLayoutConstraint(item: button, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1.0, constant: 0)
+                rightConstraint = NSLayoutConstraint(item: button, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: 0)
                 self.addConstraint(rightConstraint)
             }
 
@@ -113,16 +113,16 @@ class CatboardBanner: SuggestionView {
 
             if index == 0
             {
-                leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1.0, constant: 0)
+                leftConstraint = NSLayoutConstraint(item: button, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 0)
             }
             else
             {
 
                 let prevtButton = buttons[index-1]
-                leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: prevtButton, attribute: .Right, multiplier: 1.0, constant: 1)
+                leftConstraint = NSLayoutConstraint(item: button, attribute: .left, relatedBy: .equal, toItem: prevtButton, attribute: .right, multiplier: 1.0, constant: 1)
 
                 let firstButton = buttons[0]
-                let widthConstraint = NSLayoutConstraint(item: firstButton, attribute: .Width, relatedBy: .Equal, toItem: button, attribute: .Width, multiplier: 1.0, constant: 1)
+                let widthConstraint = NSLayoutConstraint(item: firstButton, attribute: .width, relatedBy: .equal, toItem: button, attribute: .width, multiplier: 1.0, constant: 1)
 
                 widthConstraint.priority = 800
                 self.addConstraint(widthConstraint)
@@ -134,57 +134,57 @@ class CatboardBanner: SuggestionView {
         }
 	}
 
-	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
 	{
 		if self.frame.size.height == 30
 		{
 			for touch in touches
 			{
-				let position = touch.locationInView(self)
+				let position = touch.location(in: self)
 				let view = findNearestView(position)
 				
 				let viewChangedOwnership = self.ownView(touch, viewToOwn: view)
 				if !viewChangedOwnership {
-					self.handleControl(view, controlEvent: .TouchDown)
+					self.handleControl(view, controlEvent: .touchDown)
 					
 					if touch.tapCount > 1 {
 						// two events, I think this is the correct behavior but I have not tested with an actual UIControl
-						self.handleControl(view, controlEvent: .TouchDownRepeat)
+						self.handleControl(view, controlEvent: .touchDownRepeat)
 					}
 				}
 			}
 		}
 	}
 	
-	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?)
+	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
 	{
 		if self.frame.size.height == 30
 		{
 			for touch in touches
 			{
-				let position = touch.locationInView(self)
+				let position = touch.location(in: self)
 				
 				let oldView = self.touchToView[touch]
 				let newView = findNearestView(position)
 				
 				if oldView != newView
 				{
-					self.handleControl(oldView, controlEvent: .TouchDragExit)
+					self.handleControl(oldView, controlEvent: .touchDragExit)
 					
 					let viewChangedOwnership = self.ownView(touch, viewToOwn: newView)
 					
 					if !viewChangedOwnership
 					{
-						self.handleControl(newView, controlEvent: .TouchDragEnter)
+						self.handleControl(newView, controlEvent: .touchDragEnter)
 					}
 					else
 					{
-						self.handleControl(newView, controlEvent: .TouchDragInside)
+						self.handleControl(newView, controlEvent: .touchDragInside)
 					}
 				}
 				else
 				{
-					self.handleControl(oldView, controlEvent: .TouchDragInside)
+					self.handleControl(oldView, controlEvent: .touchDragInside)
 				}
 				
 			}
@@ -193,7 +193,7 @@ class CatboardBanner: SuggestionView {
 		
 	}
 	
-	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?)
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
 	{
 		if self.frame.size.height == 30
 		{
@@ -201,15 +201,15 @@ class CatboardBanner: SuggestionView {
 			{
 				let view = self.touchToView[touch]
 				
-				let touchPosition = touch.locationInView(self)
+				let touchPosition = touch.location(in: self)
 				
 				if self.bounds.contains(touchPosition)
 				{
-					self.handleControl(view, controlEvent: .TouchUpInside)
+					self.handleControl(view, controlEvent: .touchUpInside)
 				}
 				else
 				{
-					self.handleControl(view, controlEvent: .TouchCancel)
+					self.handleControl(view, controlEvent: .touchCancel)
 				}
 				
 				self.touchToView[touch] = nil
@@ -219,7 +219,7 @@ class CatboardBanner: SuggestionView {
 		
 	}
 	
-	override func touchesCancelled(touches: Set<UITouch>!, withEvent event: UIEvent!)
+	override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent!)
 	{
 		if self.frame.size.height == 30
 		{
@@ -227,7 +227,7 @@ class CatboardBanner: SuggestionView {
 			{
 				let view = self.touchToView[touch]
 				
-				self.handleControl(view, controlEvent: .TouchCancel)
+				self.handleControl(view, controlEvent: .touchCancel)
 				
 				self.touchToView[touch] = nil
 			}
@@ -236,7 +236,7 @@ class CatboardBanner: SuggestionView {
 	}
 	
 	// TODO: there's a bit of "stickiness" to Apple's implementation
-	func findNearestView(position: CGPoint) -> UIView? {
+	func findNearestView(_ position: CGPoint) -> UIView? {
 		if !self.bounds.contains(position) {
 			return nil
 		}
@@ -246,7 +246,7 @@ class CatboardBanner: SuggestionView {
 		for anyView in self.subviews {
 			let view = anyView
 			
-			if view.hidden {
+			if view.isHidden {
 				continue
 			}
 			
@@ -272,8 +272,8 @@ class CatboardBanner: SuggestionView {
 		}
 	}
 	
-	func distanceBetween(rect: CGRect, point: CGPoint) -> CGFloat {
-		if CGRectContainsPoint(rect, point) {
+	func distanceBetween(_ rect: CGRect, point: CGPoint) -> CGFloat {
+		if rect.contains(point) {
 			return 0
 		}
 		
@@ -297,7 +297,7 @@ class CatboardBanner: SuggestionView {
 		return CGFloat(sqrt(a + b));
 	}
 	
-	func ownView(newTouch: UITouch, viewToOwn: UIView?) -> Bool {
+	func ownView(_ newTouch: UITouch, viewToOwn: UIView?) -> Bool {
 		var foundView = false
 		
 		if viewToOwn != nil {
@@ -319,16 +319,16 @@ class CatboardBanner: SuggestionView {
 		return foundView
 	}
 	
-	func handleControl(view: UIView?, controlEvent: UIControlEvents) {
+	func handleControl(_ view: UIView?, controlEvent: UIControlEvents) {
 		if let control = view as? UIControl {
-			let targets = control.allTargets()
+			let targets = control.allTargets
 			for target in targets { // TODO: Xcode crashes
-				let actions = control.actionsForTarget(target, forControlEvent: controlEvent)
+				let actions = control.actions(forTarget: target, forControlEvent: controlEvent)
 				if (actions != nil) {
 					for action in actions! {
 						let selector = Selector(action)
 						
-						control.sendAction(selector, to: target, forEvent: nil)
+						control.sendAction(selector, to: target, for: nil)
 					}
 				}
 			}

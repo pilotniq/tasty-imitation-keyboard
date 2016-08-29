@@ -17,8 +17,8 @@ let kCatTypeEnabled = "kCatTypeEnabled"
 
 class Catboard: KeyboardViewController {
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-        NSUserDefaults.standardUserDefaults().registerDefaults([kCatTypeEnabled: true])
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        UserDefaults.standard.register(defaults: [kCatTypeEnabled: true])
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
 
@@ -26,17 +26,18 @@ class Catboard: KeyboardViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func keyPressed(key: Key) {
+    override func keyPressed(_ key: Key) {
         let textDocumentProxy = self.textDocumentProxy
         
         let keyOutput = key.outputForCase(self.shiftState.uppercase())
         
-        if !NSUserDefaults.standardUserDefaults().boolForKey(kCatTypeEnabled) {
+        if !UserDefaults.standard.bool(forKey: kCatTypeEnabled) {
             InsertText(keyOutput)
             return
         }
         
-        if key.type == .Character || key.type == .SpecialCharacter {
+        if key.type == .character || key.type == .specialCharacter {
+            // context will be a String?
             let context = textDocumentProxy.documentContextBeforeInput
             if context != nil {
                 if context!.characters.count < 2 {
@@ -45,14 +46,15 @@ class Catboard: KeyboardViewController {
                 }
                 
                 var index = context!.endIndex
-                
-                index = index.predecessor()
+              
+              index = context!.index( before: index )
+                // index = context!.endIndex(before: index)
                 if context?.characters[index] != " " {
                     InsertText(keyOutput)
                     return
                 }
                 
-                index = index.predecessor()
+                index = context!.index(before: index)
                 if context?.characters[index] == " " {
                     InsertText(keyOutput)
                     return
