@@ -179,12 +179,10 @@ open class LanguageDefinitions {
     fileprivate func extractLanguageDefinitions(_ allDefinitions: NSDictionary)
     {
         if let languages = allDefinitions["languages"] as? NSArray {
-            // erl added as? LanguageDefinition here 2016-08-29
             for language2 in languages {
                 let language = language2 as! NSDictionary
               
                 if let languageProperties = language["language"] as? NSDictionary {
-
 
                     if let englishName = languageProperties["englishName"] as? String,
                         let nativeName = languageProperties["nativeName"] as? String,
