@@ -54,9 +54,6 @@ class HostingAppViewController: UIViewController {
     
     func keyboardDidChangeFrame(_ notification: Notification) {
       
-//      let frameEnd: CGRect = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as CGRectValue).cg
-//        let frameEnd: CGRect! = (notification as NSNotification).userInfo?[UIKeyboardFrameEndUserInfoKey]?.cgRectValue
-      
       if let userInfo = notification.userInfo
       {
         if let frameEnd = (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue

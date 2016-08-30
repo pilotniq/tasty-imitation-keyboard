@@ -37,7 +37,6 @@ class Catboard: KeyboardViewController {
         }
         
         if key.type == .character || key.type == .specialCharacter {
-            // context will be a String?
             let context = textDocumentProxy.documentContextBeforeInput
             if context != nil {
                 if context!.characters.count < 2 {
@@ -47,8 +46,7 @@ class Catboard: KeyboardViewController {
                 
                 var index = context!.endIndex
               
-              index = context!.index( before: index )
-                // index = context!.endIndex(before: index)
+                index = context!.index( before: index )
                 if context?.characters[index] != " " {
                     InsertText(keyOutput)
                     return
