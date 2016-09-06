@@ -17,28 +17,38 @@ class CustomNavigationController : UINavigationController {
 
     // Something of a hack: we may have to totally redraw the keyboard when we dismiss the nav controller
     // e.g. if the user selected a different layout
-    var parent: KeyboardViewController?
+    // commented out by erl 2016-08-29 because can't override stored var.
+    // var parent: KeyboardViewController?
 
-    override func pushViewController(viewController: UIViewController, animated: Bool) {
+    var myParent: KeyboardViewController?
+    {
+      get
+      {
+        return parent as! KeyboardViewController?
+      }
+    }
+  
+    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         countViews += 1
 
         super.pushViewController(viewController, animated: animated)
     }
 
-    override func popViewControllerAnimated(animated: Bool) -> UIViewController? {
+    override func popViewController(animated: Bool) -> UIViewController? {
 
         if countViews == 3 { // The nav bar itself + dummy VC (to force the back button) + settings VC
 
             countViews = 0
-            super.popViewControllerAnimated(false)
-            self.dismissViewControllerAnimated(false, completion: nil) // Nav bar goes away, revealing keyboard again
-            self.parent?.ChangeKeyboardLanguage(CurrentLanguageCode()) // But no event triggers the keyboard redrawing e.g. to account for selecting a different layout; so explicitly redo the kbd
+            super.popViewController(animated: false)
+            self.dismiss(animated: false, completion: nil) // Nav bar goes away, revealing keyboard again
+
+            self.myParent?.ChangeKeyboardLanguage(CurrentLanguageCode()) // But no event triggers the keyboard redrawing e.g. to account for selecting a different layout; so explicitly redo the kbd
 
             return nil
         }
         else {
             countViews -= 1
-            return super.popViewControllerAnimated(animated)
+            return super.popViewController(animated: animated)
         }
     }
 
@@ -54,7 +64,8 @@ class CustomNavigationController : UINavigationController {
     convenience init (parent: KeyboardViewController)
     {
         self.init()
-        self.parent = parent
+
+        parent.addChildViewController( self )
     }
 
     required init?(coder aDecoder: NSCoder) {
