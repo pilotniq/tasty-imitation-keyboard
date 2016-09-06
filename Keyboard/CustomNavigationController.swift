@@ -17,17 +17,8 @@ class CustomNavigationController : UINavigationController {
 
     // Something of a hack: we may have to totally redraw the keyboard when we dismiss the nav controller
     // e.g. if the user selected a different layout
-    // commented out by erl 2016-08-29 because can't override stored var.
-    // var parent: KeyboardViewController?
+    var parentKeyboardVC: KeyboardViewController? = nil
 
-    var myParent: KeyboardViewController?
-    {
-      get
-      {
-        return parent as! KeyboardViewController?
-      }
-    }
-  
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         countViews += 1
 
@@ -42,7 +33,7 @@ class CustomNavigationController : UINavigationController {
             super.popViewController(animated: false)
             self.dismiss(animated: false, completion: nil) // Nav bar goes away, revealing keyboard again
 
-            self.myParent?.ChangeKeyboardLanguage(CurrentLanguageCode()) // But no event triggers the keyboard redrawing e.g. to account for selecting a different layout; so explicitly redo the kbd
+            self.parentKeyboardVC?.ChangeKeyboardLanguage(CurrentLanguageCode()) // But no event triggers the keyboard redrawing e.g. to account for selecting a different layout; so explicitly redo the kbd
 
             return nil
         }
@@ -64,8 +55,7 @@ class CustomNavigationController : UINavigationController {
     convenience init (parent: KeyboardViewController)
     {
         self.init()
-
-        parent.addChildViewController( self )
+        self.parentKeyboardVC = parent
     }
 
     required init?(coder aDecoder: NSCoder) {
